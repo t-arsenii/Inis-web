@@ -19,7 +19,8 @@ const io = new Server(server, {
         origin: ["http://localhost:8080"]
     }
 })
-
+app.use(express.json());
+    
 handleSocketConnections(io)
 
 app.use(cors({
@@ -27,6 +28,7 @@ app.use(cors({
 }));
 
 app.use("/", gamesRoutes)
+
 server.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
 })

@@ -4,6 +4,7 @@ import { Card } from "./Card";
 export class Player {
     Id: string = "";
     Socket: Socket | undefined
+    isBren: boolean = false
     //Hand
     ActionCards: Card[] = [];
     EposCards: Card[] = [];
@@ -18,11 +19,9 @@ export class Player {
     SanctuariesPresence: number = 0;
     ClansDomination: number = 0;
     constructor(
-        id: string,
-        socket: Socket
+        id: string
     ) {
         this.Id = id;
-        this.Socket = socket
     }
 
 }
