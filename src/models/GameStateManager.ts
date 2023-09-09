@@ -1,7 +1,9 @@
 import { GameState } from "./GameState";
+import { Player } from "./Player";
 
 class GameStateManager {
     private gameStates: Map<string, GameState> = new Map();
+    socketToGame: Map<string, string> = new Map();
 
     createGame(gameState: GameState): void {
         this.gameStates.set(gameState.Id, gameState);
@@ -12,6 +14,7 @@ class GameStateManager {
     getGame(id: string): GameState | undefined {
         return this.gameStates.get(id)
     }
+    
     getGameStates(): Array<GameState> {
         return Array.from(this.gameStates.values());
     }
