@@ -5,6 +5,7 @@ export class Player {
     Id: string = "";
     Socket: Socket | undefined
     isBren: boolean = false
+    isActive = false
     //Hand
     // ActionCards: Card[] = [];
     // EposCards: Card[] = [];

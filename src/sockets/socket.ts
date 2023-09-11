@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { gamesManager } from "../models/GameStateManager";
 import { Player } from "../models/Player";
-import { cardDictionary } from "../GameLogic/Constans/constans_cards";
+import { cardMap } from "../GameLogic/Constans/constans_cards";
 import { GameState } from "../models/GameState";
 import { Console } from "console";
 import { playerInfo } from "../models/GameStateManager";
@@ -35,7 +35,7 @@ export default function handleSocketConnections(io: Server) {
             }
             const gameState: GameState = playerInfo.gameState
             const player: Player = playerInfo.player
-            
+
             player.Socket = undefined
             gamesManager.socketToGame.delete(socket.id)
             //console.log('A user disconnected.');
@@ -68,6 +68,18 @@ export default function handleSocketConnections(io: Server) {
             const gameState = gamesManager.getGame(gameId)
             const player = gameState?.getPlayer(userId)
             socket.emit("territory-avaliable", gameState?.map.getAllValidPlacements())
+        })
+        socket.on("next-turn", (gameId, userId) => {
+            const gameState = gamesManager.getGame(gameId)!
+            const player = gameState.getPlayer(userId)!
+            if (gameState.turnOrder.activePlayerId !== player.Id)
+            {
+                console.log("Socket not allowed")
+                socket.emit("next-turn", gameState.turnOrder)
+                return
+            }
+            gameState.nextTurn()
+            socket.emit("next-turn", gameState.turnOrder)
         })
         // socket.on("card-event", (cardId: string, gameId: string) => {
         //     console.log(`card-event room id: ${gameId}`);

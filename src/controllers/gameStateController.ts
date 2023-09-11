@@ -22,7 +22,7 @@ const CreateGame = (req: Request, res: Response) => {
         userIds.forEach(id => gameState.addPlayerById(id))
     }
     gamesManager.createGame(gameState)
-    res.status(200).send(`Game created with id: ${gameState.Id}`)
+    res.status(200).send(`Game created with id: ${gameState.id}`)
 }
 const GetGames = (req: Request, res: Response) => {
     res.status(200).send(gamesManager.getGameStates())
@@ -46,7 +46,7 @@ function convertPlayerInfoToFormat(socketId: string, playerInfo: playerInfo): Re
     return {
       socket: socketId,
       playerInfo: {
-        gameId: playerInfo.gameState.Id,
+        gameId: playerInfo.gameState.id,
         playerId: playerInfo.player.Id,
       },
     };

@@ -126,8 +126,19 @@ const Geist: Card = {
     description: ""
 } as const;
 
-export const cardDictionary: { [id: string]: Card } = {
-    [Sanctuary.id]: Sanctuary,
-    [New_clans.id]: New_clans,
-    [Conquest.id]: Conquest,
-};
+export const cardMap: Map<string, Card> = new Map([
+    [Sanctuary.id, Sanctuary],
+    [New_clans.id, New_clans],
+    [Conquest.id, Conquest],
+    [Bard.id, Bard],
+    [NewClans.id, NewClans],
+    [Druid.id, Druid],
+    [PeasantsWorkers.id, PeasantsWorkers],
+    [NewUnion.id, NewUnion],
+    [Exploration.id, Exploration],
+    [Commander.id, Commander],
+    [Holiday.id, Holiday],
+    [Relocation.id, Relocation],
+    [Citadel.id, Citadel],
+    [Geist.id, Geist]
+]);

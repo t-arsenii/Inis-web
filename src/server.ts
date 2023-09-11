@@ -5,7 +5,7 @@ import cors from 'cors';
 import { GameState } from "./models/GameState";
 import { v4 } from "uuid"
 import { Player } from "./models/Player";
-import { cardDictionary } from "./GameLogic/Constans/constans_cards";
+import { cardMap } from "./GameLogic/Constans/constans_cards";
 import { gamesManager } from "./models/GameStateManager";
 import gamesRoutes from "./routes/gamesRoutes"
 import handleSocketConnections from "./sockets/socket"
