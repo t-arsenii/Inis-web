@@ -2,6 +2,7 @@ import express, { Request, Response } from "express"
 import { GameState } from "../models/GameState";
 import { v4 } from "uuid";
 import { gamesManager } from "../models/GameStateManager";
+import { playerInfo } from "../models/GameStateManager";
 
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
@@ -35,9 +36,23 @@ const GetOnlinePlayers = (req: Request, res: Response) => {
     {
         return res.status(404).send('No players are online')
     }
-    const socketGame = Object.fromEntries(gamesManager.socketToGame);
-    res.status(200).send(socketGame)
+    const arrayOfMaps: Array<Record<string, any>> = Array.from(gamesManager.socketToGame.entries()).map(([socketId, playerInfo]) =>
+    convertPlayerInfoToFormat(socketId, playerInfo)
+  );
+    res.status(200).send(arrayOfMaps)
 }
+
+function convertPlayerInfoToFormat(socketId: string, playerInfo: playerInfo): Record<string, any> {
+    return {
+      socket: socketId,
+      playerInfo: {
+        gameId: playerInfo.gameState.Id,
+        playerId: playerInfo.player.Id,
+      },
+    };
+  }
+  
+
 export default {
     CreateGameWithId,
     CreateGame,

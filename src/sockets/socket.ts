@@ -4,7 +4,7 @@ import { Player } from "../models/Player";
 import { cardDictionary } from "../GameLogic/Constans/constans_cards";
 import { GameState } from "../models/GameState";
 import { Console } from "console";
-
+import { playerInfo } from "../models/GameStateManager";
 
 export default function handleSocketConnections(io: Server) {
     io.on('connection', (socket: Socket) => {
@@ -22,27 +22,21 @@ export default function handleSocketConnections(io: Server) {
                 return
             }
             player.Socket = socket
-            gamesManager.socketToGame.set(socket.id, gameId)
+            gamesManager.socketToGame.set(socket.id, { gameState: gameState, player: player })
             socket.emit('join-game-info', { status: "success", info: { playerId: player.Id, socket: socket.id, gameId: gameId } })
         });
         socket.on('disconnect', () => {
             if (!gamesManager.socketToGame.has(socket.id)) {
                 return
             }
-            const gameStateId: string | undefined = gamesManager.socketToGame.get(socket.id)
-            if (!gameStateId) {
+            const playerInfo: playerInfo | undefined = gamesManager.socketToGame.get(socket.id)
+            if (!playerInfo) {
                 return
             }
-            const gameState: GameState | undefined = gamesManager.getGame(gameStateId)
-            if (!gameState) {
-                return
-            }
-            gameState.players.forEach((value, key) => {
-
-                if (value.Socket && value.Socket.id === socket.id) {
-                    value.Socket = undefined
-                }
-            })
+            const gameState: GameState = playerInfo.gameState
+            const player: Player = playerInfo.player
+            
+            player.Socket = undefined
             gamesManager.socketToGame.delete(socket.id)
             //console.log('A user disconnected.');
         });
@@ -75,7 +69,6 @@ export default function handleSocketConnections(io: Server) {
             const player = gameState?.getPlayer(userId)
             socket.emit("territory-avaliable", gameState?.map.getAllValidPlacements())
         })
-
         // socket.on("card-event", (cardId: string, gameId: string) => {
         //     console.log(`card-event room id: ${gameId}`);
         //     socket.to(gameId).emit("card-event-server", `Player ${socket.id} played card: ${cardDictionary[cardId].title}`);

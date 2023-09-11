@@ -6,9 +6,9 @@ export class Player {
     Socket: Socket | undefined
     isBren: boolean = false
     //Hand
-    ActionCards: Card[] = [];
-    EposCards: Card[] = [];
-    AdvantagesCards: Card[] = [];
+    // ActionCards: Card[] = [];
+    // EposCards: Card[] = [];
+    // AdvantagesCards: Card[] = [];
     //Tokens
     DeedTokens: number = 0;
     ChallengerTokens: number = 0;

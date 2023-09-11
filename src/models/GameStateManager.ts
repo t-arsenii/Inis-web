@@ -1,9 +1,12 @@
 import { GameState } from "./GameState";
 import { Player } from "./Player";
-
+export type playerInfo = {
+    gameState: GameState
+    player: Player
+}
 class GameStateManager {
     private gameStates: Map<string, GameState> = new Map();
-    socketToGame: Map<string, string> = new Map();
+    socketToGame: Map<string, playerInfo> = new Map();
 
     createGame(gameState: GameState): void {
         this.gameStates.set(gameState.Id, gameState);

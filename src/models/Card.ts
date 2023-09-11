@@ -12,7 +12,9 @@ export enum Badge {
     Build,
     Clans,
     Move,
-    MoveAndAttack
+    Attack,
+    MoveAndAttack,
+    None
 }
 export type Card = {
     readonly id: string

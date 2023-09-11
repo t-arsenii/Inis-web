@@ -2,6 +2,7 @@ import { Player } from "./Player";
 import { v4 } from "uuid";
 import { HexGrid } from "./Territory";
 enum GameStage {
+  Begginig,
   Gathering,
   Season,
   Fight
@@ -22,7 +23,7 @@ export class GameState {
     activePlayerId: ""
   }
   map: HexGrid = new HexGrid()
-  gameStage: GameStage = GameStage.Gathering
+  gameStage: GameStage = GameStage.Begginig
   gameStatus: boolean = false
 
   constructor(lobbyId?: string) {
@@ -32,12 +33,14 @@ export class GameState {
     if (this.gameStatus) {
       throw new Error("Game is already initialized");
     }
-    // if (!this.checkSockets()) {
+    //Checking for all players connection
+    // if (checkSockets(this.players)) {
     //   throw new Error("Not all socket are connected");
     // }
     //Randomize array and picking first player id who becomes active player
-    this.shuffleArray(this.turnOrder.playersId)
+    shuffleArray(this.turnOrder.playersId)
     const activePlayerId = this.turnOrder.playersId[0]
+    this.turnOrder.order = getRandomOrder()
     //Setting active player
     this.turnOrder.activePlayerId = activePlayerId
     //Setting bren boolean in active player object
@@ -47,21 +50,10 @@ export class GameState {
     }
     activePlayer.isBren = true
     this.gameStatus = true
-    this.gameStage = GameStage.Gathering
+    this.gameStage = GameStage.Begginig
     this.map.InitHexagons()
   }
-  private shuffleArray(array: string[]): void {
-    array.sort(() => Math.random() - 0.5);
-  };
-  private checkSockets(): boolean {
-    const players: Player[] = Array.from(this.players.values())
-    for (const player of players) {
-      if (!player.Socket) {
-        return false;
-      }
-    }
-    return true
-  }
+
   addPlayer(player: Player): void {
     if (this.players.size < this.maxPlayers) {
       this.players.set(player.Id, player);
@@ -96,5 +88,29 @@ export class GameState {
       gameStatus,
       HexGrid: this.map.toJSON()
     };
+  }
+}
+
+
+function checkSockets(playersMap: Map<string, Player>): boolean {
+  const players: Player[] = Array.from(playersMap.values())
+  for (const player of players) {
+    if (!player.Socket) {
+      return false;
+    }
+  }
+  return true
+}
+
+function shuffleArray(array: string[]): void {
+  array.sort(() => Math.random() - 0.5);
+}
+
+function getRandomOrder(): "clockwise" | "counter-clockwise" {
+  const randomValue = Math.random();
+  if (randomValue < 0.5) {
+    return "clockwise";
+  } else {
+    return "counter-clockwise";
   }
 }

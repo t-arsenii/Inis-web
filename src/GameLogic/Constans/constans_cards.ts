@@ -27,6 +27,105 @@ const Conquest: Card = {
     description: "Choose 1 territory. You can move any number of clans from neighbours territories to it."
 } as const;
 
+const Bard: Card = {
+    id: "",
+    title: "Bard",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.SeasonOrTrixel,
+    badge: Badge.None,
+    description: ""
+} as const;
+
+const NewClans: Card = {
+    id: "",
+    title: "New clans",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.Clans,
+    description: ""
+} as const;
+
+const Druid: Card = {
+    id: "",
+    title: "Druid",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.None,
+    description: ""
+} as const;
+
+const PeasantsWorkers: Card = {
+    id: "",
+    title: "Peasants and workers",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.Clans,
+    description: ""
+} as const;
+
+const NewUnion: Card = {
+    id: "",
+    title: "New union",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.Clans,
+    description: ""
+} as const;
+
+const Exploration: Card = {
+    id: "",
+    title: "Exploration",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.Clans,
+    description: ""
+} as const;
+
+const Commander: Card = {
+    id: "",
+    title: "Commander",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.SeasonOrTrixel,
+    badge: Badge.Attack,
+    description: ""
+} as const;
+
+const Holiday: Card = {
+    id: "",
+    title: "Holiday",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.Clans,
+    description: ""
+} as const;
+
+const Relocation: Card = {
+    id: "",
+    title: "Relocation",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.MoveAndAttack,
+    description: ""
+} as const;
+
+const Citadel: Card = {
+    id: "",
+    title: "Сitadel",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Season,
+    badge: Badge.Build,
+    description: ""
+} as const;
+
+const Geist: Card = {
+    id: "",
+    title: "Geist",
+    card_type: Card_type.Action,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    description: ""
+} as const;
+
 export const cardDictionary: { [id: string]: Card } = {
     [Sanctuary.id]: Sanctuary,
     [New_clans.id]: New_clans,
