@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express"
-import { GameState } from "../models/GameState";
+import { GameState } from "../GameLogic/GameState";
 import { v4 } from "uuid";
-import { gamesManager } from "../models/GameStateManager";
+import { gamesManager } from "../GameLogic/GameStateManager";
+import { playerInfo } from "../GameLogic/GameStateManager";
 
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
@@ -21,7 +22,7 @@ const CreateGame = (req: Request, res: Response) => {
         userIds.forEach(id => gameState.addPlayerById(id))
     }
     gamesManager.createGame(gameState)
-    res.status(200).send(`Game created with id: ${gameState.Id}`)
+    res.status(200).send(`Game created with id: ${gameState.id}`)
 }
 const GetGames = (req: Request, res: Response) => {
     res.status(200).send(gamesManager.getGameStates())
@@ -35,9 +36,23 @@ const GetOnlinePlayers = (req: Request, res: Response) => {
     {
         return res.status(404).send('No players are online')
     }
-    const socketGame = Object.fromEntries(gamesManager.socketToGame);
-    res.status(200).send(socketGame)
+    const arrayOfMaps: Array<Record<string, any>> = Array.from(gamesManager.socketToGame.entries()).map(([socketId, playerInfo]) =>
+    convertPlayerInfoToFormat(socketId, playerInfo)
+  );
+    res.status(200).send(arrayOfMaps)
 }
+
+function convertPlayerInfoToFormat(socketId: string, playerInfo: playerInfo): Record<string, any> {
+    return {
+      socket: socketId,
+      playerInfo: {
+        gameId: playerInfo.gameState.id,
+        playerId: playerInfo.player.Id,
+      },
+    };
+  }
+  
+
 export default {
     CreateGameWithId,
     CreateGame,
