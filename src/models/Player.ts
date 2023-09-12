@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import { Card } from "./Card";
+import { CLANS_PER_PLAYER } from "../GameLogic/Constans/constans_3_players";
 
 export class Player {
     Id: string = "";
@@ -14,7 +15,7 @@ export class Player {
     DeedTokens: number = 0;
     ChallengerTokens: number = 0;
     //Clans
-    CurrentClans: number = 0;
+    ClansLeft: number = CLANS_PER_PLAYER;
     //Stats
     TerritoriesPresence: number = 0;
     SanctuariesPresence: number = 0;

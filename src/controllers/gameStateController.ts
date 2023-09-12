@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express"
-import { GameState } from "../models/GameState";
+import { GameState } from "../GameLogic/GameState";
 import { v4 } from "uuid";
-import { gamesManager } from "../models/GameStateManager";
-import { playerInfo } from "../models/GameStateManager";
+import { gamesManager } from "../GameLogic/GameStateManager";
+import { playerInfo } from "../GameLogic/GameStateManager";
 
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;

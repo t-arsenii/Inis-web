@@ -1,7 +1,8 @@
-import { Player } from "./Player";
+import { Player } from "../models/Player";
 import { v4 } from "uuid";
-import { HexGrid } from "./Territory";
-import { DeckManager } from "./DeckManager";
+import { HexGrid } from "./HexGrid";
+import { Deck, DeckManager } from "./DeckManager";
+import { shuffle } from "../srv/helperFunctions";
 enum GameStage {
   Begginig,
   Gathering,
@@ -47,14 +48,14 @@ export class GameState {
     // }
 
     //Picking and setting active player and turn order
-    shuffleArray(this.turnOrder.playersId)
+    this.turnOrder.playersId = shuffle(this.turnOrder.playersId)
     const activePlayerId = this.turnOrder.playersId[0]
     this.turnOrder.activePlayerId = activePlayerId
     this.players.get(activePlayerId)!.isActive = true
     this.turnOrder.order = getRandomOrder()
 
     //Setting bren boolean in active player object
-    const activePlayer: Player | undefined = this.getPlayer(activePlayerId)
+    const activePlayer: Player | undefined = this.getPlayerById(activePlayerId)
     if (!activePlayer) {
       return
     }
@@ -69,6 +70,7 @@ export class GameState {
 
     //Initializing players decks
     this.deckManager.addPlayers(Array.from(this.players.keys()))
+    this.deckManager.DealCards()
   }
   nextTurn(): void {
     const activePlayerId = this.turnOrder.activePlayerId
@@ -104,12 +106,24 @@ export class GameState {
   //     this.players.delete(userId)
   //   }
   // }
-  getPlayer(userId: string): Player | undefined {
+  getPlayerById(userId: string): Player | undefined {
     return this.players.get(userId)
+  }
+  getPlayerBySocket(socketId: string): Player | undefined {
+    for (const player of this.players.values()) {
+      if (player.Socket && player.Socket.id === socketId) {
+        return player;
+      }
+    }
+    return undefined;
   }
   toJSON() {
     const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = this;
     const playersArray = Array.from(this.players.values()).map(p => ({ id: p.Id, socketId: p.Socket?.id }));
+    const deckArray: { id: string; deck: Deck }[] = [];
+    this.deckManager.playersDeck.forEach((deck, playerId) => {
+      deckArray.push({ id: playerId, deck: deck });
+    });
     return {
       Id,
       players: playersArray,
@@ -117,11 +131,11 @@ export class GameState {
       turnOrder,
       gameStage,
       gameStatus,
-      HexGrid: this.map.toJSON()
+      HexGrid: this.map.toJSON(),
+      Decks: deckArray
     };
   }
 }
-
 
 function checkSockets(playersMap: Map<string, Player>): boolean {
   const players: Player[] = Array.from(playersMap.values())
@@ -131,10 +145,6 @@ function checkSockets(playersMap: Map<string, Player>): boolean {
     }
   }
   return true
-}
-
-function shuffleArray(array: string[]): void {
-  array.sort(() => Math.random() - 0.5);
 }
 
 function getRandomOrder(): TurnOrder {
