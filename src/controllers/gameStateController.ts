@@ -47,7 +47,7 @@ function convertPlayerInfoToFormat(socketId: string, playerInfo: playerInfo): Re
       socket: socketId,
       playerInfo: {
         gameId: playerInfo.gameState.id,
-        playerId: playerInfo.player.Id,
+        playerId: playerInfo.player.id,
       },
     };
   }

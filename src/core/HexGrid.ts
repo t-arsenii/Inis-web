@@ -1,5 +1,5 @@
 import { Player } from "./Player"
-import { shuffle } from "../services/helperFunctions"
+import { AxialToString, shuffle } from "../services/helperFunctions"
 import { GameState } from "./GameState"
 import { territoryMap } from "../constans/constans_territories"
 import { axialCoordiantes } from "../types/Types"
@@ -18,31 +18,35 @@ export class Hexagon {
     public q: number
     public r: number
     public field: Field
-    constructor(q: number, r: number, field: Field) {
-        this.q = q
-        this.r = r
+    private setupClansCounter = 0
+    constructor(axial: axialCoordiantes, field: Field) {
+        this.q = axial.q
+        this.r = axial.r
         this.field = field
     }
 }
 export class HexGrid {
     public grid: Map<string, Hexagon>;
+    public playerFieldPresense: Map<string, Hexagon[]> = new Map()
     private avalibleTerritories: string[]
     private gameState: GameState
+    public capital: Hexagon = undefined!
+    private setupClansCounter = 0
     constructor(gameState: GameState) {
         this.gameState = gameState
         this.grid = new Map<string, Hexagon>();
         this.avalibleTerritories = shuffle(Array.from(territoryMap.keys()))
     }
-    public toJSON() {
+    public ToJSON() {
         return { hex: Array.from(this.grid.values()).map(hex => ({ q: hex.q, r: hex.r, terId: hex.field.territoryId })), avalibleTer: this.avalibleTerritories };
     }
-    public addField(q: number, r: number): boolean {
-        const key = `${q},${r}`;
-        if (this.hasField(q, r)) {
+    public AddField(axial: axialCoordiantes): boolean {
+        const key = AxialToString(axial);
+        if (this.HasField(axial)) {
             console.log("addHex error, grid has")
             return false
         }
-        if (!this.canPlaceFieldBetween(q, r)) {
+        if (!this.CanPlaceFieldBetween(axial)) {
             console.log("addHex error, canPlaceHexagonBetween")
             return false
         }
@@ -50,12 +54,12 @@ export class HexGrid {
             return false
         }
         const territoryId = this.avalibleTerritories.pop()!
-        const hexagon = new Hexagon(q, r, new Field(territoryId));
+        const hexagon = new Hexagon(axial, new Field(territoryId));
         this.avalibleTerritories.filter(t => t !== territoryId)
         this.grid.set(key, hexagon);
         return true;
     }
-    public InitFields(): void {
+    public Init(): void {
         if (this.grid.size > 0) {
             return
         }
@@ -63,16 +67,20 @@ export class HexGrid {
         const t2Id = this.avalibleTerritories.pop()!
         const t3Id = this.avalibleTerritories.pop()!
 
-        const hex1 = new Hexagon(0, 0, new Field(t1Id))
-        const hex2 = new Hexagon(1, 0, new Field(t2Id))
-        const hex3 = new Hexagon(0, 1, new Field(t3Id))
+        this.gameState.players.forEach((player, playerId) => {
+            this.playerFieldPresense.set(playerId, [])
+        })
 
-        this.grid.set(`${hex1.q},${hex1.r}`, hex1);
-        this.grid.set(`${hex2.q},${hex2.r}`, hex2);
-        this.grid.set(`${hex3.q},${hex3.r}`, hex3);
+        const hex1 = new Hexagon({ q: 0, r: 0 }, new Field(t1Id))
+        const hex2 = new Hexagon({ q: 1, r: 0 }, new Field(t2Id))
+        const hex3 = new Hexagon({ q: 0, r: 1 }, new Field(t3Id))
+
+        this.grid.set(AxialToString({ q: hex1.q, r: hex1.r }), hex1);
+        this.grid.set(AxialToString({ q: hex2.q, r: hex2.r }), hex2);
+        this.grid.set(AxialToString({ q: hex3.q, r: hex3.r }), hex3);
         return
     }
-    public getAllValidPlacements(): [number, number][] {
+    public GetAllValidPlacements(): [number, number][] {
         const validPlacements: [number, number][] = [];
 
         // Find the minimum and maximum coordinates to determine the grid size
@@ -91,29 +99,36 @@ export class HexGrid {
         maxQ++;
         minR--;
         maxR++;
+
+        const axial: axialCoordiantes = {
+            q: 0,
+            r: 0
+        }
         for (let q = minQ; q <= maxQ; q++) {
             for (let r = minR; r <= maxR; r++) {
-                if (this.canPlaceFieldBetween(q, r)) {
+                axial.q = q
+                axial.r = r
+                if (this.CanPlaceFieldBetween(axial)) {
                     validPlacements.push([q, r]);
                 }
             }
         }
         return validPlacements;
     }
-    private hasField(q: number, r: number): boolean {
-        const key = `${q},${r}`;
+    private HasField(axial: axialCoordiantes): boolean {
+        const key = AxialToString(axial);
         return this.grid.has(key);
     }
-    private canPlaceFieldBetween(q: number, r: number): boolean {
-        if (!this.hasField(q, r)) {
-            const neighbors = this.getNeighbors(q, r);
+    private CanPlaceFieldBetween(axial: axialCoordiantes): boolean {
+        if (!this.HasField(axial)) {
+            const neighbors = this.GetNeighbors(axial);
             if (neighbors.length >= 2) {
                 return true;
             }
         }
         return false;
     }
-    private getNeighbors(q: number, r: number): Hexagon[] {
+    private GetNeighbors(axial: axialCoordiantes): Hexagon[] {
         const directions = [
             { q: 1, r: 0 },
             { q: 0, r: -1 },
@@ -123,34 +138,73 @@ export class HexGrid {
             { q: 1, r: -1 },
         ];
         const neighbors: Hexagon[] = [];
+        const axialNeighbor: axialCoordiantes = {
+            q: 0,
+            r: 0
+        }
         for (const dir of directions) {
-            const neighborQ = q + dir.q;
-            const neighborR = r + dir.r;
-            if (this.hasField(neighborQ, neighborR)) {
-                neighbors.push(this.grid.get(`${neighborQ},${neighborR}`)!);
+            axialNeighbor.q = axial.q + dir.q;
+            axialNeighbor.r = axial.r + dir.r;
+            if (this.HasField(axialNeighbor)) {
+                neighbors.push(this.grid.get(AxialToString(axialNeighbor))!);
             }
         }
         return neighbors;
     }
-    spawnClans(playerId: string, clansNum: number, axial: axialCoordiantes): void {
-        const player: Player | undefined = this.gameState.GetPlayerById(playerId)
+    AddClans(player: Player, clansNum: number, axial: axialCoordiantes): void {
         if (!player) {
             return
         }
-        const hex: Hexagon | undefined = this.grid.get(`${axial.q},${axial.r}`)
+        const hex: Hexagon | undefined = this.grid.get(AxialToString(axial))
         if (!hex) {
             return
         }
-        const field: Field = this.grid.get(`${axial.q},${axial.r}`)?.field!
-        if (clansNum > player.ClansLeft) {
+        //Maybe unnessasary check
+        if (!this.playerFieldPresense.has(player.id)) {
+            this.playerFieldPresense.set(player.id, [])
+        }
+
+        const field: Field = hex.field
+        if (clansNum > player.clansLeft) {
             return
         }
-        if (field.playersClans.has(player.Id)) {
-            const currentClans = field.playersClans.get(player.Id)
-            field.playersClans.set(player.Id, currentClans! + clansNum)
+        if (field.playersClans.has(player.id)) {
+            const currentClans = field.playersClans.get(player.id)
+            field.playersClans.set(player.id, currentClans! + clansNum)
         } else {
-            field.playersClans.set(player.Id, clansNum)
+            field.playersClans.set(player.id, clansNum)
         }
-        player.ClansLeft -= clansNum
+        player.clansLeft -= clansNum
+
+        const playerFieldsPresense: Hexagon[] = this.playerFieldPresense.get(player.id)!
+        if (!playerFieldsPresense.includes(hex)) {
+            playerFieldsPresense.push(hex)
+        }
+    }
+    SetCapital(axial: axialCoordiantes) {
+        const hex: Hexagon | undefined = this.grid.get(AxialToString(axial))
+        if (!hex) {
+            return
+        }
+        this.capital = hex
+    }
+    SetupClans(): boolean {
+        if (this.setupClansCounter < 2 * this.gameState.numPlayers) {
+            this.setupClansCounter++
+            return false
+        }
+        return true
+
+        // const setupCoordinates: [axialCoordiantes, axialCoordiantes, axialCoordiantes]
+        //     = [{ q: 0, r: 0 }, { q: 1, r: 0 }, { q: 0, r: 1 }]
+        // const playersId = Array.from(this.gameState.players.keys());
+        // const playerIdToNumberMap = new Map<string, number>();
+        // for (const playerId of playersId) {
+        //     playerIdToNumberMap.set(playerId, 0); 
+        // }
+        // setupCoordinates.forEach(axial => {
+        //     const hex: Hexagon = this.grid.get(AxialToString(axial))!
+        // })
+
     }
 }

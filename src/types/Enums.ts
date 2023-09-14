@@ -20,6 +20,25 @@ export enum Badge {
     None
 }
 
-export enum StartStructure{
+export enum StartStructure {
     Shrine
- }
+}
+
+export enum playerAction {
+    None,
+    Card,
+    Token,
+    Pass
+}
+
+export enum GameStage {
+    CapitalSetup,
+    ClansSetup,
+    Gathering,
+    Season,
+    Fight
+}
+export enum TurnOrder {
+    clockwise,
+    counter_clockwise
+}

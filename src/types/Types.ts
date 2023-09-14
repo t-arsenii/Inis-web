@@ -1,5 +1,5 @@
 
-import { Badge, Card_type, StartStructure, Timing_to_play } from "./Enums"
+import { Badge, Card_type, StartStructure, Timing_to_play, TurnOrder } from "./Enums"
 
 export type Card = {
     readonly id: string
@@ -8,19 +8,25 @@ export type Card = {
     readonly timing: Timing_to_play,
     readonly badge: Badge,
     readonly description?: string
-    readonly trixelCondition?:string
+    readonly trixelCondition?: string
     readonly secondDescription?: string
 }
 
 export type Territory = {
-    id:string
-    title:string
+    id: string
+    title: string
     description: string | undefined
-    cardId:string
+    cardId: string
     startStructure: StartStructure | undefined
- }
+}
 
- export type axialCoordiantes = {
+export type axialCoordiantes = {
     q: number
     r: number
+}
+
+export type PlayerTurnOrder = {
+    playersId: string[],
+    direction: TurnOrder,
+    activePlayerId: string;
 }

@@ -1,6 +1,8 @@
-import { Badge, Card, Card_type, Timing_to_play } from "../models/Card";
+import { Card_type, Timing_to_play, Badge } from "../types/Enums";
+import { Card } from "../types/Types";
+
 //Action cards
-const Sanctuary: Card = {
+export const Sanctuary: Card = {
     id: "f145474a-453b-4f53-8fff-12448a0ab90f",
     title: "Sanctuary",
     card_type: Card_type.Action,
@@ -9,7 +11,7 @@ const Sanctuary: Card = {
     description: "Build 1 sanctuary on territory with your clans. Take 1 Epos card",
 } as const;
 
-const New_clans: Card = {
+export const New_clans: Card = {
     id: "c1f5ddba-7325-4188-9a36-ff9ef14af22a",
     title: "New clans",
     card_type: Card_type.Action,
@@ -18,7 +20,7 @@ const New_clans: Card = {
     description: "Add 2 clans on any territory with your clans. Both clans can be added on 1 territory or 2 separate ones"
 } as const;
 
-const Conquest: Card = {
+export const Conquest: Card = {
     id: "ddc241a2-2fd1-4926-8860-4eae221b93d4",
     title: "Conquest",
     card_type: Card_type.Action,
@@ -27,7 +29,7 @@ const Conquest: Card = {
     description: "Choose 1 territory. You can move any number of clans from neighbours territories to it."
 } as const;
 
-const Bard: Card = {
+export const Bard: Card = {
     id: "9422292c-bd05-40b5-95bc-140dbd6bb3c2",
     title: "Bard",
     card_type: Card_type.Action,
@@ -36,7 +38,7 @@ const Bard: Card = {
     description: ""
 } as const;
 
-const NewClans: Card = {
+export const NewClans: Card = {
     id: "b0b388b0-802f-4522-aef4-b66c8df9aff9",
     title: "New clans",
     card_type: Card_type.Action,
@@ -45,7 +47,7 @@ const NewClans: Card = {
     description: ""
 } as const;
 
-const Druid: Card = {
+export const Druid: Card = {
     id: "6b9ed192-ea8f-4fb9-b55f-985a32b344b5",
     title: "Druid",
     card_type: Card_type.Action,
@@ -54,7 +56,7 @@ const Druid: Card = {
     description: ""
 } as const;
 
-const PeasantsWorkers: Card = {
+export const PeasantsWorkers: Card = {
     id: "3d138112-6a36-467a-8255-bcfb42fe7398",
     title: "Peasants and workers",
     card_type: Card_type.Action,
@@ -63,7 +65,7 @@ const PeasantsWorkers: Card = {
     description: ""
 } as const;
 
-const NewUnion: Card = {
+export const NewUnion: Card = {
     id: "df9b3113-f639-4d74-9e6c-a88c98cdcafa",
     title: "New union",
     card_type: Card_type.Action,
@@ -72,7 +74,7 @@ const NewUnion: Card = {
     description: ""
 } as const;
 
-const Exploration: Card = {
+export const Exploration: Card = {
     id: "5d8db5fa-f323-4d84-b78f-85ccad76fd6d",
     title: "Exploration",
     card_type: Card_type.Action,
@@ -81,7 +83,7 @@ const Exploration: Card = {
     description: ""
 } as const;
 
-const Commander: Card = {
+export const Commander: Card = {
     id: "2233b6e1-be5f-4a3d-af68-1aa3c7cfe1b4",
     title: "Commander",
     card_type: Card_type.Action,
@@ -92,7 +94,7 @@ const Commander: Card = {
     secondDescription: ""
 } as const;
 
-const Holiday: Card = {
+export const Holiday: Card = {
     id: "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a",
     title: "Holiday",
     card_type: Card_type.Action,
@@ -101,7 +103,7 @@ const Holiday: Card = {
     description: ""
 } as const;
 
-const Relocation: Card = {
+export const Relocation: Card = {
     id: "bea2a567-9011-493d-9965-7d12b2d4aaf6",
     title: "Relocation",
     card_type: Card_type.Action,
@@ -110,7 +112,7 @@ const Relocation: Card = {
     description: ""
 } as const;
 
-const Citadel: Card = {
+export const Citadel: Card = {
     id: "67f39e72-1838-460d-8cac-17ca18aec015",
     title: "Сitadel",
     card_type: Card_type.Action,
@@ -119,7 +121,7 @@ const Citadel: Card = {
     description: ""
 } as const;
 
-const Geist: Card = {
+export const Geist: Card = {
     id: "d18d8527-d0aa-47da-b291-7aa222ef3132",
     title: "Geist",
     card_type: Card_type.Action,
@@ -129,8 +131,8 @@ const Geist: Card = {
 } as const;
 
 //Advantage Cards
-const Forest: Card = {
-    id: "",
+export const Forest: Card = {
+    id: "16bea132-7365-47c3-a2ce-9610a82eceff",
     title: "Forest",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -139,8 +141,8 @@ const Forest: Card = {
     secondDescription: "Take 1 epos card"
 } as const
 
-const Wasteland: Card = {
-    id: "",
+export const Wasteland: Card = {
+    id: "34a38528-7fa9-4063-9e6a-3de4f89cfe73",
     title: "Wasteland",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -149,8 +151,8 @@ const Wasteland: Card = {
     secondDescription: ""
 } as const
 
-const Meadow: Card = {
-    id: "",
+export const Meadow: Card = {
+    id: "446d3f6c-2388-4c6d-8951-021ed0cf40c0",
     title: "Meadow",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -159,8 +161,8 @@ const Meadow: Card = {
     description: ""
 } as const
 
-const IronMine: Card = {
-    id: "",
+export const IronMine: Card = {
+    id: "e0730202-87c1-403f-9a35-a0f41334aa57",
     title: "Iron mine",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -169,8 +171,8 @@ const IronMine: Card = {
     description: ""
 } as const
 
-const Mountains: Card = {
-    id: "",
+export const Mountains: Card = {
+    id: "8287c9aa-295d-488b-b61a-84ac34cbbb8f",
     title: "Mountains",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -179,8 +181,8 @@ const Mountains: Card = {
     description: ""
 } as const
 
-const Gates: Card = {
-    id: "",
+export const Gates: Card = {
+    id: "ef64a71d-eb20-4d15-85c5-28aa0bf0b69d",
     title: "Gates",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -189,8 +191,8 @@ const Gates: Card = {
     description: ""
 } as const
 
-const StoneCircle: Card = {
-    id: "",
+export const StoneCircle: Card = {
+    id: "a1ff40f8-cf3c-43a4-94f3-3f544d187fd1",
     title: "Stone circle",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -199,8 +201,8 @@ const StoneCircle: Card = {
     description: ""
 } as const
 
-const Plateau: Card = {
-    id: "",
+export const Plateau: Card = {
+    id: "9e5cc7eb-4eb9-41a2-9de7-2967debb1b03",
     title: "Plateau",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -209,8 +211,8 @@ const Plateau: Card = {
     description: ""
 } as const
 
-const Plains: Card = {
-    id: "",
+export const Plains: Card = {
+    id: "f4030b37-b5e6-4a62-be5a-161891094327",
     title: "Plains",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Season,
@@ -218,8 +220,8 @@ const Plains: Card = {
     description: ""
 } as const
 
-const Valley: Card = {
-    id: "",
+export const Valley: Card = {
+    id: "11f9026c-f165-479f-b1cd-88e8408cdbbe",
     title: "Valley",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -227,8 +229,8 @@ const Valley: Card = {
     description: ""
 } as const
 
-const MistyLands: Card = {
-    id: "",
+export const MistyLands: Card = {
+    id: "2bec5ffa-be5f-425c-b045-48ce989a17de",
     title: "MistyLands",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Season,
@@ -236,8 +238,8 @@ const MistyLands: Card = {
     description: ""
 } as const
 
-const Hills: Card = {
-    id: "",
+export const Hills: Card = {
+    id: "09e02abe-0d43-4ee2-a56b-09035bc9a472",
     title: "Hills",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -245,8 +247,8 @@ const Hills: Card = {
     description: ""
 } as const
 
-const ForgottenRavine: Card = {
-    id: "",
+export const ForgottenRavine: Card = {
+    id: "f9ff726b-952e-41bc-81d2-a44de80537b9",
     title: "Forgotten ravine",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -254,8 +256,8 @@ const ForgottenRavine: Card = {
     description: ""
 } as const
 
-const Bay: Card = {
-    id: "",
+export const Bay: Card = {
+    id: "91cd1bfe-14b1-4963-afca-82f593514ef9",
     title: "Bay",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -263,8 +265,8 @@ const Bay: Card = {
     description: ""
 } as const
 
-const SaltMine: Card = {
-    id: "",
+export const SaltMine: Card = {
+    id: "ae75ef7b-e1ac-4bc7-9ee0-0ba95417873f",
     title: "Salt mine",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
@@ -272,14 +274,15 @@ const SaltMine: Card = {
     description: ""
 } as const
 
-const Swamp: Card = {
-    id: "",
+export const Swamp: Card = {
+    id: "9a803125-8f32-46ac-aee7-6bfd528a26ba",
     title: "Swamp",
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
     badge: Badge.None,
     description: ""
 }
+
 export const cardActionsMap: Map<string, Card> = new Map([
     [Sanctuary.id, Sanctuary],
     [New_clans.id, New_clans],
@@ -295,4 +298,23 @@ export const cardActionsMap: Map<string, Card> = new Map([
     [Relocation.id, Relocation],
     [Citadel.id, Citadel],
     [Geist.id, Geist]
+]);
+
+export const cardAdvantageMap: Map<string, Card> = new Map([
+    [Forest.id, Forest],
+    [Wasteland.id, Wasteland],
+    [Meadow.id, Meadow],
+    [IronMine.id, IronMine],
+    [Mountains.id, Mountains],
+    [Gates.id, Gates],
+    [StoneCircle.id, StoneCircle],
+    [Plateau.id, Plateau],
+    [Plains.id, Plains],
+    [Valley.id, Valley],
+    [MistyLands.id, MistyLands],
+    [Hills.id, Hills],
+    [ForgottenRavine.id, ForgottenRavine],
+    [Bay.id, Bay],
+    [SaltMine.id, SaltMine],
+    [Swamp.id, Swamp]
 ]);

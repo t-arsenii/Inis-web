@@ -2,19 +2,16 @@ import { Player } from "../Player";
 import { GameState } from "../GameState";
 import { Hexagon } from "../HexGrid";
 import { axialCoordiantes } from "../../types/Types";
+import { Sanctuary, cardActionsMap } from "../../constans/constans_cards";
 
-function SanctuaryAction(gameState: GameState, playerId: string, hexCoordinates: axialCoordiantes): void {
-    if (!gameState.players.has(playerId)) {
+function SanctuaryAction(gameState: GameState, player: Player, axial: axialCoordiantes): void {
+    if (gameState.sanctuariesCount <= 0) {
         return
     }
-    if (gameState.sanctuaries <= 0) {
+    if (!gameState.map.grid.has(`${axial.q},${axial.r}`)) {
         return
     }
-    const player: Player = gameState.players.get(playerId)!
-    if (!gameState.map.grid.has(`${hexCoordinates.q},${hexCoordinates.r}`)) {
-        return
-    }
-    const hex: Hexagon = gameState.map.grid.get(`${hexCoordinates.q},${hexCoordinates.r}`)!
-    gameState.sanctuaries--
+    const hex: Hexagon = gameState.map.grid.get(`${axial.q},${axial.r}`)!
+    gameState.sanctuariesCount--
     hex.field.sanctuaryCount++
 }
