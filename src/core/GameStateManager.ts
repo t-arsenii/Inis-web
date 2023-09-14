@@ -1,5 +1,5 @@
 import { GameState } from "./GameState";
-import { Player } from "../models/Player";
+import { Player } from "./Player";
 export type playerInfo = {
     gameState: GameState
     player: Player

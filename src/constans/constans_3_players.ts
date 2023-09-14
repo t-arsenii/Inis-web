@@ -19,8 +19,8 @@ export const TOTAL_CLANS = 36;
 export const TERRITORIES = 13;
 
 //Buildings
-export const CITADELS = 8;
-export const SANCTUARIES = 9;
+export const MAX_CITADELS = 8;
+export const MAX_SANCTUARIES = 9;
 export const CAPITAL = 1;
 
 //WINNING CONDITIONS

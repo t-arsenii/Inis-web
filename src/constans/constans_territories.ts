@@ -1,4 +1,4 @@
-import { StartStructure, Territory } from "../../models/Territory";
+import { StartStructure, Territory } from "../models/Territory";
 
 const Swamp: Territory = {
     id: "aebc97ae-b2ff-4ce1-9bcb-8bc0aabca722",
@@ -122,7 +122,6 @@ const Plateau: Territory = {
     description: undefined,
     startStructure: undefined
 }
-
 export const territoryMap: Map<string, Territory> = new Map([
     [Swamp.id, Swamp],
     [Hills.id, Hills],

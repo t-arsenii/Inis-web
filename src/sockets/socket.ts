@@ -1,22 +1,21 @@
 import { Server, Socket } from "socket.io";
-import { gamesManager } from "../GameLogic/GameStateManager";
-import { Player } from "../models/Player";
-import { cardMap } from "../GameLogic/Constans/constans_cards";
-import { GameState } from "../GameLogic/GameState";
+import { gamesManager } from "../core/GameStateManager";
+import { Player } from "../core/Player";
+import { cardActionsMap } from "../constans/constans_cards";
+import { GameState } from "../core/GameState";
 import { Console } from "console";
-import { playerInfo } from "../GameLogic/GameStateManager";
+import { playerInfo } from "../core/GameStateManager";
 
 export default function handleSocketConnections(io: Server) {
     io.on('connection', (socket: Socket) => {
-        socket.on("join-game", (userId: string, gameId: string) => {
+        socket.on("game-join", (userId: string, gameId: string) => {
             const gameState: GameState | undefined = gamesManager.getGame(gameId);
             if (!gameState) {
                 socket.emit('join-game-error', { status: "failed", message: `Game with id: ${gameId}, is not found` })
                 return
             }
-
             socket.join(gameId);
-            const player: Player | undefined = gameState?.getPlayerById(userId)
+            const player: Player | undefined = gameState?.GetPlayerById(userId)
             if (!player) {
                 socket.emit('join-game-error', { status: "failed", message: `Player with id: ${userId}, is not found in existing game: ${gameId}` })
                 return
@@ -38,52 +37,48 @@ export default function handleSocketConnections(io: Server) {
 
             player.Socket = undefined
             gamesManager.socketToGame.delete(socket.id)
-            //console.log('A user disconnected.');
         });
-        socket.on("init-game", (gameId) => {
+        socket.on("game-init", (gameId) => {
             const gameState: GameState | undefined = gamesManager.getGame(gameId);
             if (!gameState) {
                 return
             }
             try {
-                gameState.initGame()
+                gameState.InitGame()
             }
             catch (err) {
                 console.log(err)
                 return
             }
         })
-        socket.on("territory-place", (gameId, userId, { q, r }) => {
+        socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId)
-            const player = gameState?.getPlayerById(userId)
-            const isTerritory = gameState?.map.addHexagon(+q, +r)
+            const player = gameState?.GetPlayerById(userId)
+            const isTerritory = gameState?.map.addField(+q, +r)
             console.log(`Is Territory(${q},${r}) placed: ${isTerritory}`)
         })
         socket.on("territory-all", (gameId, userId) => {
             const gameState = gamesManager.getGame(gameId)
-            const player = gameState?.getPlayerById(userId)
+            const player = gameState?.GetPlayerById(userId)
             socket.emit("territory-all", gameState?.map.toJSON())
         })
         socket.on("territory-avaliable", (gameId, userId) => {
             const gameState = gamesManager.getGame(gameId)
-            const player = gameState?.getPlayerById(userId)
+            const player = gameState?.GetPlayerById(userId)
             socket.emit("territory-avaliable", gameState?.map.getAllValidPlacements())
         })
         socket.on("next-turn", (gameId, userId) => {
             const gameState = gamesManager.getGame(gameId)!
-            const player = gameState.getPlayerById(userId)!
-            if (gameState.turnOrder.activePlayerId !== player.Id)
-            {
-                console.log("Socket not allowed")
-                socket.emit("next-turn", gameState.turnOrder)
+            const player = gameState.GetPlayerById(userId)!
+            if (gameState.turnOrder.activePlayerId !== player.Id) {
                 return
             }
-            gameState.nextTurn()
+            gameState.NextTurn()
             socket.emit("next-turn", gameState.turnOrder)
         })
-        // socket.on("card-event", (cardId: string, gameId: string) => {
-        //     console.log(`card-event room id: ${gameId}`);
-        //     socket.to(gameId).emit("card-event-server", `Player ${socket.id} played card: ${cardDictionary[cardId].title}`);
-        // });
+        socket.on("player-action", (actionType: string, gameId: string, userId:string) => {
+            // console.log(`card-event room id: ${gameId}`);
+            // socket.to(gameId).emit("card-event-server", `Player ${socket.id} played card: ${cardDictionary[cardId].title}`);
+        });
     });
 }

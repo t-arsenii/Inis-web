@@ -1,12 +1,18 @@
 import { Socket } from "socket.io";
-import { Card } from "./Card";
-import { CLANS_PER_PLAYER } from "../GameLogic/Constans/constans_3_players";
-
+import { CLANS_PER_PLAYER } from "../constans/constans_3_players";
+enum playerLastAction{
+    None,
+    Card,
+    Coin,
+    Pass
+}
 export class Player {
     Id: string = "";
     Socket: Socket | undefined
     isBren: boolean = false
     isActive = false
+    lastAction: playerLastAction = playerLastAction.None
+
     //Hand
     // ActionCards: Card[] = [];
     // EposCards: Card[] = [];

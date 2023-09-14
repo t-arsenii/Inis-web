@@ -1,19 +1,20 @@
-import { Player } from "../models/Player";
+import { Player } from "./Player";
 import { v4 } from "uuid";
 import { HexGrid } from "./HexGrid";
 import { Deck, DeckManager } from "./DeckManager";
-import { shuffle } from "../srv/helperFunctions";
+import { GetRandomOrder, shuffle } from "../services/helperFunctions";
+import { MAX_CITADELS, MAX_SANCTUARIES } from "../constans/constans_3_players";
 enum GameStage {
   Begginig,
   Gathering,
   Season,
   Fight
 }
-enum TurnOrder {
+export enum TurnOrder {
   clockwise,
   counter_clockwise
 }
-type turnOrder = {
+type PlayerTurnOrder = {
   playersId: string[],
   order: TurnOrder,
   activePlayerId: string;
@@ -23,20 +24,22 @@ export class GameState {
   id: string = "";
   players: Map<string, Player> = new Map();
   numPlayers: number = 3;
-  turnOrder: turnOrder = {
+  turnOrder: PlayerTurnOrder = {
     playersId: [],
     order: TurnOrder.clockwise,
     activePlayerId: ""
   }
   deckManager: DeckManager = new DeckManager(this)
-  map: HexGrid = new HexGrid()
+  map: HexGrid = new HexGrid(this)
   gameStage: GameStage = GameStage.Begginig
   gameStatus: boolean = false
 
+  sanctuaries: number = MAX_SANCTUARIES
+  citadels: number = MAX_CITADELS
   constructor(lobbyId?: string) {
     this.id = lobbyId || v4();
   }
-  initGame(): void {
+  InitGame(): void {
     //Checking if game is already initialized
     if (this.gameStatus) {
       throw new Error("Game is already initialized");
@@ -52,10 +55,10 @@ export class GameState {
     const activePlayerId = this.turnOrder.playersId[0]
     this.turnOrder.activePlayerId = activePlayerId
     this.players.get(activePlayerId)!.isActive = true
-    this.turnOrder.order = getRandomOrder()
+    this.turnOrder.order = GetRandomOrder()
 
     //Setting bren boolean in active player object
-    const activePlayer: Player | undefined = this.getPlayerById(activePlayerId)
+    const activePlayer: Player | undefined = this.GetPlayerById(activePlayerId)
     if (!activePlayer) {
       return
     }
@@ -66,13 +69,16 @@ export class GameState {
     this.gameStage = GameStage.Begginig
 
     //Initializing map
-    this.map.InitHexagons()
+    this.map.InitFields()
 
     //Initializing players decks
     this.deckManager.addPlayers(Array.from(this.players.keys()))
     this.deckManager.DealCards()
+
+    this.sanctuaries = MAX_SANCTUARIES
+    this.citadels = MAX_CITADELS
   }
-  nextTurn(): void {
+  NextTurn(): void {
     const activePlayerId = this.turnOrder.activePlayerId
     this.players.get(activePlayerId)!.isActive = false
     const activePlayerIndex = this.turnOrder.playersId.indexOf(activePlayerId)
@@ -88,13 +94,13 @@ export class GameState {
     this.players.get(activePlayerId)!.isActive = true
   }
 
-  addPlayer(player: Player): void {
+  AddPlayer(player: Player): void {
     if (this.players.size < this.numPlayers) {
       this.players.set(player.Id, player);
       this.turnOrder.playersId.push(player.Id)
     }
   }
-  addPlayerById(userId: string): void {
+  AddPlayerById(userId: string): void {
     if (this.players.size < this.numPlayers) {
       const player: Player = new Player(userId)
       this.players.set(player.Id, player);
@@ -106,10 +112,10 @@ export class GameState {
   //     this.players.delete(userId)
   //   }
   // }
-  getPlayerById(userId: string): Player | undefined {
+  GetPlayerById(userId: string): Player | undefined {
     return this.players.get(userId)
   }
-  getPlayerBySocket(socketId: string): Player | undefined {
+  GetPlayerBySocket(socketId: string): Player | undefined {
     for (const player of this.players.values()) {
       if (player.Socket && player.Socket.id === socketId) {
         return player;
@@ -117,7 +123,7 @@ export class GameState {
     }
     return undefined;
   }
-  toJSON() {
+  ToJSON() {
     const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = this;
     const playersArray = Array.from(this.players.values()).map(p => ({ id: p.Id, socketId: p.Socket?.id }));
     const deckArray: { id: string; deck: Deck }[] = [];
@@ -132,26 +138,7 @@ export class GameState {
       gameStage,
       gameStatus,
       HexGrid: this.map.toJSON(),
-      Decks: deckArray
+      Decks: { playersDecks: deckArray, defferedCard: this.deckManager.defferedCard }
     };
-  }
-}
-
-function checkSockets(playersMap: Map<string, Player>): boolean {
-  const players: Player[] = Array.from(playersMap.values())
-  for (const player of players) {
-    if (!player.Socket) {
-      return false;
-    }
-  }
-  return true
-}
-
-function getRandomOrder(): TurnOrder {
-  const randomValue = Math.random();
-  if (randomValue < 0.5) {
-    return TurnOrder.clockwise;
-  } else {
-    return TurnOrder.counter_clockwise;
   }
 }

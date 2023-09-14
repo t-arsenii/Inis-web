@@ -1,5 +1,5 @@
-import { Badge, Card, Card_type, Timing_to_play } from "../../models/Card";
-
+import { Badge, Card, Card_type, Timing_to_play } from "../models/Card";
+//Action cards
 const Sanctuary: Card = {
     id: "f145474a-453b-4f53-8fff-12448a0ab90f",
     title: "Sanctuary",
@@ -87,7 +87,9 @@ const Commander: Card = {
     card_type: Card_type.Action,
     timing: Timing_to_play.SeasonOrTrixel,
     badge: Badge.Attack,
-    description: ""
+    description: "",
+    trixelCondition: "",
+    secondDescription: ""
 } as const;
 
 const Holiday: Card = {
@@ -126,7 +128,159 @@ const Geist: Card = {
     description: ""
 } as const;
 
-export const cardMap: Map<string, Card> = new Map([
+//Advantage Cards
+const Forest: Card = {
+    id: "",
+    title: "Forest",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "After you play epos card",
+    secondDescription: "Take 1 epos card"
+} as const
+
+const Wasteland: Card = {
+    id: "",
+    title: "Wasteland",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "",
+    secondDescription: ""
+} as const
+
+const Meadow: Card = {
+    id: "",
+    title: "Meadow",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "",
+    description: ""
+} as const
+
+const IronMine: Card = {
+    id: "",
+    title: "Iron mine",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "",
+    description: ""
+} as const
+
+const Mountains: Card = {
+    id: "",
+    title: "Mountains",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "",
+    description: ""
+} as const
+
+const Gates: Card = {
+    id: "",
+    title: "Gates",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "",
+    description: ""
+} as const
+
+const StoneCircle: Card = {
+    id: "",
+    title: "Stone circle",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "",
+    description: ""
+} as const
+
+const Plateau: Card = {
+    id: "",
+    title: "Plateau",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    trixelCondition: "",
+    description: ""
+} as const
+
+const Plains: Card = {
+    id: "",
+    title: "Plains",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Season,
+    badge: Badge.MoveAndAttack,
+    description: ""
+} as const
+
+const Valley: Card = {
+    id: "",
+    title: "Valley",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.Clans,
+    description: ""
+} as const
+
+const MistyLands: Card = {
+    id: "",
+    title: "MistyLands",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Season,
+    badge: Badge.None,
+    description: ""
+} as const
+
+const Hills: Card = {
+    id: "",
+    title: "Hills",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    description: ""
+} as const
+
+const ForgottenRavine: Card = {
+    id: "",
+    title: "Forgotten ravine",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.Move,
+    description: ""
+} as const
+
+const Bay: Card = {
+    id: "",
+    title: "Bay",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    description: ""
+} as const
+
+const SaltMine: Card = {
+    id: "",
+    title: "Salt mine",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    description: ""
+} as const
+
+const Swamp: Card = {
+    id: "",
+    title: "Swamp",
+    card_type: Card_type.Advantage,
+    timing: Timing_to_play.Trixel,
+    badge: Badge.None,
+    description: ""
+}
+export const cardActionsMap: Map<string, Card> = new Map([
     [Sanctuary.id, Sanctuary],
     [New_clans.id, New_clans],
     [Conquest.id, Conquest],

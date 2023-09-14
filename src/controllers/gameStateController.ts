@@ -1,8 +1,8 @@
 import express, { Request, Response } from "express"
-import { GameState } from "../GameLogic/GameState";
+import { GameState } from "../core/GameState";
 import { v4 } from "uuid";
-import { gamesManager } from "../GameLogic/GameStateManager";
-import { playerInfo } from "../GameLogic/GameStateManager";
+import { gamesManager } from "../core/GameStateManager";
+import { playerInfo } from "../core/GameStateManager";
 
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
@@ -10,7 +10,7 @@ const CreateGameWithId = (req: Request, res: Response) => {
     
     const userIds: string[] | undefined = req.body.userIds
     if (userIds) {
-        userIds.forEach(id => gameState.addPlayerById(id))
+        userIds.forEach(id => gameState.AddPlayerById(id))
     }
     gamesManager.createGame(gameState)
     res.status(200).send(`Game created with id: ${gameId}`)
@@ -19,7 +19,7 @@ const CreateGame = (req: Request, res: Response) => {
     const gameState: GameState = new GameState()
     const userIds: string[] | undefined = req.body.userIds
     if (userIds) {
-        userIds.forEach(id => gameState.addPlayerById(id))
+        userIds.forEach(id => gameState.AddPlayerById(id))
     }
     gamesManager.createGame(gameState)
     res.status(200).send(`Game created with id: ${gameState.id}`)
@@ -29,7 +29,7 @@ const GetGames = (req: Request, res: Response) => {
 }
 const GetGame = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
-    res.status(200).send(gamesManager.getGame(gameId)?.toJSON())
+    res.status(200).send(gamesManager.getGame(gameId)?.ToJSON())
 }
 const GetOnlinePlayers = (req: Request, res: Response) => {
     if(gamesManager.socketToGame.size <= 0)
