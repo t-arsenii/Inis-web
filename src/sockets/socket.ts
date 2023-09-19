@@ -4,12 +4,40 @@ import { Player } from "../core/Player";
 import { cardActionsMap } from "../constans/constans_cards";
 import { GameState } from "../core/GameState";
 import { Console } from "console";
-import { playerInfo } from "../core/GameStateManager";
+import { playerInfo } from "../types/Types";
 import { axialCoordiantes } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameLobbyEvents";
+import { CheckSocketGameConnection } from "../services/helperFunctions";
+import { gameSetupHandler } from "./events/gameSetupEvents";
+import { playerGameHandler } from "./events/playerGameEvents";
 export default function handleSocketConnections(io: Server) {
+    //Maybe make middleware to retrive token data from user and also gameId from querry string,
+    //to assosiate socket with game and user, in theory gives performance boost 
+    // if (!CheckSocketGameConnection(socket, gameId)) {
+    //     return
+    // }
+    // const res = GetGameStateAndPlayer(socket, gameId, playerId)
+    // if (res === undefined) {
+    //     return
+    // }
+    // const { gameState, player } = res
     io.on('connection', (socket: Socket) => {
+        socket.use((packet, next) => {
+            if (packet[0] === 'gameLobby-join') {
+                return next()
+            }
+            const pInf: playerInfo | undefined = gamesManager.getSocketInfo(socket.id)
+            if (!pInf) {
+                console.log("Socket not found")
+                return next(new Error("Socket not found"))
+            }
+            socket.gameState = pInf.gameState
+            socket.player = pInf.player
+            return next();
+        });
         gameLobbyHandler(socket)
+        gameSetupHandler(socket)
+        playerGameHandler(socket)
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId)
             const player = gameState?.GetPlayerById(userId)
@@ -18,17 +46,16 @@ export default function handleSocketConnections(io: Server) {
                 r: +r
             }
             const isTerritory = gameState?.map.AddField(axial)
-            console.log(`Is Territory(${q},${r}) placed: ${isTerritory}`)
+            socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
         })
-        socket.on("territory-all", (gameId, userId) => {
-            const gameState = gamesManager.getGame(gameId)
-            const player = gameState?.GetPlayerById(userId)
-            socket.emit("territory-all", gameState?.map.ToJSON())
+        socket.on("territory-all", () => {
+            const gameState: GameState = socket.gameState!
+            socket.emit("territory-info", gameState?.map.ToJSON())
         })
-        socket.on("territory-avaliable", (gameId, userId) => {
-            const gameState = gamesManager.getGame(gameId)
-            const player = gameState?.GetPlayerById(userId)
-            socket.emit("territory-avaliable", gameState?.map.GetAllValidPlacements())
+        socket.on("territory-avaliable", () => {
+            const gameState: GameState = socket.gameState!
+            const player: Player = socket.player!
+            socket.emit("territory-info", gameState?.map.GetAllValidPlacements())
         })
         socket.on("next-turn", (gameId, userId) => {
             const gameState = gamesManager.getGame(gameId)!

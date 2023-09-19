@@ -1,9 +1,9 @@
 import { Server, Socket } from "socket.io";
 import { GameState } from "../../core/GameState";
-import { gamesManager, playerInfo } from "../../core/GameStateManager";
+import { gamesManager } from "../../core/GameStateManager";
 import { Player } from "../../core/Player";
 import { GetGameStateAndPlayer } from "../../services/helperFunctions";
-
+import { playerInfo } from "../../types/Types"
 export function gameLobbyHandler(socket: Socket) {
     socket.on("gameLobby-join", (gameId: string, userId: string,) => {
         const res = GetGameStateAndPlayer(socket, gameId, userId)
@@ -13,14 +13,14 @@ export function gameLobbyHandler(socket: Socket) {
         const { gameState, player } = res
         socket.join(gameId);
         player.socket = socket
-        gamesManager.socketToGame.set(socket.id, { gameState: gameState, player: player })
+        gamesManager.socketsConnInfo.set(socket.id, { gameState: gameState, player: player })
         socket.emit('gameLobby-info', { status: "success", info: { playerId: player.id, socket: socket.id, gameId: gameId } })
     });
     socket.on('disconnect', () => {
-        if (!gamesManager.socketToGame.has(socket.id)) {
+        if (!gamesManager.socketsConnInfo.has(socket.id)) {
             return
         }
-        const playerInfo: playerInfo | undefined = gamesManager.socketToGame.get(socket.id)
+        const playerInfo: playerInfo | undefined = gamesManager.socketsConnInfo.get(socket.id)
         if (!playerInfo) {
             return
         }
@@ -28,7 +28,7 @@ export function gameLobbyHandler(socket: Socket) {
         const player: Player = playerInfo.player
 
         player.socket = undefined
-        gamesManager.socketToGame.delete(socket.id)
+        gamesManager.socketsConnInfo.delete(socket.id)
     });
     socket.on("gameLobby-init", (gameId) => {
         const gameState: GameState | undefined = gamesManager.getGame(gameId);

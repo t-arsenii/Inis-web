@@ -1,4 +1,6 @@
 
+import { GameState } from "../core/GameState"
+import { Player } from "../core/Player"
 import { Badge, Card_type, StartStructure, Timing_to_play, TurnOrder } from "./Enums"
 
 export type Card = {
@@ -29,4 +31,9 @@ export type PlayerTurnOrder = {
     playersId: string[],
     direction: TurnOrder,
     activePlayerId: string;
+}
+
+export type playerInfo = {
+    gameState: GameState
+    player: Player
 }

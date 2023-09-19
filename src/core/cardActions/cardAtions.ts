@@ -3,15 +3,21 @@ import { GameState } from "../GameState";
 import { Hexagon } from "../HexGrid";
 import { axialCoordiantes } from "../../types/Types";
 import { Sanctuary, cardActionsMap } from "../../constans/constans_cards";
-
-function SanctuaryAction(gameState: GameState, player: Player, axial: axialCoordiantes): void {
-    if (gameState.sanctuariesCount <= 0) {
+import { SanctuaryActionInfo } from "./cardActionsInfo";
+import { ICardOperationParams } from "../../types/Interfaces";
+interface ICardOperationBase {
+    gameState: GameState,
+    player: Player
+}
+export function SanctuaryAction({ gameState, player, axial }: ICardOperationParams): void {
+    if (gameState.sanctuariesLeft <= 0) {
         return
     }
-    if (!gameState.map.grid.has(`${axial.q},${axial.r}`)) {
+    const hex: Hexagon | undefined = gameState.map.GetHex(axial!)
+    if (!hex) {
         return
     }
-    const hex: Hexagon = gameState.map.grid.get(`${axial.q},${axial.r}`)!
-    gameState.sanctuariesCount--
+    gameState.sanctuariesLeft--
     hex.field.sanctuaryCount++
+    //Add Epos card to player
 }

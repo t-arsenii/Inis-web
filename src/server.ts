@@ -9,6 +9,7 @@ import { cardActionsMap } from "./constans/constans_cards";
 import { gamesManager } from "./core/GameStateManager";
 import gamesRoutes from "./routes/gamesRoutes"
 import handleSocketConnections from "./sockets/socket"
+import { initData } from "./services/helperFunctions";
 const PORT = 8000
 
 const app = express()
@@ -20,7 +21,7 @@ const io = new Server(server, {
     }
 })
 app.use(express.json());
-    
+
 handleSocketConnections(io)
 
 app.use(cors({
@@ -32,3 +33,4 @@ app.use("/", gamesRoutes)
 server.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
 })
+initData()
