@@ -5,7 +5,7 @@ import { GameState } from "../../core/GameState";
 import { Player } from "../../core/Player";
 import { cardActionsMap } from "../../constans/constans_cards";
 import { cardOperationsMapping } from "../../core/cardActions/cardToActionsMap";
-import { Hexagon } from "../../core/HexGrid";
+import { Hexagon } from "../../core/HexGrid/HexGrid";
 import { axialCoordiantes } from "../../types/Types";
 import { ICardOperationParams, IPlayerCardInput } from "../../types/Interfaces";
 export function playerGameHandler(socket: Socket) {
@@ -27,8 +27,7 @@ export function playerGameHandler(socket: Socket) {
             player: player,
             gameState: gameState,
             axial: params?.axial,
-            targetPlayerId: params?.targetPlayerId,
-            axialArray: params?.axialArray
+            targetPlayerId: params?.targetPlayerId
         }
         try {
             Action(actionParams)

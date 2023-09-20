@@ -1,6 +1,6 @@
 import { Player } from "./Player";
 import { v4 } from "uuid";
-import { HexGrid } from "./HexGrid";
+import { HexGrid } from "./HexGrid/HexGrid";
 import { Deck, DeckManager } from "./DeckManager";
 import { GetRandomDirection, shuffle } from "../services/helperFunctions";
 import { MAX_CITADELS, MAX_SANCTUARIES } from "../constans/constans_3_players";
