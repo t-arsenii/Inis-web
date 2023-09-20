@@ -34,6 +34,11 @@ export class DeckManager {
         this.gameState = gameState
         //this.currentCards = Array.from(cardMap.keys())
     }
+    PlayerHasCard(player: Player, cardId: string): boolean {
+        const deck: Deck = this.playersDeck.get(player.id)!
+        const allCards: string[] = [...deck.ActionCards, ...deck.AdvantagesCards, ...deck.EposCards]
+        return allCards.includes(cardId)
+    }
     addPlayer(id: string): void {
         if (this.playersDeck.size < this.gameState.numPlayers) {
             this.playersDeck.set(id, new Deck())

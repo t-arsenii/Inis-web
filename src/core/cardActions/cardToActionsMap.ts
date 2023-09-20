@@ -1,13 +1,13 @@
-import { Citadel, NewClans, Sanctuary } from "../../constans/constans_cards";
-import { ICardOperationParams } from "../../types/Interfaces";
+import { Citadel, Druid, NewClans, PeasantsWorkers, Sanctuary } from "../../constans/constans_cards";
+import { ICardOperationParams, ICardOperationResponse } from "../../types/Interfaces";
 import { GameState } from "../GameState";
 import { Hexagon } from "../HexGrid/HexGrid";
 import { Player } from "../Player";
-import { CitadelActionInfo, NewClansActionInfo, SanctuaryActionInfo } from "./cardActionsInfo";
-import { CitadelAction, NewClansAction, SanctuaryAction } from "./cardAtions";
+import { CitadelActionInfo, DruidActionInfo, NewClansActionInfo, PeasantsWorkersActionInfo, SanctuaryActionInfo } from "./cardActionsInfo";
+import { CitadelAction, DruidAction, NewClansAction, PeasantsWorkersAction, SanctuaryAction } from "./cardAtions";
 
 type CardActionFunction = (params: ICardOperationParams) => void;
-type CardInfoFunction = (gameState: GameState, player: Player) => any;
+type CardInfoFunction = (gameState: GameState, player: Player) => ICardOperationResponse;
 export const cardOperationsMapping: Record<string, { Info: CardInfoFunction, Action: CardActionFunction }> = {
     [Sanctuary.id]: {
         Info: SanctuaryActionInfo,
@@ -20,5 +20,13 @@ export const cardOperationsMapping: Record<string, { Info: CardInfoFunction, Act
     [NewClans.id]: {
         Info: NewClansActionInfo,
         Action: NewClansAction
+    },
+    [Druid.id]: {
+        Info: DruidActionInfo,
+        Action: DruidAction
+    },
+    [PeasantsWorkers.id]: {
+        Info: PeasantsWorkersActionInfo,
+        Action: PeasantsWorkersAction
     }
 }

@@ -88,16 +88,20 @@ export const initData = () => {
     //Adding cards to players
     // const Cards = shuffle(Array.from(cardActionsMap.keys()))
     gameState.deckManager.addCard(player1, "f145474a-453b-4f53-8fff-12448a0ab90f")
+    gameState.deckManager.addCard(player1, "c1f5ddba-7325-4188-9a36-ff9ef14af22a")
+    gameState.deckManager.addCard(player1, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
+    gameState.deckManager.addCard(player1, "3d138112-6a36-467a-8255-bcfb42fe7398")
+    gameState.deckManager.addCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015")
 
     //Skipping beginning stage
     //setting capital
-    gameState.map.SetCapital({ q: 0, r: 0 })
+    gameState.map.fieldsController.SetCapital({ q: 0, r: 0 })
 
     //Adding two clans for each player
-    gameState.map.AddClans(player1, 2, { q: 0, r: 0 })
-    gameState.map.AddClans(player2, 2, { q: 1, r: 0 })
-    gameState.map.AddClans(player3, 2, { q: 0, r: 1 })
-    gameState.map.SkipSetupClans()
+    gameState.map.clansController.AddClans(player1, 2, { q: 0, r: 0 })
+    gameState.map.clansController.AddClans(player2, 2, { q: 1, r: 0 })
+    gameState.map.clansController.AddClans(player3, 2, { q: 0, r: 1 })
+    gameState.map.setupController.SkipSetupClans()
 
     //Changing game stage
     gameState.gameStage = GameStage.Gathering

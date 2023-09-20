@@ -33,47 +33,55 @@ export function PeasantsWorkersAction({ gameState, player, axialToNum }: ICardOp
     if (!axialToNum) {
         return
     }
-    const playerHex: Hexagon[] = gameState.map.GetPlayerHex(player)!
-    let citadelNum: number = 0
-    playerHex.forEach(hex => {
-        if (hex.field.citadelsCount > 0) {
-            citadelNum++
-        }
-    })
-    if (citadelNum === 0) {
-        return
-    }
+    const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+    let citadelNum: number = gameState.map.fieldsController.CountPlayerCitadels(player)
 
     if (Array.isArray(axialToNum)) {
         const clansNum = axialToNum.map(axNum => axNum.num).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        if (clansNum > player.clansLeft) {
+        if (clansNum > player.clansLeft || clansNum !== citadelNum) {
             return
         }
         for (var axNum of axialToNum) {
-            let hex: Hexagon | undefined = gameState.map.GetHex(axNum.axial)
-            if (!hex) {
+            if (!gameState.map.HasHexagon(axNum.axial)) {
                 return
             }
+            let hex: Hexagon = gameState.map.GetHex(axNum.axial)!
             if (!playerHex.includes(hex)) {
                 return
             }
         }
-
         for (var axNum of axialToNum) {
-            gameState.map.AddClans(player,axNum.num, axNum.axial)
+            gameState.map.clansController.AddClans(player, axNum.num, axNum.axial)
 
         }
     }
+
+    if (typeof axialToNum === 'object' && !Array.isArray(axialToNum)) {
+        const clansNum = axialToNum.num
+        if (clansNum > player.clansLeft) {
+            return
+        }
+        if (!gameState.map.HasHexagon(axialToNum.axial)) {
+            return
+        }
+        let hex: Hexagon = gameState.map.GetHex(axialToNum.axial)!
+        if (!playerHex.includes(hex)) {
+            return
+        }
+        gameState.map.clansController.AddClans(player, axialToNum.num, axialToNum.axial)
+
+    }
+
 }
 export function SanctuaryAction({ gameState, player, axial }: ICardOperationParams): void {
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
         return
     }
-    if (gameState.sanctuariesLeft <= 0) {
+    if (gameState.map.fieldsController.sanctuariesLeft <= 0) {
         return
     }
     const map: HexGrid = gameState.map
-    const playerHex: Hexagon[] = map.GetPlayerHex(player)!
+    const playerHex: Hexagon[] = map.fieldsController.GetPlayerHex(player)!
     const hex: Hexagon | undefined = map.GetHex(axial!)
     if (!hex) {
         return
@@ -81,7 +89,7 @@ export function SanctuaryAction({ gameState, player, axial }: ICardOperationPara
     if (!playerHex.includes(hex)) {
         return
     }
-    gameState.sanctuariesLeft--
+    gameState.map.fieldsController.sanctuariesLeft--
     hex.field.sanctuaryCount++
     //Add Epos card to player
 }
@@ -89,21 +97,20 @@ export function CitadelAction({ gameState, player, axial }: ICardOperationParams
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
         return
     }
-    if (gameState.citadelsLeft <= 0) {
+    if (gameState.map.fieldsController.citadelsLeft <= 0) {
         return
     }
-    const map: HexGrid = gameState.map
-    const playerHex: Hexagon[] = map.GetPlayerHex(player)!
-    const hex: Hexagon | undefined = map.GetHex(axial!)
-    if (!hex) {
+    if (!gameState.map.HasHexagon(axial)) {
         return
     }
+    const hex: Hexagon = gameState.map.GetHex(axial)!
+    const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
     if (!playerHex.includes(hex)) {
         return
     }
-    gameState.citadelsLeft--
+    gameState.map.fieldsController.citadelsLeft--
     hex.field.citadelsCount++
-    //Add Advantage card to player is possible
+    //Add Advantage card to player if possible
 }
 export function NewClansAction({ gameState, player, axial }: ICardOperationParams): void {
     if (!axial) {
@@ -113,30 +120,29 @@ export function NewClansAction({ gameState, player, axial }: ICardOperationParam
         if (axial.length !== 2) {
             return
         }
-
-        const hex1: Hexagon | undefined = gameState.map.GetHex(axial[0])
-        const hex2: Hexagon | undefined = gameState.map.GetHex(axial[1])
-        if (!hex1 || !hex2) {
+        if (!gameState.map.HasHexagon(axial[0]) || !gameState.map.HasHexagon(axial[1])) {
             return
         }
-        const playerHex: Hexagon[] = gameState.map.GetPlayerHex(player)!
+        const hex1: Hexagon = gameState.map.GetHex(axial[0])!
+        const hex2: Hexagon = gameState.map.GetHex(axial[1])!
+        const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
         if (!playerHex.includes(hex1) || !playerHex.includes(hex2)) {
             return
         }
-        gameState.map.AddClans(player, 1, axial[0])
-        gameState.map.AddClans(player, 1, axial[1])
+        gameState.map.clansController.AddClans(player, 1, axial[0])
+        gameState.map.clansController.AddClans(player, 1, axial[1])
     }
 
     if (typeof axial === 'object' && !Array.isArray(axial)) {
-        const hex: Hexagon | undefined = gameState.map.GetHex(axial)
-        if (!hex) {
+        if (!gameState.map.HasHexagon(axial)) {
             return
         }
-        const playerHex: Hexagon[] = gameState.map.GetPlayerHex(player)!
+        const hex: Hexagon = gameState.map.GetHex(axial)!
+        const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
         if (!playerHex.includes(hex)) {
             return
         }
-        gameState.map.AddClans(player, 1, axial)
+        gameState.map.clansController.AddClans(player, 2, axial)
     }
 
 }

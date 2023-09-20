@@ -6,6 +6,7 @@ import { GetRandomDirection, shuffle } from "../services/helperFunctions";
 import { MAX_CITADELS, MAX_SANCTUARIES } from "../constans/constans_3_players";
 import { TurnOrder, GameStage } from "../types/Enums";
 import { PlayerTurnOrder } from "../types/Types";
+import { HexGridToJson, InitHexGrid } from "./HexGrid/HexGridService";
 
 export class GameState {
   id: string = "";
@@ -21,9 +22,6 @@ export class GameState {
   gameStage: GameStage = undefined!
   gameStatus: boolean = false
   roundCounter: number = 0
-
-  sanctuariesLeft: number = 0
-  citadelsLeft: number = 0
   constructor(lobbyId?: string) {
     this.id = lobbyId || v4();
   }
@@ -38,9 +36,6 @@ export class GameState {
     //   throw new Error("Not all socket are connected");
     // }
 
-    //Setting Citadels and sanctuaries counters
-    this.sanctuariesLeft = MAX_SANCTUARIES
-    this.citadelsLeft = MAX_CITADELS
 
     //Picking and setting active player and turn order
     // this.turnOrder.playersId = shuffle(this.turnOrder.playersId)
@@ -60,14 +55,16 @@ export class GameState {
     this.gameStage = GameStage.CapitalSetup
 
     //Initializing map
-    this.map.Init()
+    InitHexGrid(this.map)
+    this.map.fieldsController.sanctuariesLeft = MAX_SANCTUARIES
+    this.map.fieldsController.citadelsLeft = MAX_CITADELS
+
+    //Setting Citadels and sanctuaries counters
 
     //Initializing players decks
     this.deckManager.addPlayers(Array.from(this.players.keys()))
     // this.deckManager.DealCards()
 
-    this.sanctuariesLeft = MAX_SANCTUARIES
-    this.citadelsLeft = MAX_CITADELS
   }
   NextTurn(): void {
     const activePlayerId = this.turnOrder.activePlayerId
@@ -115,7 +112,8 @@ export class GameState {
     return undefined;
   }
   ToJSON() {
-    const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus, citadelsLeft, sanctuariesLeft } = this;
+    const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = this;
+    const {citadelsLeft, sanctuariesLeft} = this.map.fieldsController 
     const deckArray: { id: string; deck: Deck }[] = [];
     this.deckManager.playersDeck.forEach((deck, playerId) => {
       deckArray.push({ id: playerId, deck: deck });
@@ -133,7 +131,7 @@ export class GameState {
       bren: Array.from(this.players.values()).find(p => p.isBren)?.id || "",
       turnOrder,
       players: Array.from(this.players.values()).map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft })),
-      HexGrid: this.map.ToJSON(),
+      HexGrid: HexGridToJson(this.map),
       Decks: { playersDecks: deckArray, discard: this.deckManager.currentDiscard, defferedCard: this.deckManager.defferedCard }
     };
   }

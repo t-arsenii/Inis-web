@@ -11,7 +11,7 @@ export const Sanctuary: Card = {
     description: "Build 1 sanctuary on territory with your clans. Take 1 Epos card",
 } as const;
 
-export const New_clans: Card = {
+export const NewClans: Card = {
     id: "c1f5ddba-7325-4188-9a36-ff9ef14af22a",
     title: "New clans",
     card_type: Card_type.Action,
@@ -35,15 +35,6 @@ export const Bard: Card = {
     card_type: Card_type.Action,
     timing: Timing_to_play.SeasonOrTrixel,
     badge: Badge.None,
-    description: ""
-} as const;
-
-export const NewClans: Card = {
-    id: "b0b388b0-802f-4522-aef4-b66c8df9aff9",
-    title: "New clans",
-    card_type: Card_type.Action,
-    timing: Timing_to_play.Season,
-    badge: Badge.Clans,
     description: ""
 } as const;
 
@@ -285,7 +276,7 @@ export const Swamp: Card = {
 
 export const cardActionsMap: Map<string, Card> = new Map([
     [Sanctuary.id, Sanctuary],
-    [New_clans.id, New_clans],
+    [NewClans.id, NewClans],
     [Conquest.id, Conquest],
     [Bard.id, Bard],
     [NewClans.id, NewClans],

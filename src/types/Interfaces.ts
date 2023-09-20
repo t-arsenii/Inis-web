@@ -18,7 +18,7 @@ export interface ICardOperationParams extends ICardParams {
 }
 
 export interface ICardOperationResponse{
-    axial:axialCoordiantes | axialCoordiantes[],
-    cardId: string | string[],
-    num:number
+    axial?:axialCoordiantes | axialCoordiantes[],
+    cardId?: string | string[],
+    num?:number
 }

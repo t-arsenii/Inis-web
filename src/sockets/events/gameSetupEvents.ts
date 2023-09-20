@@ -21,11 +21,11 @@ export function gameSetupHandler(socket: Socket) {
             socket.emit("game-setup-info", "GameSetupClans: game stage is not valid")
             return
         }
-        if (!gameState.map.AddClans(player, 1, axial)) {
+        if (!gameState.map.clansController.AddClans(player, 1, axial)) {
             socket.emit("game-setup-info", "GameSetupClans: error adding clans")
             return
         }
-        if (gameState.map.SetupClans()) {
+        if (gameState.map.setupController.SetupClans()) {
             gameState.gameStage = GameStage.Gathering
             gameState.NextTurn()
             return
@@ -45,11 +45,11 @@ export function gameSetupHandler(socket: Socket) {
             socket.emit("game-setup-info", "GameSetupCapital: game stage is not valid")
             return
         }
-        if (gameState.map.capital) {
+        if (gameState.map.fieldsController.capital) {
             socket.emit("game-setup-info", "GameSetupCapital: capital already exists")
             return
         }
-        const setCapitalRes = gameState.map.SetCapital(axial)
+        const setCapitalRes = gameState.map.fieldsController.SetCapital(axial)
         if (!setCapitalRes) {
             socket.emit("game-setup-info", `GameSetupCapital: capital placement error(q:${axial.q},r:${axial.r})`)
             return

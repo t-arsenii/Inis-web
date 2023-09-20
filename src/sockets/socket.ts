@@ -10,6 +10,7 @@ import { gameLobbyHandler } from "./events/gameLobbyEvents";
 import { CheckSocketGameConnection } from "../services/helperFunctions";
 import { gameSetupHandler } from "./events/gameSetupEvents";
 import { playerGameHandler } from "./events/playerGameEvents";
+import { HexGridToJson } from "../core/HexGrid/HexGridService";
 export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
@@ -45,12 +46,12 @@ export default function handleSocketConnections(io: Server) {
                 q: +q,
                 r: +r
             }
-            const isTerritory = gameState?.map.AddField(axial)
+            const isTerritory = gameState?.map.fieldsController.AddRandomField(axial)
             socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
         })
         socket.on("territory-all", () => {
             const gameState: GameState = socket.gameState!
-            socket.emit("territory-info", gameState?.map.ToJSON())
+            socket.emit("territory-info", HexGridToJson(gameState.map))
         })
         socket.on("territory-avaliable", () => {
             const gameState: GameState = socket.gameState!
