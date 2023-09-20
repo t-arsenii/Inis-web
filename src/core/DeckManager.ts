@@ -1,14 +1,15 @@
-import { cardMap } from "./Constans/constans_cards";
-import { shuffle } from "../srv/helperFunctions";
-import { Card, Card_type } from "../models/Card"
+import { cardActionsMap } from "../constans/constans_cards";
+import { shuffle } from "../services/helperFunctions";
+import { Card } from "../types/Types"
+import { Card_type } from "../types/Enums"
 import { GameState } from "./GameState";
+import { Player } from "./Player";
 export class Deck {
-    //Hand
     ActionCards: string[] = [];
     EposCards: string[] = [];
     AdvantagesCards: string[] = [];
     addCard(cardId: string) {
-        const card = cardMap.get(cardId)!
+        const card = cardActionsMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
                 this.ActionCards.push(card.id)
@@ -43,38 +44,48 @@ export class DeckManager {
             playersId.forEach(id => this.addPlayer(id))
         }
     }
-    playCard(playerId: string, cardId: string): void {
-        if (!this.playersDeck.has(playerId)) {
+    playCard(player: Player, cardId: string): void {
+        const deck: Deck = this.playersDeck.get(player.id)!
+        if (!cardActionsMap.has(cardId)) {
             return
         }
-        const deck: Deck = this.playersDeck.get(playerId)!
-        if (!cardMap.has(cardId)) {
-            return
-        }
-        const playedCard: Card | undefined = cardMap.get(cardId)
-        if (!playedCard) {
-            return
-        }
+        const playedCard: Card = cardActionsMap.get(cardId)!
         switch (playedCard.card_type) {
             case Card_type.Action:
-                deck.ActionCards.filter(cardId => cardId !== playedCard.id)
+                deck.ActionCards = deck.ActionCards.filter(cardId => cardId !== playedCard.id)
                 break
             case Card_type.Advantage:
-                deck.AdvantagesCards.filter(cardId => cardId !== playedCard.id)
+                deck.AdvantagesCards = deck.AdvantagesCards.filter(cardId => cardId !== playedCard.id)
                 break
             case Card_type.Epos:
-                deck.EposCards.filter(cardId => cardId !== playedCard.id)
+                deck.EposCards = deck.EposCards.filter(cardId => cardId !== playedCard.id)
                 break
         }
         this.currentDiscard.push(playedCard.id)
 
     }
     DealCards() {
-        const Cards = shuffle(Array.from(cardMap.keys()))
+        const Cards = shuffle(Array.from(cardActionsMap.keys()))
         this.playersDeck.forEach((deck, playerId) => {
             for (let i = 0; i < this.deckSize; i++) {
                 deck.addCard(Cards.pop()!);
             }
         })
+        this.defferedCard = Cards.pop()!
+    }
+    addCard(player: Player, cardId: string) {
+        const deck: Deck = this.playersDeck.get(player.id)!
+        const card: Card = cardActionsMap.get(cardId)!
+        switch (card.card_type) {
+            case Card_type.Action:
+                deck.ActionCards.push(card.id)
+                break
+            case Card_type.Advantage:
+                deck.AdvantagesCards.push(card.id)
+                break
+            case Card_type.Epos:
+                deck.EposCards.push(card.id)
+                break
+        }
     }
 }
