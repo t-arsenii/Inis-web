@@ -1,28 +1,29 @@
 import { Player } from "../Player";
 import { GameState } from "../GameState";
-import { HexGrid, Hexagon } from "../HexGrid/HexGrid";
+import { HexGrid, Hexagon } from "../HexGrid";
 import { axialCoordiantes } from "../../types/Types";
 import { Sanctuary, cardActionsMap } from "../../constans/constans_cards";
 import { SanctuaryActionInfo } from "./cardActionsInfo";
 import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
+import { AxialToString } from "../../services/helperFunctions";
 export function BardAction({ gameState, player }: ICardOperationParams): void {
     //Giving player Epos card
 }
 export function DruidAction({ gameState, player, targetCardId }: ICardOperationParams) {
     if (!targetCardId) {
-        return
+        throw new Error("DruidAction: Target id is undefiend")
     }
     const deckManager: DeckManager = gameState.deckManager
     const deck: Deck = deckManager.playersDeck.get(player.id)!
-    if (deck.ActionCards.length === 1) {
-        return
-    }
     if (!cardActionsMap.has(targetCardId)) {
-        return
+        throw new Error("DruidAction: Target id is undefiend")
+    }
+    if (deck.ActionCards.length === 1) {
+        throw new Error("DruidAction: druid is a last card")
     }
     if (!deckManager.currentDiscard.includes(targetCardId)) {
-        return
+        throw new Error(`DruidAction: no card with id:${targetCardId}, is in discard`)
     }
     deckManager.currentDiscard = deckManager.currentDiscard.filter(cId => cId !== targetCardId)
     deckManager.addCard(player, targetCardId)
@@ -31,63 +32,60 @@ export function DruidAction({ gameState, player, targetCardId }: ICardOperationP
 }
 export function PeasantsWorkersAction({ gameState, player, axialToNum }: ICardOperationParams): void {
     if (!axialToNum) {
-        return
+        throw new Error("PeasantsWorkersAction: axialToNum field is undefiend")
     }
     const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
     let citadelNum: number = gameState.map.fieldsController.CountPlayerCitadels(player)
 
     if (Array.isArray(axialToNum)) {
-        const clansNum = axialToNum.map(axNum => axNum.num).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const clansNum = axialToNum.reduce((sum, axNum) => sum + axNum.num, 0);
         if (clansNum > player.clansLeft || clansNum !== citadelNum) {
-            return
+            throw new Error("PeasantsWorkersAction: wrong number of clans")
         }
         for (var axNum of axialToNum) {
             if (!gameState.map.HasHexagon(axNum.axial)) {
-                return
+                throw new Error(`PeasantsWorkersAction: no hexagon with axial:${axNum.axial}`)
             }
             let hex: Hexagon = gameState.map.GetHex(axNum.axial)!
             if (!playerHex.includes(hex)) {
-                return
+                throw new Error(`PeasantsWorkersAction: player is not present on axial:${axNum.axial}`)
             }
         }
         for (var axNum of axialToNum) {
             gameState.map.clansController.AddClans(player, axNum.num, axNum.axial)
-
         }
     }
 
     if (typeof axialToNum === 'object' && !Array.isArray(axialToNum)) {
         const clansNum = axialToNum.num
-        if (clansNum > player.clansLeft) {
-            return
+        if (clansNum > player.clansLeft || clansNum !== citadelNum) {
+            throw new Error("PeasantsWorkersAction: wrong number of clans")
         }
         if (!gameState.map.HasHexagon(axialToNum.axial)) {
-            return
+            throw new Error(`PeasantsWorkersAction: no hexagon with axial:${axialToNum.axial}`)
         }
         let hex: Hexagon = gameState.map.GetHex(axialToNum.axial)!
         if (!playerHex.includes(hex)) {
-            return
+            throw new Error(`PeasantsWorkersAction: player is not present on axial:${axialToNum.axial}`)
         }
         gameState.map.clansController.AddClans(player, axialToNum.num, axialToNum.axial)
-
     }
-
 }
 export function SanctuaryAction({ gameState, player, axial }: ICardOperationParams): void {
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
-        return
+        throw new Error(`SanctuaryAction: axial field error`)
     }
     if (gameState.map.fieldsController.sanctuariesLeft <= 0) {
-        return
+        throw new Error(`SanctuaryAction: no sancturies left`)
     }
     const map: HexGrid = gameState.map
-    const playerHex: Hexagon[] = map.fieldsController.GetPlayerHex(player)!
-    const hex: Hexagon | undefined = map.GetHex(axial!)
-    if (!hex) {
-        return
+    if (!gameState.map.GetHex(axial)) {
+        throw new Error(`PeasantsWorkersAction: no hexagon with axial:${axial}`)
     }
+    const hex: Hexagon = map.GetHex(axial)!
+    const playerHex: Hexagon[] = map.fieldsController.GetPlayerHex(player)!
     if (!playerHex.includes(hex)) {
-        return
+        throw new Error(`PeasantsWorkersAction: player is not present on axial:${axial}`)
     }
     gameState.map.fieldsController.sanctuariesLeft--
     hex.field.sanctuaryCount++
@@ -95,18 +93,18 @@ export function SanctuaryAction({ gameState, player, axial }: ICardOperationPara
 }
 export function CitadelAction({ gameState, player, axial }: ICardOperationParams): void {
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
-        return
+        throw new Error(`CitadelAction: axial field error`)
     }
     if (gameState.map.fieldsController.citadelsLeft <= 0) {
-        return
+        throw new Error(`CitadelAction: no citadels left`)
     }
     if (!gameState.map.HasHexagon(axial)) {
-        return
+        throw new Error(`PeasantsWorkersAction: no hexagon with axial:${axial}`)
     }
     const hex: Hexagon = gameState.map.GetHex(axial)!
     const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
     if (!playerHex.includes(hex)) {
-        return
+        throw new Error(`PeasantsWorkersAction: player is not present on axial:${axial}`)
     }
     gameState.map.fieldsController.citadelsLeft--
     hex.field.citadelsCount++
@@ -114,20 +112,26 @@ export function CitadelAction({ gameState, player, axial }: ICardOperationParams
 }
 export function NewClansAction({ gameState, player, axial }: ICardOperationParams): void {
     if (!axial) {
-        return
+        throw new Error(`NewClansAction: axial field error`)
     }
     if (Array.isArray(axial)) {
         if (axial.length !== 2) {
-            return
+            throw new Error(`NewClansAction: axial array length error`)
         }
-        if (!gameState.map.HasHexagon(axial[0]) || !gameState.map.HasHexagon(axial[1])) {
-            return
+        if (!gameState.map.HasHexagon(axial[0])) {
+            throw new Error(`NewClansAction: no hexagon with axial:${axial[0]}`)
+        }
+        if (!gameState.map.HasHexagon(axial[1])) {
+            throw new Error(`NewClansAction: no hexagon with axial:${axial[1]}`)
         }
         const hex1: Hexagon = gameState.map.GetHex(axial[0])!
         const hex2: Hexagon = gameState.map.GetHex(axial[1])!
         const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
-        if (!playerHex.includes(hex1) || !playerHex.includes(hex2)) {
-            return
+        if (!playerHex.includes(hex1)) {
+            throw new Error(`NewClansAction: player is not present on axial:${axial[0]}`)
+        }
+        if (!playerHex.includes(hex2)) {
+            throw new Error(`NewClansAction: player is not present on axial:${axial[1]}`)
         }
         gameState.map.clansController.AddClans(player, 1, axial[0])
         gameState.map.clansController.AddClans(player, 1, axial[1])
@@ -135,14 +139,42 @@ export function NewClansAction({ gameState, player, axial }: ICardOperationParam
 
     if (typeof axial === 'object' && !Array.isArray(axial)) {
         if (!gameState.map.HasHexagon(axial)) {
-            return
+            throw new Error(`NewClansAction: no hexagon with axial:${axial}`)
         }
         const hex: Hexagon = gameState.map.GetHex(axial)!
         const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
         if (!playerHex.includes(hex)) {
-            return
+            throw new Error(`NewClansAction: player is not present on axial:${axial}`)
         }
         gameState.map.clansController.AddClans(player, 2, axial)
     }
 
+}
+export function ExplorationAction({ gameState, player, axial }: ICardOperationParams): void {
+    if (!axial || typeof axial !== 'object' || Array.isArray(axial)) {
+        throw new Error(`ExplorationAction: axial field error`)
+    }
+    if (!gameState.map.HasHexagon(axial)) {
+        throw new Error(`ExplorationAction: no hexagon with axial:${axial}`)
+    }
+    gameState.map.fieldsController.AddRandomField(axial)
+    gameState.map.clansController.AddClans(player, 1, axial)
+}
+export function HolidayAction({ gameState, player, axial }: ICardOperationParams): void {
+    if (!axial || typeof axial !== `object` || Array.isArray(axial)) {
+        throw new Error(`HolidayAction: axial field error`)
+    }
+    if (!gameState.map.HasHexagon(axial)) {
+        throw new Error(`HolidayAction: no hexagon with axial:${axial}`)
+    }
+    const hexArr: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+    const hex: Hexagon = gameState.map.GetHex(axial)!
+    if (!hexArr.includes(hex)) {
+        throw new Error(`HolidayAction: player is not present on axial:${axial}`)
+    }
+    if (hex.field.sanctuaryCount === 0) {
+        throw new Error(`HolidayAction: no sanctuaries`)
+    }
+    gameState.map.clansController.AddClans(player, 1, axial)
+    gameState.map.fieldsController.SetHolidayField(axial)
 }

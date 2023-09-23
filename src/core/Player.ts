@@ -7,7 +7,6 @@ export class Player {
     isBren: boolean = false
     isActive = false
     lastAction: playerAction = playerAction.None
-
     //Hand
     // ActionCards: Card[] = [];
     // EposCards: Card[] = [];

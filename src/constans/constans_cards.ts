@@ -60,7 +60,7 @@ export const NewUnion: Card = {
     id: "df9b3113-f639-4d74-9e6c-a88c98cdcafa",
     title: "New union",
     card_type: Card_type.Action,
-    timing: Timing_to_play.Season,
+    timing: Timing_to_play.SeasonX2,
     badge: Badge.Clans,
     description: ""
 } as const;

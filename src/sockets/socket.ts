@@ -9,8 +9,9 @@ import { axialCoordiantes } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameLobbyEvents";
 import { CheckSocketGameConnection } from "../services/helperFunctions";
 import { gameSetupHandler } from "./events/gameSetupEvents";
-import { playerGameHandler } from "./events/playerGameEvents";
-import { HexGridToJson } from "../core/HexGrid/HexGridService";
+import { playerCardHandler } from "./events/playerCardEvents";
+import { HexGridToJson } from "../services/HexGridService";
+import { playerFightHandler } from "./events/playerFightEvents";
 export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
@@ -38,7 +39,8 @@ export default function handleSocketConnections(io: Server) {
         });
         gameLobbyHandler(socket)
         gameSetupHandler(socket)
-        playerGameHandler(socket)
+        playerCardHandler(socket)
+        playerFightHandler(socket)
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId)
             const player = gameState?.GetPlayerById(userId)

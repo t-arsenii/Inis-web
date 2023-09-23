@@ -32,13 +32,27 @@ export enum playerAction {
 }
 
 export enum GameStage {
-    CapitalSetup ="CAPITAL_SETUP",
+    CapitalSetup = "CAPITAL_SETUP",
     ClansSetup = "CLANS_SETUP",
     Gathering = "GATHERING",
     Season = "SEASON",
     Fight = "FIGHT"
 }
 export enum TurnOrder {
-    clockwise="CLOCKWISE",
-    counter_clockwise="COUNTER_CLOCKWISE"
+    clockwise = "CLOCKWISE",
+    counter_clockwise = "COUNTER_CLOCKWISE"
+}
+export enum ActionType{
+    Atack,
+    Defend
+}
+export enum AttackerAction {
+    Atack,
+    Move,
+    Epos
+}
+
+export enum DeffenderAction{
+    Clan,
+    Card
 }

@@ -93,13 +93,16 @@ export const initData = () => {
     gameState.deckManager.addCard(player1, "3d138112-6a36-467a-8255-bcfb42fe7398")
     gameState.deckManager.addCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015")
 
+    gameState.deckManager.addCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
+    gameState.deckManager.addCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
+    gameState.deckManager.addCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015")
     //Skipping beginning stage
     //setting capital
     gameState.map.fieldsController.SetCapital({ q: 0, r: 0 })
 
     //Adding two clans for each player
     gameState.map.clansController.AddClans(player1, 2, { q: 0, r: 0 })
-    gameState.map.clansController.AddClans(player2, 2, { q: 1, r: 0 })
+    gameState.map.clansController.AddClans(player2, 2, { q: 0, r: 0 })
     gameState.map.clansController.AddClans(player3, 2, { q: 0, r: 1 })
     gameState.map.setupController.SkipSetupClans()
 

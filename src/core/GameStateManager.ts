@@ -4,7 +4,6 @@ import { Player } from "./Player";
 class GameStateManager {
     private gameStates: Map<string, GameState> = new Map();
     socketsConnInfo: Map<string, playerInfo> = new Map();
-
     createGame(gameState: GameState): void {
         this.gameStates.set(gameState.id, gameState);
     }

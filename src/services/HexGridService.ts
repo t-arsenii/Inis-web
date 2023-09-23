@@ -1,5 +1,5 @@
-import { AxialToString } from "../../services/helperFunctions";
-import { Field, HexGrid, Hexagon } from "./HexGrid";
+import { AxialToString } from "./helperFunctions";
+import { Field, HexGrid, Hexagon } from "../core/HexGrid";
 
 export function HexGridToJson(hexGrid: HexGrid) {
     return { hex: Array.from(hexGrid.grid.values()).map(hex => ({ q: hex.q, r: hex.r, field: hex.field })), avalibleTer: hexGrid.fieldsController.avalibleTerritories, capital: hexGrid.fieldsController.capital || "" };

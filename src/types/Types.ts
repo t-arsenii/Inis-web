@@ -37,3 +37,9 @@ export type playerInfo = {
     gameState: GameState
     player: Player
 }
+
+export type AttackerCycle = {
+    status: boolean,
+    attackerPlayerId: string | undefined,
+    defenderPlayerId: string | undefined
+}

@@ -5,11 +5,10 @@ import { GameState } from "../../core/GameState";
 import { Player } from "../../core/Player";
 import { cardActionsMap } from "../../constans/constans_cards";
 import { cardOperationsMapping } from "../../core/cardActions/cardToActionsMap";
-import { Hexagon } from "../../core/HexGrid/HexGrid";
+import { Hexagon } from "../../core/HexGrid";
 import { axialCoordiantes } from "../../types/Types";
 import { ICardOperationParams, ICardOperationResponse, IPlayerCardInput } from "../../types/Interfaces";
-export function playerGameHandler(socket: Socket) {
-
+export function playerCardHandler(socket: Socket) {
     socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
@@ -43,7 +42,6 @@ export function playerGameHandler(socket: Socket) {
             console.log(err)
         }
     })
-
     socket.on("player-card-info", ({ cardId }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!

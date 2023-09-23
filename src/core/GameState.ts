@@ -1,12 +1,13 @@
 import { Player } from "./Player";
 import { v4 } from "uuid";
-import { HexGrid } from "./HexGrid/HexGrid";
+import { HexGrid } from "./HexGrid";
 import { Deck, DeckManager } from "./DeckManager";
 import { GetRandomDirection, shuffle } from "../services/helperFunctions";
 import { MAX_CITADELS, MAX_SANCTUARIES } from "../constans/constans_3_players";
 import { TurnOrder, GameStage } from "../types/Enums";
 import { PlayerTurnOrder } from "../types/Types";
-import { HexGridToJson, InitHexGrid } from "./HexGrid/HexGridService";
+import { HexGridToJson, InitHexGrid } from "../services/HexGridService";
+import { FightManager } from "./Fighter";
 
 export class GameState {
   id: string = "";
@@ -18,6 +19,7 @@ export class GameState {
     activePlayerId: ""
   }
   deckManager: DeckManager = new DeckManager(this)
+  fightManager: FightManager = new FightManager(this)
   map: HexGrid = new HexGrid(this)
   gameStage: GameStage = undefined!
   gameStatus: boolean = false
@@ -113,7 +115,7 @@ export class GameState {
   }
   ToJSON() {
     const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = this;
-    const {citadelsLeft, sanctuariesLeft} = this.map.fieldsController 
+    const { citadelsLeft, sanctuariesLeft } = this.map.fieldsController
     const deckArray: { id: string; deck: Deck }[] = [];
     this.deckManager.playersDeck.forEach((deck, playerId) => {
       deckArray.push({ id: playerId, deck: deck });

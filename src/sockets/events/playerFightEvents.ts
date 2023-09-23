@@ -1,0 +1,52 @@
+import { Socket } from "socket.io";
+import { Player } from "../../core/Player";
+import { GameState } from "../../core/GameState";
+import { ActionType, AttackerAction, GameStage } from "../../types/Enums";
+import { IAttackerInputParams, IAttackerParams, IDeffenderInputParams } from "../../types/Interfaces";
+export function playerFightHandler(socket: Socket) {
+    socket.on("get-fight-info", () => {
+        const gameState: GameState = socket.gameState!
+        console.log(gameState.fightManager.currentFight)
+        socket.emit("fight-info", gameState.fightManager.currentFight)
+    })
+    socket.on("init-fight", () => {
+        const gameState: GameState = socket.gameState!
+        const player: Player = socket.player!
+        gameState.gameStage = GameStage.Fight
+        gameState.fightManager.InitFight(player, gameState.map.GetHex({ q: 0, r: 0 })!)
+    })
+    socket.on("player-fight-attacker", (playerAction: IAttackerInputParams) => {
+        const gameState: GameState = socket.gameState!
+        const player: Player = socket.player!
+        const FightParams: IAttackerParams = {
+            player,
+            attackerAction: playerAction.attackerAction,
+            axial: playerAction.axial,
+            targetPlayerId: playerAction.targetPlayerId
+        }
+        try {
+            gameState.fightManager.AttackerAction(FightParams)
+        } catch (err) {
+            console.log("PlayerFightAction: Error")
+        }
+    })
+    socket.on("player-fight-deffender", (params: IDeffenderInputParams) => {
+        const gameState: GameState = socket.gameState!
+        const player: Player = socket.player!
+        try {
+            gameState.fightManager.DeffenderAction(player, params.deffenderAction, params.cardId)
+        } catch (err) {
+            console.log(err)
+        }
+    })
+    socket.on("player-fight-peace-vote", () => {
+        const gameState: GameState = socket.gameState!
+        const player: Player = socket.player!
+        try {
+            gameState.fightManager.PlayerPeaceVote(player)
+        } catch (err) {
+            console.log(`PlayerFightPeaceVote:\n${err}`)
+        }
+    })
+
+}
