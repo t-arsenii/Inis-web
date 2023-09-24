@@ -113,28 +113,4 @@ export class GameState {
     }
     return undefined;
   }
-  ToJSON() {
-    const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = this;
-    const { citadelsLeft, sanctuariesLeft } = this.map.fieldsController
-    const deckArray: { id: string; deck: Deck }[] = [];
-    this.deckManager.playersDeck.forEach((deck, playerId) => {
-      deckArray.push({ id: playerId, deck: deck });
-    });
-    return {
-      Id,
-      gameInfo:
-      {
-        gameStatus,
-        maxPlayers,
-        citadelsLeft,
-        sanctuariesLeft,
-        gameStage: gameStage || "",
-      },
-      bren: Array.from(this.players.values()).find(p => p.isBren)?.id || "",
-      turnOrder,
-      players: Array.from(this.players.values()).map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft })),
-      HexGrid: HexGridToJson(this.map),
-      Decks: { playersDecks: deckArray, discard: this.deckManager.currentDiscard, defferedCard: this.deckManager.defferedCard }
-    };
-  }
 }

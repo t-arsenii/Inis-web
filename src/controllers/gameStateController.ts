@@ -3,6 +3,7 @@ import { GameState } from "../core/GameState";
 import { v4 } from "uuid";
 import { gamesManager } from "../core/GameStateManager";
 import { playerInfo } from "../types/Types";
+import { GameStateToJSON } from "../services/GameStateService";
 
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
@@ -29,7 +30,12 @@ const GetGames = (req: Request, res: Response) => {
 }
 const GetGame = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
-    res.status(200).send(gamesManager.getGame(gameId)?.ToJSON())
+    const gameState = gamesManager.getGame(gameId)
+    if (!gameState) {
+        res.status(404)
+        return
+    }
+    res.status(200).send(GameStateToJSON(gameState))
 }
 const GetOnlinePlayers = (req: Request, res: Response) => {
     if (gamesManager.socketsConnInfo.size <= 0) {

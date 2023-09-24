@@ -9,6 +9,9 @@ export class Deck {
     EposCards: string[] = [];
     AdvantagesCards: string[] = [];
     addCard(cardId: string) {
+        if (!cardActionsMap.has(cardId)) {
+            throw new Error("Deck.addCard: cardId not found")
+        }
         const card = cardActionsMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
@@ -27,12 +30,10 @@ export class DeckManager {
     deckSize: number = 4
     gameState: GameState
     playersDeck: Map<string, Deck> = new Map()
-    //currentCards: string[]
     currentDiscard: string[] = []
     defferedCard: string = ""
     constructor(gameState: GameState) {
         this.gameState = gameState
-        //this.currentCards = Array.from(cardMap.keys())
     }
     PlayerHasCard(player: Player, cardId: string): boolean {
         const deck: Deck = this.playersDeck.get(player.id)!
@@ -52,7 +53,7 @@ export class DeckManager {
     playCard(player: Player, cardId: string): void {
         const deck: Deck = this.playersDeck.get(player.id)!
         if (!cardActionsMap.has(cardId)) {
-            return
+            throw new Error("DeckManager.playCard: cardId not found")
         }
         const playedCard: Card = cardActionsMap.get(cardId)!
         switch (playedCard.card_type) {
@@ -80,6 +81,9 @@ export class DeckManager {
     }
     addCard(player: Player, cardId: string) {
         const deck: Deck = this.playersDeck.get(player.id)!
+        if (!cardActionsMap.has(cardId)) {
+            throw new Error("DeckManager.addCard: cardId not found")
+        }
         const card: Card = cardActionsMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
