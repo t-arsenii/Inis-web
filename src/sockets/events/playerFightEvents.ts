@@ -4,17 +4,6 @@ import { GameState } from "../../core/GameState";
 import { ActionType, AttackerAction, GameStage } from "../../types/Enums";
 import { IAttackerInputParams, IAttackerParams, IDeffenderInputParams } from "../../types/Interfaces";
 export function playerFightHandler(socket: Socket) {
-    socket.on("get-fight-info", () => {
-        const gameState: GameState = socket.gameState!
-        console.log(gameState.fightManager.currentFight)
-        socket.emit("fight-info", gameState.fightManager.currentFight)
-    })
-    socket.on("init-fight", () => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
-        gameState.gameStage = GameStage.Fight
-        gameState.fightManager.InitFight(player, gameState.map.GetHex({ q: 0, r: 0 })!)
-    })
     socket.on("player-fight-attacker", (playerAction: IAttackerInputParams) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
@@ -48,5 +37,4 @@ export function playerFightHandler(socket: Socket) {
             console.log(`PlayerFightPeaceVote:\n${err}`)
         }
     })
-
 }

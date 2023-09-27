@@ -1,20 +1,20 @@
 import { AxialToString } from "../../services/helperFunctions"
-import { ICardOperationResponse } from "../../types/Interfaces"
+import { ICardOperationParams, ICardOperationResponse, ICardParams } from "../../types/Interfaces"
 import { axialCoordiantes } from "../../types/Types"
 import { Deck, DeckManager } from "../DeckManager"
 import { GameState } from "../GameState"
 import { Hexagon } from "../HexGrid"
 import { Player } from "../Player"
-export function BardActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function BardActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     //Don't know what info to return yet
     return {}
 }
-export function DruidActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function DruidActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const deckManager: DeckManager = gameState.deckManager
     return { cardId: deckManager.currentDiscard }
 
 }
-export function PeasantsWorkersActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function PeasantsWorkersActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const playerHex: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
     if (!playerHex) {
         return {}
@@ -22,35 +22,35 @@ export function PeasantsWorkersActionInfo(gameState: GameState, player: Player):
     const citadelNum: number = gameState.map.fieldsController.CountPlayerCitadels(player)
     return { axial: playerHex.map(hex => ({ q: hex.q, r: hex.r })), num: citadelNum }
 }
-export function SanctuaryActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function SanctuaryActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
     if (!hexArr) {
         return {}
     }
     return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })) }
 }
-export function CitadelActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function CitadelActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
     if (!hexArr) {
         return {}
     }
     return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })) }
 }
-export function NewClansActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function NewClansActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
     if (!hexArr) {
         return {}
     }
     return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })) }
 }
-export function ExplorationActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function ExplorationActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const axialArr: axialCoordiantes[] = gameState.map.GetAllValidPlacements()
     if (!axialArr) {
         return {}
     }
     return { axial: axialArr }
 }
-export function HolidayActionInfo(gameState: GameState, player: Player): ICardOperationResponse {
+export function HolidayActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
     if (!hexArr) {
         return {}
@@ -60,4 +60,22 @@ export function HolidayActionInfo(gameState: GameState, player: Player): ICardOp
         return {}
     }
     return { axial: hexSanctArr.map(hex => ({ q: hex.q, r: hex.r })) }
+}
+export function ConquestActionInfo({ gameState, player, axial }: ICardOperationParams): ICardOperationResponse {
+    if (!axial || Array.isArray(axial)) {
+        throw new Error("ConquestActionInfo: axial coordinate error")
+    }
+    if (!gameState.map.HasHexagon(axial)) {
+        throw new Error(`ConquestActionInfo: no hexagon with axial:${axial}`)
+    }
+    const hexArr: Hexagon[] = gameState.map.GetNeighbors(axial)
+    const axialToNumRes: { axial: axialCoordiantes, num: number }[] = [];
+
+    hexArr.forEach(hex => {
+        if (hex.field.playersClans.has(player.id)) {
+            axialToNumRes.push({ axial: { q: hex.q, r: hex.r }, num: hex.field.playersClans.get(player.id)! });
+        }
+    });
+
+    return { axialToNum: axialToNumRes };
 }

@@ -4,7 +4,7 @@ import { ActionType, AttackerAction, DeffenderAction } from "./Enums"
 import { axialCoordiantes } from "./Types"
 
 export interface ICardParams {
-    axial?: axialCoordiantes | axialCoordiantes[],
+    axial?: axialCoordiantes | axialCoordiantes[]
     targetPlayerId?: string,
     axialToNum?: { axial: axialCoordiantes, num: number }[] | { axial: axialCoordiantes, num: number }
     targetCardId?: string
@@ -22,7 +22,7 @@ export interface IAttackerParams {
 }
 export interface IDeffenderInputParams {
     deffenderAction: DeffenderAction,
-    cardId?:string
+    cardId?: string
 }
 export interface IPlayerCardInput {
     cardId: string,
@@ -36,5 +36,6 @@ export interface ICardOperationParams extends ICardParams {
 export interface ICardOperationResponse {
     axial?: axialCoordiantes | axialCoordiantes[],
     cardId?: string | string[],
-    num?: number
+    num?: number,
+    axialToNum?: { axial: axialCoordiantes, num: number }[] | { axial: axialCoordiantes, num: number }
 }

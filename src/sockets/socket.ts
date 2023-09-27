@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { gamesManager } from "../core/GameStateManager";
 import { Player } from "../core/Player";
-import { cardActionsMap } from "../constans/constans_cards";
+import { cardActionsMap } from "../constans/constans_action_cards";
 import { GameState } from "../core/GameState";
 import { Console } from "console";
 import { playerInfo } from "../types/Types";
@@ -12,6 +12,7 @@ import { gameSetupHandler } from "./events/gameSetupEvents";
 import { playerCardHandler } from "./events/playerCardEvents";
 import { HexGridToJson } from "../services/HexGridService";
 import { playerFightHandler } from "./events/playerFightEvents";
+import { DebugTools } from "./events/debugEvents";
 export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
@@ -37,6 +38,7 @@ export default function handleSocketConnections(io: Server) {
             socket.player = pInf.player
             return next();
         });
+        DebugTools(socket)
         gameLobbyHandler(socket)
         gameSetupHandler(socket)
         playerCardHandler(socket)
@@ -50,24 +52,6 @@ export default function handleSocketConnections(io: Server) {
             }
             const isTerritory = gameState?.map.fieldsController.AddRandomField(axial)
             socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
-        })
-        socket.on("territory-all", () => {
-            const gameState: GameState = socket.gameState!
-            socket.emit("territory-info", HexGridToJson(gameState.map))
-        })
-        socket.on("territory-avaliable", () => {
-            const gameState: GameState = socket.gameState!
-            const player: Player = socket.player!
-            socket.emit("territory-info", gameState?.map.GetAllValidPlacements())
-        })
-        socket.on("next-turn", (gameId, userId) => {
-            const gameState = gamesManager.getGame(gameId)!
-            const player = gameState.GetPlayerById(userId)!
-            if (gameState.turnOrder.activePlayerId !== player.id) {
-                return
-            }
-            gameState.NextTurn()
-            socket.emit("next-turn", gameState.turnOrder)
         })
         socket.on("player-action", (actionType: string, gameId: string, userId: string) => {
             // console.log(`card-event room id: ${gameId}`);

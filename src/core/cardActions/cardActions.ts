@@ -2,7 +2,7 @@ import { Player } from "../Player";
 import { GameState } from "../GameState";
 import { HexGrid, Hexagon } from "../HexGrid";
 import { axialCoordiantes } from "../../types/Types";
-import { Sanctuary, cardActionsMap } from "../../constans/constans_cards";
+import { Sanctuary, cardActionsMap } from "../../constans/constans_action_cards";
 import { SanctuaryActionInfo } from "./cardActionsInfo";
 import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
@@ -167,8 +167,8 @@ export function HolidayAction({ gameState, player, axial }: ICardOperationParams
     if (!gameState.map.HasHexagon(axial)) {
         throw new Error(`HolidayAction: no hexagon with axial:${axial}`)
     }
-    const hexArr: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
     const hex: Hexagon = gameState.map.GetHex(axial)!
+    const hexArr: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
     if (!hexArr.includes(hex)) {
         throw new Error(`HolidayAction: player is not present on axial:${axial}`)
     }
@@ -177,4 +177,67 @@ export function HolidayAction({ gameState, player, axial }: ICardOperationParams
     }
     gameState.map.clansController.AddClans(player, 1, axial)
     gameState.map.fieldsController.SetHolidayField(axial)
+}
+export function ConquestAction({ gameState, player, axial: singleAxial, axialToNum: axialToNum }: ICardOperationParams): void {
+    //validate data
+    if (!singleAxial || typeof singleAxial !== `object` || Array.isArray(singleAxial)) {
+        throw new Error(`ConquestAction: targetAxial field error`)
+    }
+    if (!axialToNum) {
+        throw new Error(`ConquestAction: targetAxial field error`)
+    }
+    if (!gameState.map.HasHexagon(singleAxial)) {
+        throw new Error(`ConquestAction: no hexagon with axial:${singleAxial}`)
+    }
+    //validate hexagons
+    const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+    const hexNeighbours: Hexagon[] = gameState.map.GetNeighbors({ q: singleAxial.q, r: singleAxial.r })
+    const targetHexagon: Hexagon = gameState.map.GetHex(singleAxial)!
+    if (Array.isArray(axialToNum)) {
+        for (const ax of axialToNum) {
+            if (!gameState.map.HasHexagon(ax.axial)) {
+                throw new Error(`ConquestAction: no hexagon with axial:${ax.axial}`)
+            }
+            let hex: Hexagon = gameState.map.GetHex(ax.axial)!
+            if (!playerHex.includes(hex)) {
+                throw new Error(`ConquestAction: player is not present on axial:${ax.axial}`)
+            }
+            if (!hexNeighbours.includes(hex)) {
+                throw new Error(`ConquestAction: the axial:${ax.axial}, is not a neighbour`)
+            }
+            //Check clans
+            if (!hex.field.playersClans.has(player.id)) {
+                throw new Error(`ConquestAction: player dosen't have clans on axial:${ax.axial}`)
+            }
+            if (hex.field.playersClans.get(player.id)! < ax.num) {
+                throw new Error(`ConquestAction:player dosen't have enough clans on the axial:${ax.axial}`)
+            }
+        }
+        for (const ax of axialToNum) {
+            gameState.map.clansController.MoveClans(player, ax.axial, singleAxial, ax.num)
+        }
+    }
+    else if (typeof axialToNum === 'object' && !Array.isArray(axialToNum)) {
+        if (!gameState.map.HasHexagon(axialToNum.axial)) {
+            throw new Error(`ConquestAction: no hexagon with axial:${axialToNum.axial}`)
+        }
+        let hex: Hexagon = gameState.map.GetHex(axialToNum.axial)!
+        if (!playerHex.includes(hex)) {
+            throw new Error(`ConquestAction: player is not present on axial:${axialToNum.axial}`)
+        }
+        if (!hexNeighbours.includes(hex)) {
+            throw new Error(`ConquestAction: the axial:${axialToNum.axial}, is not a neighbour`)
+        }
+        //Check clans
+        if (!hex.field.playersClans.has(player.id)) {
+            throw new Error(`ConquestAction: player dosen't have clans on axial:${axialToNum.axial}`)
+        }
+        if (hex.field.playersClans.get(player.id)! < axialToNum.num) {
+            throw new Error(`ConquestAction:player dosen't have enough clans on the axial:${axialToNum.axial}`)
+        }
+        gameState.map.clansController.MoveClans(player, axialToNum.axial, singleAxial, axialToNum.num)
+    }
+    if (targetHexagon.field.playersClans.size > 1) {
+        gameState.fightManager.InitFight(player, targetHexagon)
+    }
 }

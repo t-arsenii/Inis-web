@@ -92,6 +92,8 @@ export const initData = () => {
     gameState.deckManager.addCard(player1, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
     gameState.deckManager.addCard(player1, "3d138112-6a36-467a-8255-bcfb42fe7398")
     gameState.deckManager.addCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015")
+    gameState.deckManager.addCard(player1, "ddc241a2-2fd1-4926-8860-4eae221b93d4")
+
 
     gameState.deckManager.addCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
     gameState.deckManager.addCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
@@ -107,5 +109,5 @@ export const initData = () => {
     gameState.map.setupController.SkipSetupClans()
 
     //Changing game stage
-    gameState.gameStage = GameStage.Gathering
+    gameState.gameStage = GameStage.Season
 }

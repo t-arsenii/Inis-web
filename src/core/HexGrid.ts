@@ -7,9 +7,36 @@ export class Field {
     territoryId: string = ""
     sanctuaryCount: number = 0
     citadelsCount: number = 0
-    playersClans: Record<string, number> = {}
+    playersClans: Map<string, number> = new Map()
+    leaderPlayerId: string = ""
     constructor(terId: string) {
         this.territoryId = terId
+    }
+    toJSON() {
+        const { territoryId, sanctuaryCount, citadelsCount, leaderPlayerId } = this
+        const playerClans = Object.fromEntries(this.playersClans)
+        return {
+            territoryId,
+            sanctuaryCount,
+            citadelsCount,
+            leaderPlayerId,
+            playerClans
+        }
+    }
+    UpdateLeader(): void {
+        if (this.playersClans.size <= 0) {
+            return
+        }
+        let largestValue: number = 0;
+        let playerId: string = "";
+
+        for (const [id, value] of this.playersClans) {
+            if (value > largestValue) {
+                largestValue = value;
+                playerId = id;
+            }
+        }
+        this.leaderPlayerId = playerId;
     }
 }
 export class Hexagon {
@@ -41,17 +68,18 @@ class ClansController {
         if (clansNum > player.clansLeft) {
             throw new Error(`ClansController.AddClans: player not enoght clans left`)
         }
-        if (field.playersClans.hasOwnProperty(player.id)) {
-            const currentClans = field.playersClans[player.id]
-            field.playersClans[player.id] = currentClans! + clansNum
+        if (field.playersClans.has(player.id)) {
+            const currentClans = field.playersClans.get(player.id)!
+            field.playersClans.set(player.id, currentClans + clansNum)
         } else {
-            field.playersClans[player.id] = clansNum
+            field.playersClans.set(player.id, clansNum)
         }
         player.clansLeft -= clansNum
         const playerFieldsPresense: Hexagon[] = this.playerFieldPresense.get(player.id)!
         if (!playerFieldsPresense.includes(hex)) {
             playerFieldsPresense.push(hex)
         }
+        hex.field.UpdateLeader()
     }
     public RemoveClans(player: Player, clansNum: number, axial: axialCoordiantes): void {
         if (clansNum <= 0) {
@@ -62,21 +90,22 @@ class ClansController {
         }
         const hex: Hexagon = this.hexGrid.GetHex(axial)!;
         const field: Field = hex.field;
-        if (!field.playersClans.hasOwnProperty(player.id)) {
+        if (!field.playersClans.has(player.id)) {
             throw new Error("ClansController.RemoveClans: the player has no clans to remove on field")
         }
-        const playerCurrentClans = field.playersClans[player.id];
+        const playerCurrentClans = field.playersClans.get(player.id)!;
         if (clansNum > playerCurrentClans) {
             throw new Error("ClansController.RemoveClans: the clansNum can't be larger than currentClans on field")
         }
         if (clansNum === playerCurrentClans) {
             const playerFieldsPresence = this.playerFieldPresense.get(player.id)!;
             this.playerFieldPresense.set(player.id, playerFieldsPresence.filter(h => h !== hex));
-            delete field.playersClans[player.id];
+            field.playersClans.delete(player.id);
         } else {
-            field.playersClans[player.id] = playerCurrentClans - clansNum;
+            field.playersClans.set(player.id, playerCurrentClans - clansNum);
         }
         player.clansLeft += clansNum;
+        hex.field.UpdateLeader()
     }
     public MoveClans(player: Player, axialFrom: axialCoordiantes, axialTo: axialCoordiantes, clansNum: number) {
         if (clansNum <= 0) {
@@ -90,29 +119,31 @@ class ClansController {
         }
         const hexFrom: Hexagon = this.hexGrid.GetHex(axialFrom)!
         const hexTo: Hexagon = this.hexGrid.GetHex(axialTo)!
-        if (!hexFrom.field.playersClans.hasOwnProperty(player.id)) {
+        if (!hexFrom.field.playersClans.has(player.id)) {
             throw new Error("ClansController.MoveClans: the player has no clans to move from field")
         }
-        const playerCurrentClans = hexFrom.field.playersClans[player.id];
+        const playerCurrentClans = hexFrom.field.playersClans.get(player.id)!;
         if (clansNum > playerCurrentClans) {
             throw new Error("ClansController.MoveClans: the clansNum can't be larger than currentClans on field")
         }
         const playerFieldsPresence: Hexagon[] = this.playerFieldPresense.get(player.id)!;
         if (clansNum === playerCurrentClans) {
             this.playerFieldPresense.set(player.id, playerFieldsPresence.filter(h => h !== hexFrom));
-            delete hexFrom.field.playersClans[player.id];
+            hexFrom.field.playersClans.delete(player.id);
         } else {
-            hexFrom.field.playersClans[player.id] = playerCurrentClans - clansNum;
+            hexFrom.field.playersClans.set(player.id, playerCurrentClans - clansNum);
         }
-        if (hexTo.field.playersClans.hasOwnProperty(player.id)) {
-            const currentClans = hexTo.field.playersClans[player.id]
-            hexTo.field.playersClans[player.id] = currentClans! + clansNum
+        if (hexTo.field.playersClans.has(player.id)) {
+            const currentClans = hexTo.field.playersClans.get(player.id)!
+            hexTo.field.playersClans.set(player.id, currentClans! + clansNum)
         } else {
-            hexTo.field.playersClans[player.id] = clansNum
+            hexTo.field.playersClans.set(player.id, clansNum)
         }
         if (!playerFieldsPresence.includes(hexTo)) {
             playerFieldsPresence.push(hexTo)
         }
+        hexTo.field.UpdateLeader()
+        hexFrom.field.UpdateLeader()
     }
 }
 class SetupController {
@@ -253,7 +284,7 @@ export class HexGrid {
         }
         return false;
     }
-    private GetNeighbors(axial: axialCoordiantes): Hexagon[] {
+    public GetNeighbors(axial: axialCoordiantes): Hexagon[] {
         const directions = [
             { q: 1, r: 0 },
             { q: 0, r: -1 },

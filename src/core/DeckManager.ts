@@ -1,4 +1,4 @@
-import { cardActionsMap } from "../constans/constans_cards";
+import { cardActionsMap } from "../constans/constans_action_cards";
 import { shuffle } from "../services/helperFunctions";
 import { Card } from "../types/Types"
 import { Card_type } from "../types/Enums"

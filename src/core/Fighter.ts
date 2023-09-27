@@ -15,12 +15,16 @@ export class FightManager {
         this.gameState = gameState
     }
     InitFight(playerAttacker: Player, hex: Hexagon) {
+        if (hex.field.playersClans.size < 2) {
+            throw new Error("FightManager.InitFight: Can't start a fight, not enough players")
+        }
         const fight: Fight = new Fight(hex, playerAttacker, this.gameState.turnOrder)
         if (!this.currentFight) {
             this.currentFight = fight
         }
         this.fights.push(fight)
         this.status = true
+        this.gameState.gameStage = GameStage.Fight
     }
     AttackerAction({ player, attackerAction, targetPlayerId, axial }: IAttackerParams): void {
         if (!this.currentFight) {
@@ -91,7 +95,7 @@ export class FightManager {
         }
         const isPeace = Object.values(this.currentFight.players).every((data) => data.peace);
         if (this.currentFight.FightTurnOrder.playersId.length <= 1 || isPeace) {
-            if (this.fights.length > 1) {
+            if (this.fights.length > 0) {
                 this.fights = this.fights.filter((f) => f !== this.currentFight);
                 this.currentFight = this.fights[0]
             } else {
@@ -117,7 +121,7 @@ class Fight {
     fightHex: Hexagon;
     constructor(hex: Hexagon, playerAttacker: Player, turnOrder: PlayerTurnOrder) {
         this.fightHex = hex
-        Object.entries(hex.field.playersClans).forEach(([pId, clansNum]) => {
+        hex.field.playersClans.forEach((clansNum, pId ) => {
             this.players[pId] = { clansNum, peace: false };
         });
         hex.field.playersClans
