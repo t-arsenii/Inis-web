@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { CLANS_PER_PLAYER } from "../constans/constans_3_players";
+import { CLANS_PER_PLAYER } from "../constans/constant_3_players";
 import { playerAction } from "../types/Enums";
 export class Player {
     id: string = "";

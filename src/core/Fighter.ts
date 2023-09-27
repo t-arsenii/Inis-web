@@ -1,3 +1,4 @@
+import { trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { AttackerAction, DeffenderAction, GameStage, TurnOrder } from "../types/Enums";
 import { IAttackerParams } from "../types/Interfaces";
 import { AttackerCycle, PlayerTurnOrder } from "../types/Types";
@@ -121,7 +122,7 @@ class Fight {
     fightHex: Hexagon;
     constructor(hex: Hexagon, playerAttacker: Player, turnOrder: PlayerTurnOrder) {
         this.fightHex = hex
-        hex.field.playersClans.forEach((clansNum, pId ) => {
+        hex.field.playersClans.forEach((clansNum, pId) => {
             this.players[pId] = { clansNum, peace: false };
         });
         hex.field.playersClans
@@ -150,11 +151,15 @@ class Fight {
         if (defenderAction === DeffenderAction.Clan) {
             this.players[this.attackCycle.defenderPlayerId].clansNum -= 1
             gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r })
+
+            const playerAttacker: Player = gameState.players.get(this.attackCycle.attackerPlayerId)!
+            gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty)
+
         } else if (defenderAction === DeffenderAction.Card) {
             if (!cardId) {
                 throw new Error("Figth.PerformAttack: no card id provided")
             }
-            gameState.deckManager.playCard(deffenderPlayer, cardId)
+            gameState.deckManager.PlayCard(deffenderPlayer, cardId)
         }
         this.attackCycle.status = false
         this.attackCycle.attackerPlayerId = undefined

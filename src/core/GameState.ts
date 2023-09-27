@@ -3,11 +3,12 @@ import { v4 } from "uuid";
 import { HexGrid } from "./HexGrid";
 import { Deck, DeckManager } from "./DeckManager";
 import { GetRandomDirection, shuffle } from "../services/helperFunctions";
-import { MAX_CITADELS, MAX_SANCTUARIES } from "../constans/constans_3_players";
+import { MAX_CITADELS, MAX_SANCTUARIES } from "../constans/constant_3_players";
 import { TurnOrder, GameStage } from "../types/Enums";
 import { PlayerTurnOrder } from "../types/Types";
 import { HexGridToJson, InitHexGrid } from "../services/HexGridService";
 import { FightManager } from "./Fighter";
+import { TrixelManager } from "./TrixelManager";
 
 export class GameState {
   id: string = "";
@@ -24,6 +25,7 @@ export class GameState {
   gameStage: GameStage = undefined!
   gameStatus: boolean = false
   roundCounter: number = 0
+  trixelManager: TrixelManager = new TrixelManager(this)
   constructor(lobbyId?: string) {
     this.id = lobbyId || v4();
   }
@@ -60,12 +62,12 @@ export class GameState {
     InitHexGrid(this.map)
     this.map.fieldsController.sanctuariesLeft = MAX_SANCTUARIES
     this.map.fieldsController.citadelsLeft = MAX_CITADELS
-
-    //Setting Citadels and sanctuaries counters
-
     //Initializing players decks
-    this.deckManager.addPlayers(Array.from(this.players.keys()))
+    this.deckManager.Init()
     // this.deckManager.DealCards()
+
+    //Initializing trixelManager
+    this.trixelManager.Init()
 
   }
   NextTurn(): void {
@@ -83,7 +85,6 @@ export class GameState {
     this.turnOrder.activePlayerId = newActivePlayerId
     this.players.get(newActivePlayerId)!.isActive = true
   }
-
   AddPlayer(player: Player): void {
     if (this.players.size < this.numPlayers) {
       this.players.set(player.id, player);

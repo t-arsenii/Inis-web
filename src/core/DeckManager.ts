@@ -1,18 +1,19 @@
-import { cardActionsMap } from "../constans/constans_action_cards";
+import { cardActionMap } from "../constans/constant_action_cards";
 import { shuffle } from "../services/helperFunctions";
 import { Card } from "../types/Types"
 import { Card_type } from "../types/Enums"
 import { GameState } from "./GameState";
 import { Player } from "./Player";
+import { cardEposMap } from "../constans/constant_epos_cards";
 export class Deck {
     ActionCards: string[] = [];
     EposCards: string[] = [];
     AdvantagesCards: string[] = [];
     addCard(cardId: string) {
-        if (!cardActionsMap.has(cardId)) {
+        if (!cardActionMap.has(cardId)) {
             throw new Error("Deck.addCard: cardId not found")
         }
-        const card = cardActionsMap.get(cardId)!
+        const card = cardActionMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
                 this.ActionCards.push(card.id)
@@ -31,6 +32,8 @@ export class DeckManager {
     gameState: GameState
     playersDeck: Map<string, Deck> = new Map()
     currentDiscard: string[] = []
+    eposCards: string[] = []
+    eposCardsDiscard: string[] = []
     defferedCard: string = ""
     constructor(gameState: GameState) {
         this.gameState = gameState
@@ -40,22 +43,26 @@ export class DeckManager {
         const allCards: string[] = [...deck.ActionCards, ...deck.AdvantagesCards, ...deck.EposCards]
         return allCards.includes(cardId)
     }
-    addPlayer(id: string): void {
-        if (this.playersDeck.size < this.gameState.numPlayers) {
-            this.playersDeck.set(id, new Deck())
-        }
+    Init() {
+        this.gameState.players.forEach((player, pId) => {
+            this.playersDeck.set(pId, new Deck())
+        })
+        const eposCards = shuffle(Array.from(cardEposMap.keys()))
     }
-    addPlayers(playersId: string[]) {
-        if (playersId.length <= this.gameState.numPlayers - this.playersDeck.size) {
-            playersId.forEach(id => this.addPlayer(id))
+    AddRandomEposCard(player: Player) {
+        if (this.eposCards.length <= 0) {
+            throw new Error("DeckManager.AddRandomEpos: no epos cards left")
         }
+        const eposCardId = this.eposCards.pop()!
+        this.playersDeck.get(player.id)?.addCard(eposCardId)
     }
-    playCard(player: Player, cardId: string): void {
+    // giveRandomEpos
+    PlayCard(player: Player, cardId: string): void {
         const deck: Deck = this.playersDeck.get(player.id)!
-        if (!cardActionsMap.has(cardId)) {
-            throw new Error("DeckManager.playCard: cardId not found")
+        if (!cardActionMap.has(cardId)) {
+            throw new Error("DeckManager.PlayCard: cardId not found")
         }
-        const playedCard: Card = cardActionsMap.get(cardId)!
+        const playedCard: Card = cardActionMap.get(cardId)!
         switch (playedCard.card_type) {
             case Card_type.Action:
                 deck.ActionCards = deck.ActionCards.filter(cardId => cardId !== playedCard.id)
@@ -71,7 +78,7 @@ export class DeckManager {
 
     }
     DealCards() {
-        const Cards = shuffle(Array.from(cardActionsMap.keys()))
+        const Cards = shuffle(Array.from(cardActionMap.keys()))
         this.playersDeck.forEach((deck, playerId) => {
             for (let i = 0; i < this.deckSize; i++) {
                 deck.addCard(Cards.pop()!);
@@ -79,12 +86,12 @@ export class DeckManager {
         })
         this.defferedCard = Cards.pop()!
     }
-    addCard(player: Player, cardId: string) {
+    AddCard(player: Player, cardId: string) {
         const deck: Deck = this.playersDeck.get(player.id)!
-        if (!cardActionsMap.has(cardId)) {
+        if (!cardActionMap.has(cardId)) {
             throw new Error("DeckManager.addCard: cardId not found")
         }
-        const card: Card = cardActionsMap.get(cardId)!
+        const card: Card = cardActionMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
                 deck.ActionCards.push(card.id)

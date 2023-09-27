@@ -2,8 +2,8 @@ import { Player } from "../Player";
 import { GameState } from "../GameState";
 import { HexGrid, Hexagon } from "../HexGrid";
 import { axialCoordiantes } from "../../types/Types";
-import { Sanctuary, cardActionsMap } from "../../constans/constans_action_cards";
-import { SanctuaryActionInfo } from "./cardActionsInfo";
+import { Sanctuary, cardActionMap } from "../../constans/constant_action_cards";
+import { SanctuaryActionInfo } from "./cardActionInfo";
 import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
 import { AxialToString } from "../../services/helperFunctions";
@@ -16,7 +16,7 @@ export function DruidAction({ gameState, player, targetCardId }: ICardOperationP
     }
     const deckManager: DeckManager = gameState.deckManager
     const deck: Deck = deckManager.playersDeck.get(player.id)!
-    if (!cardActionsMap.has(targetCardId)) {
+    if (!cardActionMap.has(targetCardId)) {
         throw new Error("DruidAction: Target id is undefiend")
     }
     if (deck.ActionCards.length === 1) {
@@ -26,7 +26,7 @@ export function DruidAction({ gameState, player, targetCardId }: ICardOperationP
         throw new Error(`DruidAction: no card with id:${targetCardId}, is in discard`)
     }
     deckManager.currentDiscard = deckManager.currentDiscard.filter(cId => cId !== targetCardId)
-    deckManager.addCard(player, targetCardId)
+    deckManager.AddCard(player, targetCardId)
 
 
 }

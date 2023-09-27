@@ -1,6 +1,6 @@
 import { StartStructure } from "../types/Enums";
 import { Territory } from "../types/Types";
-import { Hills, Mountains, SaltMine, Swamp, Forest, cardAdvantageMap, Gates, StoneCircle, Wasteland, Meadow, ForgottenRavine, Bay, IronMine, MistyLands, Valley, Plains, Plateau } from "./constans_advantage_cards";
+import { Hills, Mountains, SaltMine, Swamp, Forest, cardAdvantageMap, Gates, StoneCircle, Wasteland, Meadow, ForgottenRavine, Bay, IronMine, MistyLands, Valley, Plains, Plateau } from "./constant_advantage_cards";
 const Swamp_ter: Territory = {
     id: "aebc97ae-b2ff-4ce1-9bcb-8bc0aabca722",
     title: "Swamp",

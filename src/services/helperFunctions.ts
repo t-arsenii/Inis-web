@@ -87,17 +87,17 @@ export const initData = () => {
 
     //Adding cards to players
     // const Cards = shuffle(Array.from(cardActionsMap.keys()))
-    gameState.deckManager.addCard(player1, "f145474a-453b-4f53-8fff-12448a0ab90f")
-    gameState.deckManager.addCard(player1, "c1f5ddba-7325-4188-9a36-ff9ef14af22a")
-    gameState.deckManager.addCard(player1, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
-    gameState.deckManager.addCard(player1, "3d138112-6a36-467a-8255-bcfb42fe7398")
-    gameState.deckManager.addCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015")
-    gameState.deckManager.addCard(player1, "ddc241a2-2fd1-4926-8860-4eae221b93d4")
+    gameState.deckManager.AddCard(player1, "f145474a-453b-4f53-8fff-12448a0ab90f")
+    gameState.deckManager.AddCard(player1, "c1f5ddba-7325-4188-9a36-ff9ef14af22a")
+    gameState.deckManager.AddCard(player1, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
+    gameState.deckManager.AddCard(player1, "3d138112-6a36-467a-8255-bcfb42fe7398")
+    gameState.deckManager.AddCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015")
+    gameState.deckManager.AddCard(player1, "ddc241a2-2fd1-4926-8860-4eae221b93d4")
 
 
-    gameState.deckManager.addCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
-    gameState.deckManager.addCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
-    gameState.deckManager.addCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015")
+    gameState.deckManager.AddCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
+    gameState.deckManager.AddCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
+    gameState.deckManager.AddCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015")
     //Skipping beginning stage
     //setting capital
     gameState.map.fieldsController.SetCapital({ q: 0, r: 0 })

@@ -1,7 +1,7 @@
 import { Player } from "./Player"
 import { AxialToString, shuffle } from "../services/helperFunctions"
 import { GameState } from "./GameState"
-import { territoryMap } from "../constans/constans_territories"
+import { territoryMap } from "../constans/constant_territories"
 import { axialCoordiantes } from "../types/Types"
 export class Field {
     territoryId: string = ""

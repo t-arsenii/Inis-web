@@ -121,7 +121,7 @@ export const Geist: Card = {
     description: ""
 } as const;
 
-export const cardActionsMap: Map<string, Card> = new Map([
+export const cardActionMap: Map<string, Card> = new Map([
     [Sanctuary.id, Sanctuary],
     [NewClans.id, NewClans],
     [Conquest.id, Conquest],

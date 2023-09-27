@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { gamesManager } from "../core/GameStateManager";
 import { Player } from "../core/Player";
-import { cardActionsMap } from "../constans/constans_action_cards";
+import { cardActionMap } from "../constans/constant_action_cards";
 import { GameState } from "../core/GameState";
 import { Console } from "console";
 import { playerInfo } from "../types/Types";

@@ -19,6 +19,10 @@ export class TrixelManager {
         }
         this.trixelArray.get(player.id)?.add(trixel.id)
     }
+    HasTrixel(player: Player, trixel: TrixelCondition) {
+        const playerTrixel: Set<string> = this.trixelArray.get(player.id)!
+        return playerTrixel.has(trixel.id)
+    }
     ClearTrixel() {
 
     }
