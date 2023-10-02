@@ -1,42 +1,35 @@
 import { Socket } from "socket.io";
-import { playerAction } from "../../types/Enums";
-import { GetGameStateAndPlayer } from "../../services/helperFunctions";
 import { GameState } from "../../core/GameState";
 import { Player } from "../../core/Player";
 import { cardActionMap } from "../../constans/constant_action_cards";
-import { cardEposMap } from "../../core/cardOperations/cardMap";
-import { Hexagon } from "../../core/HexGrid";
-import { axialCoordiantes } from "../../types/Types";
+import { cardSeasonMap, cardTrixelMap } from "../../core/cardOperations/cardMap";
 import { ICardOperationParams, ICardOperationResponse, IPlayerCardInput } from "../../types/Interfaces";
+import { trixelCondition_oOWJ5 } from "../../constans/constant_trixelConditions";
 export function playerCardHandler(socket: Socket) {
     socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
-        if (!player.isActive) {
-            socket.emit("player-card-season-error", "PlayerCardSeason: player is not active")
-            return
-        }
-        if (!cardActionMap.has(cardId)) {
-            socket.emit("player-card-season-error", `PlayerCardSeason: card id is not found, cardId: ${cardId}`)
-            return
-        }
-        if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
-            socket.emit("player-card-season-error", `PlayerCardSeason: player dosen't have a card with id: ${cardId}`)
-            return
-        }
-        const res = cardEposMap[(cardId)]
-        const { Action } = res
-        const actionParams: ICardOperationParams = {
-            player: player,
-            gameState: gameState,
-            axial: params?.axial,
-            targetPlayerId: params?.targetPlayerId,
-            targetCardId: params?.targetCardId,
-            axialToNum: params?.axialToNum
-        }
         try {
+            if (!player.isActive) {
+                throw new Error("PlayerCardSeason: player is not active")
+            }
+            //Check card in seasonMap
+            // if (!cardActionMap.has(cardId)) {
+            //     throw new Error(`PlayerCardSeason: card id is not found, cardId: ${cardId}`)
+            // }
+            if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
+                throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`)
+            }
+            const res = cardSeasonMap[(cardId)]
+            const { Action } = res
+            const actionParams: ICardOperationParams = {
+                player: player,
+                gameState: gameState,
+                ...params
+            }
             Action(actionParams)
-            gameState.deckManager.PlayCard(player, cardId)
+            gameState.deckManager.DiscardCard(player, cardId)
+            gameState.trixelManager.AddTrixel(player, trixelCondition_oOWJ5)
         } catch (err) {
             socket.emit("player-card-season-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`)
             console.log(err)
@@ -52,19 +45,40 @@ export function playerCardHandler(socket: Socket) {
         const infoParams: ICardOperationParams = {
             player: player,
             gameState: gameState,
-            axial: params?.axial,
-            targetPlayerId: params?.targetPlayerId,
-            targetCardId: params?.targetCardId,
-            axialToNum: params?.axialToNum
+            ...params
         }
-        const res = cardEposMap[(cardId)]
+        const res = cardSeasonMap[(cardId)]
         const { Info } = res
         const info: ICardOperationResponse = Info(infoParams)
         socket.emit("player-card-info", info)
 
     })
-    socket.on("player-card-trixel",()=>{
-
+    socket.on("player-card-trixel", ({ cardId, params }: IPlayerCardInput) => {
+        const gameState: GameState = socket.gameState!
+        const player: Player = socket.player!
+        //Check card in trixelMap
+        // if (!cardActionMap.has(cardId)) {
+        //     socket.emit("player-card-season-error", `PlayerCardSeason: card id is not found, cardId: ${cardId}`)
+        //     return
+        // }
+        try {
+            if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
+                throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`)
+                return
+            }
+            const res = cardTrixelMap[(cardId)]
+            const { Action } = res
+            const actionParams: ICardOperationParams = {
+                player: player,
+                gameState: gameState,
+                ...params
+            }
+            Action(actionParams)
+            gameState.deckManager.DiscardCard(player, cardId)
+        } catch (err) {
+            socket.emit("player-card-trixel-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`)
+            console.log(err)
+        }
     })
     socket.on("player-token", () => {
 

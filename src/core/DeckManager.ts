@@ -56,8 +56,7 @@ export class DeckManager {
         const eposCardId = this.eposCards.pop()!
         this.playersDeck.get(player.id)?.addCard(eposCardId)
     }
-    // giveRandomEpos
-    PlayCard(player: Player, cardId: string): void {
+    DiscardCard(player: Player, cardId: string): void {
         const deck: Deck = this.playersDeck.get(player.id)!
         if (!cardActionMap.has(cardId)) {
             throw new Error("DeckManager.PlayCard: cardId not found")

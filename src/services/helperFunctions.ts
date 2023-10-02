@@ -93,7 +93,7 @@ export const initData = () => {
     gameState.deckManager.AddCard(player1, "3d138112-6a36-467a-8255-bcfb42fe7398")
     gameState.deckManager.AddCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015")
     gameState.deckManager.AddCard(player1, "ddc241a2-2fd1-4926-8860-4eae221b93d4")
-
+    gameState.deckManager.AddCard(player1, "9422292c-bd05-40b5-95bc-140dbd6bb3c2")
 
     gameState.deckManager.AddCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
     gameState.deckManager.AddCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")

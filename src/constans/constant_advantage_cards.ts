@@ -17,8 +17,7 @@ export const Wasteland: Card = {
     card_type: Card_type.Advantage,
     timing: Timing_to_play.Trixel,
     badge: Badge.None,
-    trixelCondition: "",
-    secondDescription: ""
+    trixelCondition: ""
 } as const
 
 export const Meadow: Card = {

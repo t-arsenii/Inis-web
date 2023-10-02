@@ -3,12 +3,13 @@ import { v4 } from "uuid";
 import { HexGrid } from "./HexGrid";
 import { Deck, DeckManager } from "./DeckManager";
 import { GetRandomDirection, shuffle } from "../services/helperFunctions";
-import { MAX_CITADELS, MAX_SANCTUARIES } from "../constans/constant_3_players";
+import { MAX_CHALLENGER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES } from "../constans/constant_3_players";
 import { TurnOrder, GameStage } from "../types/Enums";
 import { PlayerTurnOrder } from "../types/Types";
 import { HexGridToJson, InitHexGrid } from "../services/HexGridService";
 import { FightManager } from "./Fighter";
 import { TrixelManager } from "./TrixelManager";
+import EventEmitter from "events";
 
 export class GameState {
   id: string = "";
@@ -19,13 +20,16 @@ export class GameState {
     direction: undefined!,
     activePlayerId: ""
   }
-  deckManager: DeckManager = new DeckManager(this)
-  fightManager: FightManager = new FightManager(this)
-  map: HexGrid = new HexGrid(this)
   gameStage: GameStage = undefined!
   gameStatus: boolean = false
   roundCounter: number = 0
+  deedTokens: number = MAX_DEED_TOKENS
+  challengerTokens: number = MAX_CHALLENGER_TOKENS
+  deckManager: DeckManager = new DeckManager(this)
+  fightManager: FightManager = new FightManager(this)
   trixelManager: TrixelManager = new TrixelManager(this)
+  map: HexGrid = new HexGrid(this)
+  eventEmitter: EventEmitter = new EventEmitter()
   constructor(lobbyId?: string) {
     this.id = lobbyId || v4();
   }
@@ -98,11 +102,6 @@ export class GameState {
       this.turnOrder.playersId.push(player.id)
     }
   }
-  // deletePlayer(userId: string): void {
-  //   if (this.players.size != 0) {
-  //     this.players.delete(userId)
-  //   }
-  // }
   GetPlayerById(userId: string): Player | undefined {
     return this.players.get(userId)
   }
@@ -113,5 +112,12 @@ export class GameState {
       }
     }
     return undefined;
+  }
+  AddDeedToken(player: Player) {
+    if (this.deedTokens < 0) {
+      throw new Error("gameState.AddDeedToken: no tokens left")
+    }
+    this.deedTokens--
+    player.deedTokens++
   }
 }

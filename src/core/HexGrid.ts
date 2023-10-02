@@ -218,11 +218,10 @@ class FieldsController {
     }
     public SetHolidayField(axial: axialCoordiantes) {
         if (!this.hexGrid.HasHexagon(axial)) {
-            return
+            throw new Error("FieldsController.SetHolidayField: axial not found")
         }
         const hex: Hexagon = this.hexGrid.grid.get(AxialToString(axial))!
         this.holiday = hex
-        return
     }
 }
 export class HexGrid {

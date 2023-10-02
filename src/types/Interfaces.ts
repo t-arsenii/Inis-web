@@ -7,7 +7,8 @@ export interface ICardParams {
     axial?: axialCoordiantes | axialCoordiantes[]
     targetPlayerId?: string,
     axialToNum?: { axial: axialCoordiantes, num: number }[] | { axial: axialCoordiantes, num: number }
-    targetCardId?: string
+    targetCardId?: string,
+    CardVariation?: number
 }
 export interface IAttackerInputParams {
     attackerAction: AttackerAction,

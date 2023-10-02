@@ -6,7 +6,6 @@ import { Deck, DeckManager } from "./DeckManager";
 import { GameState } from "./GameState";
 import { Hexagon } from "./HexGrid";
 import { Player } from "./Player";
-
 export class FightManager {
     private fights: Fight[] = []
     public currentFight: Fight | undefined
@@ -19,7 +18,7 @@ export class FightManager {
         if (hex.field.playersClans.size < 2) {
             throw new Error("FightManager.InitFight: Can't start a fight, not enough players")
         }
-        const fight: Fight = new Fight(hex, playerAttacker, this.gameState.turnOrder)
+        const fight: Fight = new Fight(hex, playerAttacker, this.gameState)
         if (!this.currentFight) {
             this.currentFight = fight
         }
@@ -72,7 +71,7 @@ export class FightManager {
             throw new Error("FightManager.DeffenderAction: no cardId for card action")
         }
         try {
-            this.currentFight.PerformAttack(deffenderPlayer, deffenderAction, this.gameState, cardId)
+            this.currentFight.PerformAttack(deffenderPlayer, deffenderAction, cardId)
         } catch (err) {
             console.error(err)
             throw err
@@ -108,6 +107,7 @@ export class FightManager {
     }
 }
 class Fight {
+    gameState: GameState
     players: Record<string, { clansNum: number, peace: boolean }> = {};
     FightTurnOrder: PlayerTurnOrder = {
         playersId: [],
@@ -120,17 +120,18 @@ class Fight {
         defenderPlayerId: undefined
     }
     fightHex: Hexagon;
-    constructor(hex: Hexagon, playerAttacker: Player, turnOrder: PlayerTurnOrder) {
+    constructor(hex: Hexagon, playerAttacker: Player, gameState: GameState) {
         this.fightHex = hex
+        this.gameState = gameState
         hex.field.playersClans.forEach((clansNum, pId) => {
             this.players[pId] = { clansNum, peace: false };
         });
         hex.field.playersClans
-        let playerFighterIds: string[] = turnOrder.playersId.filter((pId) => {
+        let playerFighterIds: string[] = gameState.turnOrder.playersId.filter((pId) => {
             return pId in this.players;
         });
         this.FightTurnOrder.playersId = playerFighterIds
-        this.FightTurnOrder.direction = turnOrder.direction
+        this.FightTurnOrder.direction = gameState.turnOrder.direction
         this.FightTurnOrder.activePlayerId = playerAttacker.id
     }
     AttackRequest(player: Player, targetPlayerId: string) {
@@ -144,22 +145,22 @@ class Fight {
         this.attackCycle.attackerPlayerId = player.id
         this.attackCycle.defenderPlayerId = targetPlayerId
     }
-    PerformAttack(deffenderPlayer: Player, defenderAction: DeffenderAction, gameState: GameState, cardId?: string) {
+    PerformAttack(deffenderPlayer: Player, defenderAction: DeffenderAction, cardId?: string) {
         if (!this.attackCycle.attackerPlayerId || !this.attackCycle.defenderPlayerId || !this.attackCycle.status) {
             throw new Error("Figth.PerformAttack: attacker cycle error")
         }
         if (defenderAction === DeffenderAction.Clan) {
             this.players[this.attackCycle.defenderPlayerId].clansNum -= 1
-            gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r })
+            this.gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r })
 
-            const playerAttacker: Player = gameState.players.get(this.attackCycle.attackerPlayerId)!
-            gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty)
+            const playerAttacker: Player = this.gameState.players.get(this.attackCycle.attackerPlayerId)!
+            this.gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty)
 
         } else if (defenderAction === DeffenderAction.Card) {
             if (!cardId) {
                 throw new Error("Figth.PerformAttack: no card id provided")
             }
-            gameState.deckManager.PlayCard(deffenderPlayer, cardId)
+            this.gameState.deckManager.DiscardCard(deffenderPlayer, cardId)
         }
         this.attackCycle.status = false
         this.attackCycle.attackerPlayerId = undefined
@@ -178,9 +179,10 @@ class Fight {
                 this.FightTurnOrder.playersId = this.FightTurnOrder.playersId.filter(id => pId !== id)
             }
         });
-        this.NextFightTurn()
+        this.startTimerAndListenForAction(10000)
     }
     private NextFightTurn(): void {
+        this.gameState.trixelManager.ClearTrixel()
         const activePlayerId = this.FightTurnOrder.activePlayerId
         const activePlayerIndex = this.FightTurnOrder.playersId.indexOf(activePlayerId)
         let nextIndex: number = 0
@@ -194,4 +196,26 @@ class Fight {
         const newActivePlayerId = this.FightTurnOrder.playersId[nextIndex]
         this.FightTurnOrder.activePlayerId = newActivePlayerId
     }
+    private startTimerAndListenForAction(timeoutMs: number) {
+        const timer = setTimeout(() => {
+            console.log("Action is not occurred")
+            this.NextFightTurn();
+        }, timeoutMs);
+
+        this.gameState.eventEmitter.on('TrixelEvent', () => {
+            clearTimeout(timer);
+            console.log("Action occurred.");
+            this.NextFightTurn();
+        });
+    }
+    toJSON() {
+        const { players, FightTurnOrder, attackCycle, fightHex } = this
+        return {
+            players,
+            FightTurnOrder,
+            attackCycle,
+            fightHex
+        }
+    }
 }
+
