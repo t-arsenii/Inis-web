@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { gamesManager } from "../core/GameStateManager";
 import { Player } from "../core/Player";
-import { cardActionMap } from "../constans/constant_action_cards";
+import { cardActionMap } from "../core/constans/constant_action_cards";
 import { GameState } from "../core/GameState";
 import { Console } from "console";
 import { playerInfo } from "../types/Types";
@@ -53,9 +53,13 @@ export default function handleSocketConnections(io: Server) {
             const isTerritory = gameState?.map.fieldsController.AddRandomField(axial)
             socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
         })
-        socket.on("player-action", (actionType: string, gameId: string, userId: string) => {
-            // console.log(`card-event room id: ${gameId}`);
-            // socket.to(gameId).emit("card-event-server", `Player ${socket.id} played card: ${cardDictionary[cardId].title}`);
+        socket.on("player-nextTurn", () => {
+            const gameState: GameState = socket.gameState!
+            const player: Player = socket.player!
+            if (player.id !== gameState.turnOrder.activePlayerId) {
+                return
+            }
+            gameState.NextTurn()
         });
     });
 }

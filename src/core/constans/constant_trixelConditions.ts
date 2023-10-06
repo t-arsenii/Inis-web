@@ -1,4 +1,4 @@
-import { TrixelCondition } from "../types/Types";
+import { TrixelCondition } from "../../types/Types";
 export const trixelCondition_bxaty: TrixelCondition = {
     id: "bxaty",
     description: "after your manuver delete 1 or more enemy clans"

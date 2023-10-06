@@ -1,5 +1,5 @@
-import { Card_type, Timing_to_play, Badge } from "../types/Enums";
-import { Card } from "../types/Types";
+import { Card_type, Timing_to_play, Badge } from "../../types/Enums";
+import { Card } from "../../types/Types";
 //Advantage Cards
 export const Forest: Card = {
     id: "16bea132-7365-47c3-a2ce-9610a82eceff",

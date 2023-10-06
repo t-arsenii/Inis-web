@@ -2,11 +2,6 @@ import express, { Express, Request, Response } from "express"
 import { Server, Socket } from "socket.io"
 import http from 'http';
 import cors from 'cors';
-import { GameState } from "./core/GameState";
-import { v4 } from "uuid"
-import { Player } from "./core/Player";
-import { cardActionMap } from "./constans/constant_action_cards";
-import { gamesManager } from "./core/GameStateManager";
 import gamesRoutes from "./routes/gamesRoutes"
 import handleSocketConnections from "./sockets/socket"
 import { initData } from "./services/helperFunctions";

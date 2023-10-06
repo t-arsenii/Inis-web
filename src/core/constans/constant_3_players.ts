@@ -24,3 +24,4 @@ export const MAX_SANCTUARIES = 9;
 export const CAPITAL = 1;
 
 //WINNING CONDITIONS
+export const MIN_WINNING_AMOUNT = 6

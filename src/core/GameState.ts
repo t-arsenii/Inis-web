@@ -3,13 +3,14 @@ import { v4 } from "uuid";
 import { HexGrid } from "./HexGrid";
 import { Deck, DeckManager } from "./DeckManager";
 import { GetRandomDirection, shuffle } from "../services/helperFunctions";
-import { MAX_CHALLENGER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES } from "../constans/constant_3_players";
-import { TurnOrder, GameStage } from "../types/Enums";
+import { MAX_CHALLENGER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES, MIN_WINNING_AMOUNT } from "./constans/constant_3_players";
+import { TurnOrder, GameStage, ChallengerTokenType, playerAction } from "../types/Enums";
 import { PlayerTurnOrder } from "../types/Types";
 import { HexGridToJson, InitHexGrid } from "../services/HexGridService";
 import { FightManager } from "./Fighter";
 import { TrixelManager } from "./TrixelManager";
 import EventEmitter from "events";
+import { ChallengerClans, ChallengerSanctuaries, ChallengerTerritories } from "../services/GameStateService";
 
 export class GameState {
   id: string = "";
@@ -88,6 +89,7 @@ export class GameState {
     const newActivePlayerId = this.turnOrder.playersId[nextIndex]
     this.turnOrder.activePlayerId = newActivePlayerId
     this.players.get(newActivePlayerId)!.isActive = true
+    this.trixelManager.ClearTrixel() //clearing all trixel data
   }
   AddPlayer(player: Player): void {
     if (this.players.size < this.numPlayers) {
@@ -119,5 +121,40 @@ export class GameState {
     }
     this.deedTokens--
     player.deedTokens++
+  }
+  UpdateChallenger() {
+    throw new Error("UpdateChallenger exception")
+  }
+  TakeChallengerToken(player: Player, tokenType: ChallengerTokenType) {
+    const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens
+    let challengerResult = false
+    switch (tokenType) {
+      case ChallengerTokenType.Clans:
+        challengerResult = ChallengerClans(this, player, winning_amount)
+        player.challengerTokens.clans = challengerResult
+        break;
+      case ChallengerTokenType.Sanctuaries:
+        challengerResult = ChallengerSanctuaries(this, player, winning_amount)
+        player.challengerTokens.sancturies = challengerResult
+        break;
+      case ChallengerTokenType.Territories:
+        challengerResult = ChallengerTerritories(this, player, winning_amount)
+        player.challengerTokens.territories = challengerResult
+        break;
+      default:
+        throw new Error("GameState.TakeChallengerToken: error tokenType")
+    }
+    if (!challengerResult) {
+      throw new Error("GameState.TakeChallengerToken: can't take token")
+    }
+  }
+  TryEndRound() {
+    let passCheck = Array.from(this.players.values()).every(player => player.lastAction === playerAction.Pass);
+    if (passCheck) {
+      this.gameStage = GameStage.Gathering
+      this.trixelManager.ClearTrixel()
+      this.players.forEach(player => player.lastAction = playerAction.None)
+    }
+    
   }
 }

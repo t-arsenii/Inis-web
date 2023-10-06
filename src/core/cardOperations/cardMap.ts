@@ -1,4 +1,4 @@
-import { Bard, Citadel, Conquest, Druid, NewClans, PeasantsWorkers, Sanctuary } from "../../constans/constant_action_cards";
+import { Bard, Citadel, Conquest, Druid, NewClans, PeasantsWorkers, Sanctuary } from "../constans/constant_action_cards";
 import { ICardOperationParams, ICardOperationResponse } from "../../types/Interfaces";
 import { CitadelActionInfo, ConquestActionInfo, DruidActionInfo, NewClansActionInfo, PeasantsWorkersActionInfo, SanctuaryActionInfo } from "./cardActionInfo";
 import { BardTrixel, CitadelAction, ConquestAction, DruidAction, NewClansAction, PeasantsWorkersAction, SanctuaryAction } from "./cardAction";

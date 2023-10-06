@@ -1,8 +1,8 @@
 import { HexGrid, Hexagon } from "../HexGrid";
-import { Sanctuary, cardActionMap } from "../../constans/constant_action_cards";
+import { Sanctuary, cardActionMap } from "../constans/constant_action_cards";
 import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
-import { trixelCondition_bxaty } from "../../constans/constant_trixelConditions";
+import { trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { Player } from "../Player";
 export function BardSeason({ gameState, player }: ICardOperationParams): void {
     gameState.deckManager.AddRandomEposCard(player)
@@ -23,10 +23,10 @@ export function DruidSeason({ gameState, player, targetCardId }: ICardOperationP
     if (deck.ActionCards.length === 1) {
         throw new Error("DruidSeason: druid is a last card")
     }
-    if (!deckManager.currentDiscard.includes(targetCardId)) {
+    if (!deckManager.actionDiscard.includes(targetCardId)) {
         throw new Error(`DruidSeason: no card with id:${targetCardId}, is in discard`)
     }
-    deckManager.currentDiscard = deckManager.currentDiscard.filter(cId => cId !== targetCardId)
+    deckManager.actionDiscard = deckManager.actionDiscard.filter(cId => cId !== targetCardId)
     deckManager.AddCard(player, targetCardId)
 
 

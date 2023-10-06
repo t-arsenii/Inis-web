@@ -1,10 +1,10 @@
-import { cardActionMap } from "../constans/constant_action_cards";
+import { cardActionMap } from "./constans/constant_action_cards";
 import { shuffle } from "../services/helperFunctions";
 import { Card } from "../types/Types"
 import { Card_type } from "../types/Enums"
 import { GameState } from "./GameState";
 import { Player } from "./Player";
-import { cardEposMap } from "../constans/constant_epos_cards";
+import { cardEposMap } from "./constans/constant_epos_cards";
 export class Deck {
     ActionCards: string[] = [];
     EposCards: string[] = [];
@@ -31,9 +31,9 @@ export class DeckManager {
     deckSize: number = 4
     gameState: GameState
     playersDeck: Map<string, Deck> = new Map()
-    currentDiscard: string[] = []
     eposCards: string[] = []
-    eposCardsDiscard: string[] = []
+    eposDiscard: string[] = []
+    actionDiscard: string[] = []
     defferedCard: string = ""
     constructor(gameState: GameState) {
         this.gameState = gameState
@@ -65,15 +65,16 @@ export class DeckManager {
         switch (playedCard.card_type) {
             case Card_type.Action:
                 deck.ActionCards = deck.ActionCards.filter(cardId => cardId !== playedCard.id)
+                this.actionDiscard.push(playedCard.id)
                 break
             case Card_type.Advantage:
                 deck.AdvantagesCards = deck.AdvantagesCards.filter(cardId => cardId !== playedCard.id)
                 break
             case Card_type.Epos:
                 deck.EposCards = deck.EposCards.filter(cardId => cardId !== playedCard.id)
+                this.eposDiscard.push(playedCard.id)
                 break
         }
-        this.currentDiscard.push(playedCard.id)
 
     }
     DealCards() {

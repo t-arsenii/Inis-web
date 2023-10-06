@@ -1,5 +1,5 @@
-import { Badge, Card_type, Timing_to_play } from "../types/Enums";
-import { Card } from "../types/Types";
+import { Badge, Card_type, Timing_to_play } from "../../types/Enums";
+import { Card } from "../../types/Types";
 
 export const DagdaHarp: Card = {
     id: "b90e911f-9a3f-4686-bd7c-4abe07f16b0a",

@@ -1,4 +1,5 @@
-import { trixelCondition_bxaty } from "../constans/constant_trixelConditions";
+import { Hills_ter } from "./constans/constant_territories";
+import { trixelCondition_NzLys, trixelCondition_bxaty } from "./constans/constant_trixelConditions";
 import { AttackerAction, DeffenderAction, GameStage, TurnOrder } from "../types/Enums";
 import { IAttackerParams } from "../types/Interfaces";
 import { AttackerCycle, PlayerTurnOrder } from "../types/Types";
@@ -76,8 +77,21 @@ export class FightManager {
             console.error(err)
             throw err
         }
+        this.currentFight.startTimerAndListenForTrixel(10000)
         this.currentFight.UpdateFight()
         this.TryCurrentFightTermination()
+    }
+    SkipDeffenderAction(deffenderPlayer: Player) {
+        if (!this.currentFight) {
+            return
+        }
+        if (!this.currentFight.attackCycle) {
+            return
+        }
+        if (this.currentFight.attackCycle.defenderPlayerId !== deffenderPlayer.id) {
+            return
+        }
+        this.currentFight.RestoreAttackCycle()
     }
     PlayerPeaceVote(player: Player) {
         if (!this.currentFight) {
@@ -141,6 +155,11 @@ class Fight {
         if (!this.FightTurnOrder.playersId.includes(targetPlayerId)) {
             throw new Error("Fight.AttackRequest: wrong player id")
         }
+        //Trixel for hills
+        if (this.fightHex.field.territoryId === Hills_ter.id) {
+            const defPlayer = this.gameState.GetPlayerById(targetPlayerId)!
+            this.gameState.trixelManager.AddTrixel(defPlayer, trixelCondition_NzLys)
+        }
         this.attackCycle.status = true
         this.attackCycle.attackerPlayerId = player.id
         this.attackCycle.defenderPlayerId = targetPlayerId
@@ -161,11 +180,13 @@ class Fight {
                 throw new Error("Figth.PerformAttack: no card id provided")
             }
             this.gameState.deckManager.DiscardCard(deffenderPlayer, cardId)
+            this.RestoreAttackCycle()
         }
+    }
+    RestoreAttackCycle() {
         this.attackCycle.status = false
         this.attackCycle.attackerPlayerId = undefined
         this.attackCycle.defenderPlayerId = undefined
-
     }
     PerformMove(player: Player, hex: Hexagon) {
         //In development
@@ -179,7 +200,6 @@ class Fight {
                 this.FightTurnOrder.playersId = this.FightTurnOrder.playersId.filter(id => pId !== id)
             }
         });
-        this.startTimerAndListenForAction(10000)
     }
     private NextFightTurn(): void {
         this.gameState.trixelManager.ClearTrixel()
@@ -196,7 +216,7 @@ class Fight {
         const newActivePlayerId = this.FightTurnOrder.playersId[nextIndex]
         this.FightTurnOrder.activePlayerId = newActivePlayerId
     }
-    private startTimerAndListenForAction(timeoutMs: number) {
+    public startTimerAndListenForTrixel(timeoutMs: number) {
         const timer = setTimeout(() => {
             console.log("Action is not occurred")
             this.NextFightTurn();

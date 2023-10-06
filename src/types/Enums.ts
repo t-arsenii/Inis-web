@@ -19,18 +19,15 @@ export enum Badge {
     MoveAndAttack,
     None
 }
-
 export enum StartStructure {
     Shrine
 }
-
 export enum playerAction {
     None,
     Card,
     Token,
     Pass
 }
-
 export enum GameStage {
     CapitalSetup = "CAPITAL_SETUP",
     ClansSetup = "CLANS_SETUP",
@@ -42,7 +39,7 @@ export enum TurnOrder {
     clockwise = "CLOCKWISE",
     counter_clockwise = "COUNTER_CLOCKWISE"
 }
-export enum ActionType{
+export enum ActionType {
     Atack,
     Defend
 }
@@ -51,8 +48,12 @@ export enum AttackerAction {
     Move,
     Epos
 }
-
-export enum DeffenderAction{
+export enum DeffenderAction {
     Clan,
     Card
+}
+export enum ChallengerTokenType {
+    Clans = "CLANS",
+    Sanctuaries = "SAN",
+    Territories = "TER"
 }
