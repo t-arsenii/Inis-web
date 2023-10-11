@@ -5,6 +5,7 @@ import { Socket } from "socket.io";
 import { gamesManager } from "../core/GameStateManager";
 import { GameStage, TurnOrder } from "../types/Enums";
 import { Deck } from "../core/DeckManager";
+import { Hexagon } from "../core/map/HexGrid";
 export function shuffle<T>(array: T[]): T[] {
     const shuffledArray = array.slice(); // Copy the original array
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -35,6 +36,10 @@ export function AxialToString(axial: axialCoordiantes): string {
     return `${axial.q},${axial.r}`
 }
 
+export function hexToAxialCoordinates(hex: Hexagon): axialCoordiantes {
+    return { q: hex.q, r: hex.r }
+}
+
 export function CheckSocketGameConnection(socket: Socket, gameId: string): boolean {
     if (!gamesManager.socketsConnInfo.has(socket.id)) {
         return false
@@ -57,8 +62,8 @@ export function GetGameStateAndPlayer(socket: Socket, gameId: string, userId: st
 
 
 export const initData = () => {
-    const gameId = "54a94296-eb0b-45dc-a6f6-544559cf6b8b"
-    const gameState: GameState = new GameState(gameId)
+    const DebugGameId = "54a94296-eb0b-45dc-a6f6-544559cf6b8b"
+    const gameState: GameState = new GameState(DebugGameId)
     const player1Id = "6dd6246a-f15b-43f8-bd67-5a38aa91184e"
     const player2Id = "66182a83-8824-481a-8889-39b60ab361fd"
     const player3Id = "363ed71a-056c-4fc6-9779-7dcc38d31e9c"
@@ -74,7 +79,7 @@ export const initData = () => {
     gamesManager.createGame(gameState)
 
     //Initing game
-    gameState.InitGame()
+    gameState.Init()
 
     //getting players objects
     const player1: Player = gameState.GetPlayerById(player1Id)!
@@ -98,7 +103,6 @@ export const initData = () => {
     gameState.deckManager.AddCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
     gameState.deckManager.AddCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
     gameState.deckManager.AddCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015")
-    //Skipping beginning stage
     //setting capital
     gameState.map.fieldsController.SetCapital({ q: 0, r: 0 })
 
@@ -106,8 +110,40 @@ export const initData = () => {
     gameState.map.clansController.AddClans(player1, 2, { q: 0, r: 0 })
     gameState.map.clansController.AddClans(player2, 2, { q: 0, r: 0 })
     gameState.map.clansController.AddClans(player3, 2, { q: 0, r: 1 })
-    gameState.map.setupController.SkipSetupClans()
+    //Skipping beginning stage
+    gameState.map.setupController.SkipSetupClans() //skipping setup clans
+    gameState.gameStage = GameStage.Season //Changing game stage
+}
 
-    //Changing game stage
-    gameState.gameStage = GameStage.Season
+export function getKeyWithUniqueMaxValue(map: Map<string, number>) {
+    let maxKey = null;
+    let maxValue = -Infinity;
+    let isUnique = true;
+    for (const [key, value] of Object.entries(map)) {
+        if (value > maxValue) {
+            maxKey = key;
+            maxValue = value;
+            isUnique = true; // Reset isUnique when a new maximum value is found
+        } else if (value === maxValue) {
+            isUnique = false; // There is another key with the same maximum value
+        }
+    }
+
+    return isUnique ? maxKey : null;
+}
+
+export function getKeysWithMaxValue(map: Map<string, number>) {
+    let maxKeys: string[] = [];
+    let maxValue = -Infinity;
+
+    map.forEach((value, key) => {
+        if (value > maxValue) {
+            maxKeys = [key];
+            maxValue = value;
+        } else if (value === maxValue) {
+            maxKeys.push(key);
+        }
+    })
+
+    return maxKeys;
 }

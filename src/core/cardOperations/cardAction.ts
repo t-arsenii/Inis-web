@@ -1,4 +1,4 @@
-import { HexGrid, Hexagon } from "../HexGrid";
+import { HexGrid, Hexagon } from "../map/HexGrid";
 import { Sanctuary, cardActionMap } from "../constans/constant_action_cards";
 import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
@@ -90,8 +90,8 @@ export function SanctuarySeason({ gameState, player, axial }: ICardOperationPara
     }
     gameState.map.fieldsController.sanctuariesLeft--
     hex.field.sanctuaryCount++
-    gameState.deckManager.AddRandomEposCard(player)
     //Add Epos card to player
+    // gameState.deckManager.AddRandomEposCard(player)
 }
 export function CitadelSeason({ gameState, player, axial }: ICardOperationParams): void {
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {

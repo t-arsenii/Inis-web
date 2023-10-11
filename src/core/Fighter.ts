@@ -5,11 +5,11 @@ import { IAttackerParams } from "../types/Interfaces";
 import { AttackerCycle, PlayerTurnOrder } from "../types/Types";
 import { Deck, DeckManager } from "./DeckManager";
 import { GameState } from "./GameState";
-import { Hexagon } from "./HexGrid";
+import { Hexagon } from "./map/HexGrid";
 import { Player } from "./Player";
 export class FightManager {
     private fights: Fight[] = []
-    public currentFight: Fight | undefined
+    public currentFight: Fight | null = null
     private status: boolean = false
     private gameState: GameState
     constructor(gameState: GameState) {
@@ -109,12 +109,12 @@ export class FightManager {
         }
         const isPeace = Object.values(this.currentFight.players).every((data) => data.peace);
         if (this.currentFight.FightTurnOrder.playersId.length <= 1 || isPeace) {
-            if (this.fights.length > 0) {
+            if (this.fights.length > 1) {
                 this.fights = this.fights.filter((f) => f !== this.currentFight);
                 this.currentFight = this.fights[0]
             } else {
                 this.fights.pop();
-                this.currentFight = undefined;
+                this.currentFight = null;
                 this.gameState.gameStage = GameStage.Season;
             }
         }
@@ -130,8 +130,8 @@ class Fight {
     }
     attackCycle: AttackerCycle = {
         status: false,
-        attackerPlayerId: undefined,
-        defenderPlayerId: undefined
+        attackerPlayerId: null,
+        defenderPlayerId: null
     }
     fightHex: Hexagon;
     constructor(hex: Hexagon, playerAttacker: Player, gameState: GameState) {
@@ -180,13 +180,13 @@ class Fight {
                 throw new Error("Figth.PerformAttack: no card id provided")
             }
             this.gameState.deckManager.DiscardCard(deffenderPlayer, cardId)
-            this.RestoreAttackCycle()
         }
+        this.RestoreAttackCycle()
     }
     RestoreAttackCycle() {
         this.attackCycle.status = false
-        this.attackCycle.attackerPlayerId = undefined
-        this.attackCycle.defenderPlayerId = undefined
+        this.attackCycle.attackerPlayerId = null
+        this.attackCycle.defenderPlayerId = null
     }
     PerformMove(player: Player, hex: Hexagon) {
         //In development

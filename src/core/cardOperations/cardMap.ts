@@ -1,34 +1,34 @@
 import { Bard, Citadel, Conquest, Druid, NewClans, PeasantsWorkers, Sanctuary } from "../constans/constant_action_cards";
 import { ICardOperationParams, ICardOperationResponse } from "../../types/Interfaces";
 import { CitadelActionInfo, ConquestActionInfo, DruidActionInfo, NewClansActionInfo, PeasantsWorkersActionInfo, SanctuaryActionInfo } from "./cardActionInfo";
-import { BardTrixel, CitadelAction, ConquestAction, DruidAction, NewClansAction, PeasantsWorkersAction, SanctuaryAction } from "./cardAction";
+import { BardTrixel, CitadelSeason, ConquestSeason, DruidSeason, NewClansSeason, PeasantsWorkersSeason, SanctuarySeason } from "./cardAction";
 
 type CardActionFunction = (params: ICardOperationParams) => void;
 type CardInfoFunction = (params: ICardOperationParams) => ICardOperationResponse;
 export const cardSeasonMap: Record<string, { Info: CardInfoFunction, Action: CardActionFunction }> = {
     [Sanctuary.id]: {
         Info: SanctuaryActionInfo,
-        Action: SanctuaryAction
+        Action: SanctuarySeason
     },
     [Citadel.id]: {
         Info: CitadelActionInfo,
-        Action: CitadelAction
+        Action: CitadelSeason
     },
     [NewClans.id]: {
         Info: NewClansActionInfo,
-        Action: NewClansAction
+        Action: NewClansSeason
     },
     [Druid.id]: {
         Info: DruidActionInfo,
-        Action: DruidAction
+        Action: DruidSeason
     },
     [PeasantsWorkers.id]: {
         Info: PeasantsWorkersActionInfo,
-        Action: PeasantsWorkersAction
+        Action: PeasantsWorkersSeason
     },
     [Conquest.id]: {
         Info: ConquestActionInfo,
-        Action: ConquestAction
+        Action: ConquestSeason
     }
 }
 export const cardTrixelMap: Record<string, { Info?: CardInfoFunction, Action: CardActionFunction }> = {

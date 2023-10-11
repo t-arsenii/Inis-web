@@ -3,7 +3,6 @@ import { gamesManager } from "../core/GameStateManager";
 import { Player } from "../core/Player";
 import { cardActionMap } from "../core/constans/constant_action_cards";
 import { GameState } from "../core/GameState";
-import { Console } from "console";
 import { playerInfo } from "../types/Types";
 import { axialCoordiantes } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameLobbyEvents";

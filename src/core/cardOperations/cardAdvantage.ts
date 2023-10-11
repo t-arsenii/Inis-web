@@ -2,7 +2,7 @@ import { StoneCircle } from "../constans/constant_advantage_cards";
 import { territoryMap } from "../constans/constant_territories";
 import { trixelCondition_1WIFg, trixelCondition_NzLys, trixelCondition_oOWJ5 } from "../constans/constant_trixelConditions";
 import { ICardOperationParams } from "../../types/Interfaces";
-import { HexGrid, Hexagon } from "../HexGrid";
+import { HexGrid, Hexagon } from "../map/HexGrid";
 
 //пустошь, лес, каменный круг, долина, холмы, горы
 export function WastelandTrixel({ gameState, player, targetPlayerId }: ICardOperationParams) {

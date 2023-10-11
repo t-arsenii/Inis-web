@@ -27,7 +27,7 @@ export function gameLobbyHandler(socket: Socket) {
         const gameState: GameState = playerInfo.gameState
         const player: Player = playerInfo.player
 
-        player.socket = undefined
+        player.socket = null
         gamesManager.socketsConnInfo.delete(socket.id)
     });
     socket.on("gameLobby-init", (gameId) => {
@@ -36,7 +36,7 @@ export function gameLobbyHandler(socket: Socket) {
             return
         }
         try {
-            gameState.InitGame()
+            gameState.Init()
         }
         catch (err) {
             console.log(err)

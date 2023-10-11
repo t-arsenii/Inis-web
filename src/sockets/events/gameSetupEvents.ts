@@ -4,11 +4,6 @@ import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../services
 import { GameStage } from "../../types/Enums";
 import { GameState } from "../../core/GameState";
 import { Player } from "../../core/Player";
-// interface IGameStage {
-//     gameId: string,
-//     userId: string,
-//     axial: axialCoordiantes
-// }
 export function gameSetupHandler(socket: Socket) {
     socket.on("game-setup-clans", (axial: axialCoordiantes) => {
         const gameState: GameState = socket.gameState!

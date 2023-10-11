@@ -16,11 +16,11 @@ export type TrixelCondition = {
     readonly description: string
 }
 export type Territory = {
-    id: string
+    id: string,
     title: string
-    description: string | undefined
+    description: string
     cardId: string
-    startStructure: StartStructure | undefined
+    startStructure?: StartStructure
 }
 export type axialCoordiantes = {
     q: number
@@ -37,11 +37,11 @@ export type playerInfo = {
 }
 export type AttackerCycle = {
     status: boolean,
-    attackerPlayerId: string | undefined,
-    defenderPlayerId: string | undefined
+    attackerPlayerId: string | null,
+    defenderPlayerId: string | null
 }
 export type challengerTokens = {
-    sancturies: boolean,
+    sanctuaries: boolean,
     clans: boolean,
     territories: boolean
 }

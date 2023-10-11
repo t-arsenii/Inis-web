@@ -5,11 +5,12 @@ import { Card_type } from "../types/Enums"
 import { GameState } from "./GameState";
 import { Player } from "./Player";
 import { cardEposMap } from "./constans/constant_epos_cards";
+import { territoryMap } from "./constans/constant_territories";
 export class Deck {
     ActionCards: string[] = [];
     EposCards: string[] = [];
     AdvantagesCards: string[] = [];
-    addCard(cardId: string) {
+    AddCard(cardId: string) {
         if (!cardActionMap.has(cardId)) {
             throw new Error("Deck.addCard: cardId not found")
         }
@@ -25,6 +26,9 @@ export class Deck {
                 this.AdvantagesCards.push(card.id)
                 break
         }
+    }
+    ClearActionCards() {
+        this.ActionCards = [];
     }
 }
 export class DeckManager {
@@ -54,7 +58,7 @@ export class DeckManager {
             throw new Error("DeckManager.AddRandomEpos: no epos cards left")
         }
         const eposCardId = this.eposCards.pop()!
-        this.playersDeck.get(player.id)?.addCard(eposCardId)
+        this.playersDeck.get(player.id)?.AddCard(eposCardId)
     }
     DiscardCard(player: Player, cardId: string): void {
         const deck: Deck = this.playersDeck.get(player.id)!
@@ -75,23 +79,14 @@ export class DeckManager {
                 this.eposDiscard.push(playedCard.id)
                 break
         }
-
-    }
-    DealCards() {
-        const Cards = shuffle(Array.from(cardActionMap.keys()))
-        this.playersDeck.forEach((deck, playerId) => {
-            for (let i = 0; i < this.deckSize; i++) {
-                deck.addCard(Cards.pop()!);
-            }
-        })
-        this.defferedCard = Cards.pop()!
     }
     AddCard(player: Player, cardId: string) {
         const deck: Deck = this.playersDeck.get(player.id)!
         if (!cardActionMap.has(cardId)) {
             throw new Error("DeckManager.addCard: cardId not found")
         }
-        const card: Card = cardActionMap.get(cardId)!
+        const
+            card: Card = cardActionMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
                 deck.ActionCards.push(card.id)
@@ -103,5 +98,25 @@ export class DeckManager {
                 deck.EposCards.push(card.id)
                 break
         }
+    }
+    DealSeasonCards() {
+        const Cards = shuffle(Array.from(cardActionMap.keys()))
+        this.playersDeck.forEach((deck, playerId) => {
+            deck.ClearActionCards();
+            for (let i = 0; i < this.deckSize; i++) {
+                deck.AddCard(Cards.pop()!);
+            }
+        })
+        this.defferedCard = Cards.pop()!
+    }
+    DealAdvantageCards() {
+        const grid = this.gameState.map.grid;
+        grid.forEach(hex => {
+            if (hex.field.leaderPlayerId) {
+                const leaderPlayer = this.gameState.GetPlayerById(hex.field.leaderPlayerId)!
+                const advantageCardId = territoryMap.get(hex.field.territoryId)!.cardId;
+                this.AddCard(leaderPlayer, advantageCardId)
+            }
+        })
     }
 }

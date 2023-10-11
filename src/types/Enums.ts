@@ -33,7 +33,8 @@ export enum GameStage {
     ClansSetup = "CLANS_SETUP",
     Gathering = "GATHERING",
     Season = "SEASON",
-    Fight = "FIGHT"
+    Fight = "FIGHT",
+    END = "END"
 }
 export enum TurnOrder {
     clockwise = "CLOCKWISE",

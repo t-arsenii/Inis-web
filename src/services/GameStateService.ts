@@ -22,7 +22,7 @@ export function GameStateToJSON(gameState: GameState) {
         },
         bren: Array.from(gameState.players.values()).find(p => p.isBren)?.id || "",
         turnOrder,
-        players: Array.from(gameState.players.values()).map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft })),
+        players: Array.from(gameState.players.values()).map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, ChallengerTokens: p.challengerTokens, deedTokens: p.deedTokens })),
         HexGrid: HexGridToJson(gameState.map),
         Decks: { playersDecks: deckArray, discard: gameState.deckManager.actionDiscard, defferedCard: gameState.deckManager.defferedCard }
     };

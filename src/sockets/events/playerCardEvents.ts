@@ -97,19 +97,19 @@ export function playerCardHandler(socket: Socket) {
             console.log(err)
         }
     })
-    //potential bugs when player make moves and then pass, because he's active whole time
+    //potential bugs when player make moves and then pass, because he's in active whole time
     socket.on("player-pass", () => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
         try {
             if (!player.isActive) {
                 throw new Error("player-pass: player is not active")
             }
-            gameState.NextTurn()
-            player.lastAction = playerAction.Pass
-            gameState.TryEndRound()
+            gameState.NextTurn();
+            player.lastAction = playerAction.Pass;
+            gameState.TryEndRound();
         } catch (err) {
-
+            console.log(err)
         }
     })
 }

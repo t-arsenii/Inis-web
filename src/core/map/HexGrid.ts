@@ -1,16 +1,18 @@
-import { Player } from "./Player"
-import { AxialToString, shuffle } from "../services/helperFunctions"
-import { GameState } from "./GameState"
-import { territoryMap } from "./constans/constant_territories"
-import { axialCoordiantes } from "../types/Types"
+import { Player } from "../Player"
+import { AxialToString, hexToAxialCoordinates, getKeysWithMaxValue, shuffle } from "../../services/helperFunctions"
+import { GameState } from "../GameState"
+import { territoryMap } from "../constans/constant_territories"
+import { axialCoordiantes } from "../../types/Types"
 export class Field {
     territoryId: string = ""
     sanctuaryCount: number = 0
     citadelsCount: number = 0
     playersClans: Map<string, number> = new Map()
-    leaderPlayerId: string = ""
-    constructor(terId: string) {
+    leaderPlayerId: string | null = null
+    gameState: GameState
+    constructor(terId: string, gameState: GameState) {
         this.territoryId = terId
+        this.gameState = gameState
     }
     toJSON() {
         const { territoryId, sanctuaryCount, citadelsCount, leaderPlayerId } = this
@@ -25,18 +27,29 @@ export class Field {
     }
     UpdateLeader(): void {
         if (this.playersClans.size <= 0) {
+            this.leaderPlayerId = null;
             return
         }
-        let largestValue: number = 0;
-        let playerId: string = "";
-
-        for (const [id, value] of this.playersClans) {
-            if (value > largestValue) {
-                largestValue = value;
-                playerId = id;
-            }
+        //maybe unnecessary check
+        if (!this.gameState.brenPlayer) {
+            throw new Error("")
         }
-        this.leaderPlayerId = playerId;
+
+        if (this.playersClans.size === 1) {
+            const [singleKey] = this.playersClans.keys();
+            this.leaderPlayerId = singleKey;
+            return;
+        }
+        const maxClansPlayersKeys: string[] = getKeysWithMaxValue(this.playersClans);
+        if (maxClansPlayersKeys.length === 1) {
+            this.leaderPlayerId = maxClansPlayersKeys[0]
+            return
+        }
+        if (maxClansPlayersKeys.includes(this.gameState.brenPlayer.id)) {
+            this.leaderPlayerId = this.gameState.brenPlayer.id
+            return
+        }
+        this.leaderPlayerId = null;
     }
     hasClans(player: Player): boolean {
         return this.playersClans.has(player.id)
@@ -145,6 +158,12 @@ class ClansController {
         if (!playerFieldsPresence.includes(hexTo)) {
             playerFieldsPresence.push(hexTo)
         }
+
+        //checking holiday token
+        if (this.hexGrid.fieldsController.holiday == hexTo) {
+            this.RemoveClans(player, 1, hexToAxialCoordinates(hexTo))
+        }
+        //updating field leader
         hexTo.field.UpdateLeader()
         hexFrom.field.UpdateLeader()
     }
@@ -167,15 +186,16 @@ class SetupController {
     }
 }
 class FieldsController {
-    private hexGrid: HexGrid
-    public playerFieldPresense: Map<string, Hexagon[]> = new Map()
-    public avalibleTerritories: string[] = shuffle(Array.from(territoryMap.keys()))
-    public capital: Hexagon | undefined = undefined
-    public holiday: Hexagon | undefined = undefined
-    sanctuariesLeft: number = 0
-    citadelsLeft: number = 0
+    private hexGrid: HexGrid;
+    public playerFieldPresense: Map<string, Hexagon[]> = new Map();
+    public avalibleTerritories: string[];
+    public capital: Hexagon = undefined!;
+    public holiday: Hexagon | null = null;
+    sanctuariesLeft: number = 0;
+    citadelsLeft: number = 0;
     constructor(hexGrid: HexGrid) {
         this.hexGrid = hexGrid
+        this.avalibleTerritories = shuffle(Array.from(territoryMap.keys()))
     }
     public AddRandomField(axial: axialCoordiantes): void {
         const key = AxialToString(axial);
@@ -190,7 +210,7 @@ class FieldsController {
             throw Error("FieldsController.AddRandomField: no territories left")
         }
         const territoryId = this.avalibleTerritories.pop()!
-        const hexagon = new Hexagon(axial, new Field(territoryId));
+        const hexagon = new Hexagon(axial, new Field(territoryId, this.hexGrid.gameState));
         this.avalibleTerritories.filter(t => t !== territoryId)
         this.hexGrid.grid.set(key, hexagon);
     }
@@ -225,6 +245,9 @@ class FieldsController {
         }
         const hex: Hexagon = this.hexGrid.grid.get(AxialToString(axial))!
         this.holiday = hex
+    }
+    public ResetHolidayField() {
+        this.holiday = null
     }
 }
 export class HexGrid {
