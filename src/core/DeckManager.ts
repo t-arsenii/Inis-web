@@ -115,19 +115,19 @@ export class DeckManager {
     }
     PlayerDealActionCardDiscard(player: Player, cardIds: string[]) {
         if (!this.dealCards) {
-            return;
+            throw new Error("DeckManager.PlayerDealActionCardDiscard: dealCards not initialized")
         }
         if (cardIds.length !== this.dealCards.cardsToDiscardNum) {
-            return;
+            throw new Error("DeckManager.PlayerDealActionCardDiscard: cardIds length not equal to cardsToDiscardNum");
         }
         const playerCards: string[] = this.dealCards.players[player.id].cards;
         for (const cardId of cardIds) {
             if (!cardActionMap.has(cardId) || !playerCards.includes(cardId)) {
-                return;
+                throw new Error("DeckManager.PlayerDealActionCardDiscard: cardId not found")
             }
         }
         this.dealCards.players[player.id].cardsToDiscard = cardIds;
-        this.dealCards.players[player.id].cards.filter(cardId => !cardIds.includes(cardId));
+        this.dealCards.players[player.id].cards = this.dealCards.players[player.id].cards.filter(cardId => !cardIds.includes(cardId));
         this.dealCards.players[player.id].readyToDeal = true;
     }
     public InitDealActionCards() {
@@ -160,16 +160,17 @@ export class DeckManager {
             const playerFrom = playersDealCardsArray[i];
             nextIndex = (i + 1) % playersDealCardsArray.length;
             const playerTo = playersDealCardsArray[nextIndex];
-            playerTo.cards.push(...playerFrom.cards);
+            playerTo.cards.push(...playerFrom.cardsToDiscard);
+            playerFrom.cardsToDiscard = [];
+            playerFrom.readyToDeal = false;
         }
+        this.dealCards.cardsToDiscardNum--;
     }
     TryEndDealActionCards() {
         if (!this.dealCards) {
             return;
         }
-        if (this.dealCards.cardsToDiscardNum >= 0) {
-
-            this.dealCards.cardsToDiscardNum--;
+        if (this.dealCards.cardsToDiscardNum > 0) {
             return;
         }
         let playerDealCards: any = {};

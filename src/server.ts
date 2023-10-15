@@ -4,7 +4,7 @@ import http from 'http';
 import cors from 'cors';
 import gamesRoutes from "./routes/gamesRoutes"
 import handleSocketConnections from "./sockets/socket"
-import { initData } from "./services/helperFunctions";
+import { initGameToGathering, initGameToSeason } from "./services/helperFunctions";
 const PORT = 8000
 
 const app = express()
@@ -28,4 +28,5 @@ app.use("/", gamesRoutes)
 server.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
 })
-initData()
+initGameToSeason();
+// initGameToGathering();

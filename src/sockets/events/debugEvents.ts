@@ -36,7 +36,7 @@ export function DebugTools(socket: Socket) {
         const player: Player = socket.player!
         socket.emit("territory-info", gameState?.map.GetAllValidPlacements())
     })
-    socket.on("next-turn", (gameId, userId) => {
+    socket.on("next-turn", () => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         if (gameState.turnOrder.activePlayerId !== player.id) {
@@ -44,5 +44,10 @@ export function DebugTools(socket: Socket) {
         }
         gameState.NextTurn()
         socket.emit("next-turn", gameState.turnOrder)
+    })
+    socket.on("get-deal-cards", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        socket.emit("get-deal-cards", gameState.deckManager.dealCards);
     })
 }
