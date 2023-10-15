@@ -1,11 +1,13 @@
 import { cardActionMap } from "./constans/constant_action_cards";
 import { shuffle } from "../services/helperFunctions";
-import { Card } from "../types/Types"
+import { Card, DealCards } from "../types/Types"
 import { Card_type } from "../types/Enums"
 import { GameState } from "./GameState";
 import { Player } from "./Player";
 import { cardEposMap } from "./constans/constant_epos_cards";
 import { territoryMap } from "./constans/constant_territories";
+import { cardAdvantageMap } from "./constans/constant_advantage_cards";
+import { cardAllMap } from "./constans/constant_all_cards";
 export class Deck {
     ActionCards: string[] = [];
     EposCards: string[] = [];
@@ -27,18 +29,26 @@ export class Deck {
                 break
         }
     }
+
     ClearActionCards() {
         this.ActionCards = [];
     }
+    ClearEposCards() {
+        this.EposCards = [];
+    }
+    ClearAdvantagesCards() {
+        this.AdvantagesCards = [];
+    }
 }
 export class DeckManager {
-    deckSize: number = 4
-    gameState: GameState
-    playersDeck: Map<string, Deck> = new Map()
-    eposCards: string[] = []
-    eposDiscard: string[] = []
-    actionDiscard: string[] = []
-    defferedCard: string = ""
+    readonly deckSize: number = 4;
+    gameState: GameState;
+    playersDeck: Map<string, Deck> = new Map();
+    eposCards: string[] = [];
+    eposDiscard: string[] = [];
+    actionDiscard: string[] = [];
+    defferedCardId: string = "";
+    dealCards: DealCards | null = null
     constructor(gameState: GameState) {
         this.gameState = gameState
     }
@@ -82,11 +92,10 @@ export class DeckManager {
     }
     AddCard(player: Player, cardId: string) {
         const deck: Deck = this.playersDeck.get(player.id)!
-        if (!cardActionMap.has(cardId)) {
+        const card: Card | undefined = cardAllMap.get(cardId)
+        if (!card) {
             throw new Error("DeckManager.addCard: cardId not found")
         }
-        const
-            card: Card = cardActionMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
                 deck.ActionCards.push(card.id)
@@ -99,15 +108,80 @@ export class DeckManager {
                 break
         }
     }
-    DealSeasonCards() {
-        const Cards = shuffle(Array.from(cardActionMap.keys()))
-        this.playersDeck.forEach((deck, playerId) => {
+    private ClearActionCardsDeck() {
+        this.playersDeck.forEach((deck) => {
             deck.ClearActionCards();
+        })
+    }
+    PlayerDealActionCardDiscard(player: Player, cardIds: string[]) {
+        if (!this.dealCards) {
+            return;
+        }
+        if (cardIds.length !== this.dealCards.cardsToDiscardNum) {
+            return;
+        }
+        const playerCards: string[] = this.dealCards.players[player.id].cards;
+        for (const cardId of cardIds) {
+            if (!cardActionMap.has(cardId) || !playerCards.includes(cardId)) {
+                return;
+            }
+        }
+        this.dealCards.players[player.id].cardsToDiscard = cardIds;
+        this.dealCards.players[player.id].cards.filter(cardId => !cardIds.includes(cardId));
+        this.dealCards.players[player.id].readyToDeal = true;
+    }
+    public InitDealActionCards() {
+        this.ClearActionCardsDeck(); // Clearing remaining action cards from player decks
+        const playersInOrder: string[] = this.gameState.turnOrder.playersId;
+        this.dealCards = { cardsToDiscardNum: 3, players: {} };
+        const Cards = shuffle(Array.from(cardActionMap.keys()))
+        playersInOrder.forEach((playerId) => {
+            this.dealCards!.players[playerId] = {
+                cards: [],
+                cardsToDiscard: [],
+                readyToDeal: false,
+            };
             for (let i = 0; i < this.deckSize; i++) {
-                deck.AddCard(Cards.pop()!);
+                this.dealCards!.players[playerId].cards.push(Cards.pop()!)
             }
         })
-        this.defferedCard = Cards.pop()!
+        this.defferedCardId = Cards.pop()!;
+    }
+    TryDealActionCards() {
+        if (!this.dealCards) {
+            return;
+        }
+        if (!Object.values(this.dealCards.players).every(player => player.readyToDeal)) {
+            return;
+        }
+        const playersDealCardsArray = Object.values(this.dealCards.players);
+        let nextIndex;
+        for (let i = 0; i < playersDealCardsArray.length; i++) {
+            const playerFrom = playersDealCardsArray[i];
+            nextIndex = (i + 1) % playersDealCardsArray.length;
+            const playerTo = playersDealCardsArray[nextIndex];
+            playerTo.cards.push(...playerFrom.cards);
+        }
+    }
+    TryEndDealActionCards() {
+        if (!this.dealCards) {
+            return;
+        }
+        if (this.dealCards.cardsToDiscardNum >= 0) {
+
+            this.dealCards.cardsToDiscardNum--;
+            return;
+        }
+        let playerDealCards: any = {};
+        let deck: Deck = undefined!;
+        for (const playerId in this.dealCards.players) {
+            if (this.dealCards.players.hasOwnProperty(playerId)) {
+                playerDealCards = this.dealCards.players[playerId];
+                deck = this.playersDeck.get(playerId)!;
+                deck.ActionCards = playerDealCards.cards;
+            }
+        }
+        this.dealCards = null;
     }
     DealAdvantageCards() {
         const grid = this.gameState.map.grid;

@@ -111,19 +111,27 @@ const Plateau_ter: Territory = {
 }
 export const territoryMap: Map<string, Territory> = new Map([
     [Hills_ter.id, Hills_ter],
-    [Swamp_ter.id, Swamp_ter],
-    [Mountains_ter.id, Mountains_ter],
-    [SaltMine_ter.id, SaltMine_ter],
     [Forest_ter.id, Forest_ter],
-    [Gates_ter.id, Gates_ter],
     [StoneCircle_ter.id, StoneCircle_ter],
     [Wasteland_ter.id, Wasteland_ter],
-    [Meadow_ter.id, Meadow_ter],
-    [ForgottenRavine_ter.id, ForgottenRavine_ter],
-    [Bay_ter.id, Bay_ter],
-    [IronMine_ter.id, IronMine_ter],
-    [MistyLands_ter.id, MistyLands_ter],
     [Valley_ter.id, Valley_ter],
-    [Plains_ter.id, Plains_ter],
-    [Plateau_ter.id, Plateau_ter],
+    [Swamp_ter.id, Swamp_ter]
 ]);
+// export const territoryMap: Map<string, Territory> = new Map([
+//     [Hills_ter.id, Hills_ter],
+//     [Swamp_ter.id, Swamp_ter],
+//     [Mountains_ter.id, Mountains_ter],
+//     [SaltMine_ter.id, SaltMine_ter],
+//     [Forest_ter.id, Forest_ter],
+//     [Gates_ter.id, Gates_ter],
+//     [StoneCircle_ter.id, StoneCircle_ter],
+//     [Wasteland_ter.id, Wasteland_ter],
+//     [Meadow_ter.id, Meadow_ter],
+//     [ForgottenRavine_ter.id, ForgottenRavine_ter],
+//     [Bay_ter.id, Bay_ter],
+//     [IronMine_ter.id, IronMine_ter],
+//     [MistyLands_ter.id, MistyLands_ter],
+//     [Valley_ter.id, Valley_ter],
+//     [Plains_ter.id, Plains_ter],
+//     [Plateau_ter.id, Plateau_ter],
+// ]);

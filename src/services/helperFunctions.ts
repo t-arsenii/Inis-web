@@ -6,6 +6,7 @@ import { gamesManager } from "../core/GameStateManager";
 import { GameStage, TurnOrder } from "../types/Enums";
 import { Deck } from "../core/DeckManager";
 import { Hexagon } from "../core/map/HexGrid";
+
 export function shuffle<T>(array: T[]): T[] {
     const shuffledArray = array.slice(); // Copy the original array
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -14,7 +15,7 @@ export function shuffle<T>(array: T[]): T[] {
     }
     return shuffledArray;
 }
-export function CheckSockets(playersMap: Map<string, Player>): boolean {
+export function checkSockets(playersMap: Map<string, Player>): boolean {
     const players: Player[] = Array.from(playersMap.values())
     for (const player of players) {
         if (!player.socket) {
@@ -23,7 +24,7 @@ export function CheckSockets(playersMap: Map<string, Player>): boolean {
     }
     return true
 }
-export function GetRandomDirection(): TurnOrder {
+export function getRandomDirection(): TurnOrder {
     const randomValue = Math.random();
     if (randomValue < 0.5) {
         return TurnOrder.clockwise;
@@ -67,14 +68,12 @@ export const initData = () => {
     const player1Id = "6dd6246a-f15b-43f8-bd67-5a38aa91184e"
     const player2Id = "66182a83-8824-481a-8889-39b60ab361fd"
     const player3Id = "363ed71a-056c-4fc6-9779-7dcc38d31e9c"
-    const userIds: string[] = [
-        player1Id,
-        player2Id,
-        player3Id
+    const users: { userId: string, userName: string }[] = [
+        { userId: player1Id, userName: "username1" },
+        { userId: player2Id, userName: "username2" },
+        { userId: player3Id, userName: "username3" },
     ]
-    if (userIds) {
-        userIds.forEach(id => gameState.AddPlayerById(id))
-    }
+    users.forEach(user => gameState.AddPlayer({ userId: user.userId, username: user.userName }));
     //Adding gameState to manager
     gamesManager.createGame(gameState)
 
@@ -99,12 +98,14 @@ export const initData = () => {
     gameState.deckManager.AddCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015")
     gameState.deckManager.AddCard(player1, "ddc241a2-2fd1-4926-8860-4eae221b93d4")
     gameState.deckManager.AddCard(player1, "9422292c-bd05-40b5-95bc-140dbd6bb3c2")
+    gameState.deckManager.AddCard(player1, "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a")
 
     gameState.deckManager.AddCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
     gameState.deckManager.AddCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
     gameState.deckManager.AddCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015")
     //setting capital
     gameState.map.fieldsController.SetCapital({ q: 0, r: 0 })
+    gameState.map.fieldsController.AddSanctuary({ q: 0, r: 0 })
 
     //Adding two clans for each player
     gameState.map.clansController.AddClans(player1, 2, { q: 0, r: 0 })
@@ -128,14 +129,12 @@ export function getKeyWithUniqueMaxValue(map: Map<string, number>) {
             isUnique = false; // There is another key with the same maximum value
         }
     }
-
     return isUnique ? maxKey : null;
 }
 
 export function getKeysWithMaxValue(map: Map<string, number>) {
     let maxKeys: string[] = [];
     let maxValue = -Infinity;
-
     map.forEach((value, key) => {
         if (value > maxValue) {
             maxKeys = [key];

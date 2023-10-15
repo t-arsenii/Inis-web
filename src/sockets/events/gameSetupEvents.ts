@@ -10,15 +10,16 @@ export function gameSetupHandler(socket: Socket) {
         const player: Player = socket.player!
         try {
             if (!player.isActive) {
-                throw new Error("GameSetupClans: player not active")
+                throw new Error("GameSetupClans: player not active");
             }
             if (gameState.gameStage !== GameStage.ClansSetup) {
-                throw new Error("GameSetupClans: game stage is not valid")
+                throw new Error("GameSetupClans: game stage is not valid");
             }
-            gameState.map.clansController.AddClans(player, 1, axial)
+            gameState.map.clansController.AddClans(player, 1, axial);
             if (gameState.map.setupController.SetupClans()) {
-                gameState.gameStage = GameStage.Gathering
-                gameState.NextTurn()
+                gameState.gameStage = GameStage.Gathering;
+                gameState.NextTurn();
+                gameState.StartGatheringStage();
                 return
             }
             gameState.NextTurn()
@@ -38,18 +39,16 @@ export function gameSetupHandler(socket: Socket) {
             if (gameState.gameStage !== GameStage.CapitalSetup) {
                 throw new Error("GameSetupCapital: game stage is not valid")
             }
-            if (gameState.map.fieldsController.capital) {
+            if (gameState.map.fieldsController.capitalHex) {
                 throw new Error("GameSetupCapital: capital already exists")
             }
-            const setCapitalRes = gameState.map.fieldsController.SetCapital(axial)
-            if (!setCapitalRes) {
-                throw new Error(`GameSetupCapital: capital placement error(q:${axial.q},r:${axial.r})`)
-            }
+            gameState.map.fieldsController.SetCapital(axial);
+            gameState.map.fieldsController.AddSanctuary(axial);
+            gameState.gameStage = GameStage.ClansSetup
         }
         catch (err) {
             socket.emit("game-setup-capital-error", `GameSetupClans: Internal server error:\n${err}`)
             console.log(err)
         }
-        gameState.gameStage = GameStage.ClansSetup
     })
 }

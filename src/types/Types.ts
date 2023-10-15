@@ -40,8 +40,12 @@ export type AttackerCycle = {
     attackerPlayerId: string | null,
     defenderPlayerId: string | null
 }
-export type challengerTokens = {
+export type PretenderTokens = {
     sanctuaries: boolean,
     clans: boolean,
     territories: boolean
+}
+export type DealCards = {
+    cardsToDiscardNum: number,
+    players: Record<string, { cards: string[], cardsToDiscard: string[], readyToDeal: boolean }>
 }

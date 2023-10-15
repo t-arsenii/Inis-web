@@ -3,39 +3,51 @@ import { GameState } from "../core/GameState";
 import { v4 } from "uuid";
 import { gamesManager } from "../core/GameStateManager";
 import { playerInfo } from "../types/Types";
-import { GameStateToJSON } from "../services/GameStateService";
+import { GameStateToJSON, GameStateToJSONFormated } from "../services/GameStateService";
+
+interface IUserReq {
+    userId: string,
+    username: string
+}
 
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const gameState: GameState = new GameState(gameId)
-
-    const userIds: string[] | undefined = req.body.userIds
-    if (userIds) {
-        userIds.forEach(id => gameState.AddPlayerById(id))
+    const users: IUserReq[] | undefined = req.body.users;
+    if (users) {
+        users.forEach(user => gameState.AddPlayer({ userId: user.userId, username: user.username }));
     }
     gamesManager.createGame(gameState)
     res.status(200).send(`Game created with id: ${gameId}`)
 }
 const CreateGame = (req: Request, res: Response) => {
-    const gameState: GameState = new GameState()
-    const userIds: string[] | undefined = req.body.userIds
-    if (userIds) {
-        userIds.forEach(id => gameState.AddPlayerById(id))
+    const gameState: GameState = new GameState();
+    const users: IUserReq[] | undefined = req.body.users;
+    if (users) {
+        users.forEach(user => gameState.AddPlayer({ userId: user.userId, username: user.username }));
     }
     gamesManager.createGame(gameState)
     res.status(200).send(`Game created with id: ${gameState.id}`)
 }
 const GetGames = (req: Request, res: Response) => {
-    res.status(200).send(gamesManager.getGameStates())
+    // res.status(200).send(gamesManager.getGameStates())
+    res.status(200).send("Not implemented")
 }
 const GetGame = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const gameState = gamesManager.getGame(gameId)
     if (!gameState) {
-        res.status(404)
-        return
+        return res.status(404).send("Game not found")
     }
     res.status(200).send(GameStateToJSON(gameState))
+}
+const GetGameFormated = (req: Request, res: Response) => {
+    const gameId: string = req.params.id;
+    const gameState = gamesManager.getGame(gameId)
+    if (!gameState) {
+        return res.status(404).send("Game not found")
+    }
+    res.status(200).send(GameStateToJSONFormated(gameState))
 }
 const GetOnlinePlayers = (req: Request, res: Response) => {
     if (gamesManager.socketsConnInfo.size <= 0) {
@@ -56,12 +68,11 @@ function convertPlayerInfoToFormat(socketId: string, playerInfo: playerInfo): Re
         },
     };
 }
-
-
 export default {
     CreateGameWithId,
     CreateGame,
     GetGames,
     GetGame,
+    GetGameFormated,
     GetOnlinePlayers
 }

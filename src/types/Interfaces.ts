@@ -1,6 +1,6 @@
 import { GameState } from "../core/GameState"
 import { Player } from "../core/Player"
-import { ActionType, AttackerAction, ChallengerTokenType, DeffenderAction } from "./Enums"
+import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction } from "./Enums"
 import { axialCoordiantes } from "./Types"
 
 export interface ICardParams {
@@ -9,6 +9,20 @@ export interface ICardParams {
     axialToNum?: { axial: axialCoordiantes, num: number }[] | { axial: axialCoordiantes, num: number }
     targetCardId?: string,
     CardVariation?: number
+}
+export interface IPlayerCardInput {
+    cardId: string,
+    params?: ICardParams
+}
+export interface ICardOperationParams extends ICardParams {
+    gameState: GameState,
+    player: Player
+}
+export interface ICardOperationResponse {
+    axial?: axialCoordiantes | axialCoordiantes[],
+    cardId?: string | string[],
+    num?: number,
+    axialToNum?: { axial: axialCoordiantes, num: number }[] | { axial: axialCoordiantes, num: number }
 }
 export interface IAttackerInputParams {
     attackerAction: AttackerAction,
@@ -25,20 +39,9 @@ export interface IDeffenderInputParams {
     deffenderAction: DeffenderAction,
     cardId?: string
 }
-export interface IPlayerCardInput {
-    cardId: string,
-    params?: ICardParams
+export interface IPretenderTokenInput {
+    type: PretenderTokenType
 }
-export interface ICardOperationParams extends ICardParams {
-    gameState: GameState,
-    player: Player
-}
-export interface ICardOperationResponse {
-    axial?: axialCoordiantes | axialCoordiantes[],
-    cardId?: string | string[],
-    num?: number,
-    axialToNum?: { axial: axialCoordiantes, num: number }[] | { axial: axialCoordiantes, num: number }
-}
-export interface IChallengerTokenInput {
-    type: ChallengerTokenType
+export interface IPlayerCardDealInput {
+    cardIds: string[]
 }

@@ -8,7 +8,7 @@ import { axialCoordiantes } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameLobbyEvents";
 import { CheckSocketGameConnection } from "../services/helperFunctions";
 import { gameSetupHandler } from "./events/gameSetupEvents";
-import { playerCardHandler } from "./events/playerCardEvents";
+import { playerCardHandler } from "./events/playerGameEvents";
 import { HexGridToJson } from "../services/HexGridService";
 import { playerFightHandler } from "./events/playerFightEvents";
 import { DebugTools } from "./events/debugEvents";

@@ -53,7 +53,7 @@ export enum DeffenderAction {
     Clan,
     Card
 }
-export enum ChallengerTokenType {
+export enum PretenderTokenType {
     Clans = "CLANS",
     Sanctuaries = "SAN",
     Territories = "TER"

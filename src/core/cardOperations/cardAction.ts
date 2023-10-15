@@ -4,6 +4,7 @@ import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
 import { trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { Player } from "../Player";
+import { hexToAxialCoordinates } from "../../services/helperFunctions";
 export function BardSeason({ gameState, player }: ICardOperationParams): void {
     gameState.deckManager.AddRandomEposCard(player)
 }
@@ -28,8 +29,6 @@ export function DruidSeason({ gameState, player, targetCardId }: ICardOperationP
     }
     deckManager.actionDiscard = deckManager.actionDiscard.filter(cId => cId !== targetCardId)
     deckManager.AddCard(player, targetCardId)
-
-
 }
 export function PeasantsWorkersSeason({ gameState, player, axialToNum }: ICardOperationParams): void {
     if (!axialToNum) {
@@ -88,8 +87,7 @@ export function SanctuarySeason({ gameState, player, axial }: ICardOperationPara
     if (!playerHex.includes(hex)) {
         throw new Error(`SanctuarySeason: player is not present on axial:${axial}`)
     }
-    gameState.map.fieldsController.sanctuariesLeft--
-    hex.field.sanctuaryCount++
+    map.fieldsController.AddSanctuary(hexToAxialCoordinates(hex));
     //Add Epos card to player
     // gameState.deckManager.AddRandomEposCard(player)
 }
@@ -164,12 +162,12 @@ export function ExplorationSeason({ gameState, player, axial }: ICardOperationPa
 }
 export function HolidaySeason({ gameState, player, axial }: ICardOperationParams): void {
     if (!axial || typeof axial !== `object` || Array.isArray(axial)) {
-        throw new Error(`HolidaySeason: axial field error`)
+        throw new Error(`HolidaySeason: axial field error`);
     }
-    if (!gameState.map.HasHexagon(axial)) {
-        throw new Error(`HolidaySeason: no hexagon with axial:${axial}`)
+    const hex: Hexagon | undefined = gameState.map.GetHex(axial);
+    if (!hex) {
+        throw new Error(`HolidaySeason: no hexagon with axial:${axial}`);
     }
-    const hex: Hexagon = gameState.map.GetHex(axial)!
     const hexArr: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
     if (!hexArr.includes(hex)) {
         throw new Error(`HolidaySeason: player is not present on axial:${axial}`)
@@ -177,7 +175,9 @@ export function HolidaySeason({ gameState, player, axial }: ICardOperationParams
     if (hex.field.sanctuaryCount === 0) {
         throw new Error(`HolidaySeason: no sanctuaries`)
     }
-    gameState.map.clansController.AddClans(player, 1, axial)
+    if (player.clansLeft > 0) {
+        gameState.map.clansController.AddClans(player, 1, axial)
+    }
     gameState.map.fieldsController.SetHolidayField(axial)
 }
 export function ConquestSeason({ gameState, player, axial: singleAxial, axialToNum: axialToNum }: ICardOperationParams): void {

@@ -76,3 +76,6 @@ export function ConquestActionInfo({ gameState, player, axial }: ICardOperationP
 
     return { axialToNum: axialToNumRes };
 }
+export function NewUnionActionInfo({ gameState, player, axial }: ICardOperationParams): ICardOperationResponse {
+    throw new Error("Not implemented exception");
+}

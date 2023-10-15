@@ -160,7 +160,7 @@ class ClansController {
         }
 
         //checking holiday token
-        if (this.hexGrid.fieldsController.holiday == hexTo) {
+        if (this.hexGrid.fieldsController.festivalHex == hexTo) {
             this.RemoveClans(player, 1, hexToAxialCoordinates(hexTo))
         }
         //updating field leader
@@ -189,8 +189,8 @@ class FieldsController {
     private hexGrid: HexGrid;
     public playerFieldPresense: Map<string, Hexagon[]> = new Map();
     public avalibleTerritories: string[];
-    public capital: Hexagon = undefined!;
-    public holiday: Hexagon | null = null;
+    public capitalHex: Hexagon | null = null;
+    public festivalHex: Hexagon | null = null;
     sanctuariesLeft: number = 0;
     citadelsLeft: number = 0;
     constructor(hexGrid: HexGrid) {
@@ -214,14 +214,13 @@ class FieldsController {
         this.avalibleTerritories.filter(t => t !== territoryId)
         this.hexGrid.grid.set(key, hexagon);
     }
-    public SetCapital(axial: axialCoordiantes): boolean {
-        if (!this.hexGrid.HasHexagon(axial)) {
-            return false
+    public SetCapital(axial: axialCoordiantes): void {
+        const hex = this.hexGrid.GetHex(axial);
+        if (!hex) {
+            throw new Error("FieldsController.SetCapital: ")
         }
-        const hex: Hexagon = this.hexGrid.grid.get(AxialToString(axial))!
-        this.capital = hex
+        this.capitalHex = hex
         hex.field.citadelsCount++
-        return true
     }
     public GetPlayerHex(player: Player): Hexagon[] | undefined {
         if (!this.playerFieldPresense.has(player.id)) {
@@ -244,10 +243,22 @@ class FieldsController {
             throw new Error("FieldsController.SetHolidayField: axial not found")
         }
         const hex: Hexagon = this.hexGrid.grid.get(AxialToString(axial))!
-        this.holiday = hex
+        this.festivalHex = hex
     }
     public ResetHolidayField() {
-        this.holiday = null
+        this.festivalHex = null
+    }
+    AddSanctuary(axial: axialCoordiantes) {
+        const hex = this.hexGrid.GetHex(axial)!;
+        if (!hex) {
+            throw new Error("FieldsController.AddSanctuary: ");
+        }
+        if (this.sanctuariesLeft < 1) {
+            throw new Error("FieldsController.AddSanctuary: no sanctuaries left");
+        }
+        hex.field.sanctuaryCount++;
+        this.sanctuariesLeft--;
+
     }
 }
 export class HexGrid {

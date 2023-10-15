@@ -1,6 +1,7 @@
 import { Deck } from "../core/DeckManager";
 import { GameState } from "../core/GameState";
 import { Player } from "../core/Player";
+import { cardAllMap } from "../core/constans/constant_all_cards";
 import { HexGridToJson } from "./HexGridService";
 
 export function GameStateToJSON(gameState: GameState) {
@@ -22,12 +23,63 @@ export function GameStateToJSON(gameState: GameState) {
         },
         bren: Array.from(gameState.players.values()).find(p => p.isBren)?.id || "",
         turnOrder,
-        players: Array.from(gameState.players.values()).map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, ChallengerTokens: p.challengerTokens, deedTokens: p.deedTokens })),
-        HexGrid: HexGridToJson(gameState.map),
-        Decks: { playersDecks: deckArray, discard: gameState.deckManager.actionDiscard, defferedCard: gameState.deckManager.defferedCard }
+        players: Array.from(gameState.players.values()).map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, PretenderTokens: p.pretenderTokens, deedTokens: p.deedTokens })),
+        Map: HexGridToJson(gameState.map),
+        Decks: { playersDecks: deckArray, discard: gameState.deckManager.actionDiscard, defferedCard: gameState.deckManager.defferedCardId }
     };
 }
-export function ChallengerClans(gameState: GameState, player: Player, winning_amount: number): boolean {
+export function GameStateToJSONFormated(gameState: GameState) {
+    const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = gameState;
+    const { citadelsLeft, sanctuariesLeft } = gameState.map.fieldsController
+    const deckArray: { id: string; deck: any }[] = [];
+    gameState.deckManager.playersDeck.forEach((deck, playerId) => {
+        const playerDeck = {
+            ActionCards: <string[]>[],
+            EposCards: <string[]>[],
+            AdvantagesCards: <string[]>[],
+        };
+
+        deck.ActionCards.forEach((cardId) => {
+            const card = cardAllMap.get(cardId);
+            if (card) {
+                playerDeck.ActionCards.push(card.title);
+            }
+        });
+
+        deck.EposCards.forEach((cardId) => {
+            const card = cardAllMap.get(cardId);
+            if (card) {
+                playerDeck.EposCards.push(card.title);
+            }
+        });
+
+        deck.AdvantagesCards.forEach((cardId) => {
+            const card = cardAllMap.get(cardId);
+            if (card) {
+                playerDeck.AdvantagesCards.push(card.title);
+            }
+        });
+
+        deckArray.push({ id: playerId, deck: playerDeck });
+    });
+    return {
+        Id,
+        gameInfo:
+        {
+            gameStatus,
+            maxPlayers,
+            citadelsLeft,
+            sanctuariesLeft,
+            gameStage: gameStage || "",
+        },
+        bren: gameState.brenPlayer.id || "",
+        turnOrder,
+        players: Array.from(gameState.players.values()).map(p => ({ id: p.id, userName: p.username, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, PretenderTokens: p.pretenderTokens, deedTokens: p.deedTokens })),
+        Map: HexGridToJson(gameState.map),
+        Decks: { playersDecks: deckArray, discard: gameState.deckManager.actionDiscard, defferedCard: gameState.deckManager.defferedCardId }
+    };
+}
+export function PretenderClans(gameState: GameState, player: Player, winning_amount: number): boolean {
     const hexArr = gameState.map.fieldsController.GetPlayerHex(player)!
     const leaderHex = hexArr.filter(hex => { hex.field.leaderPlayerId === player.id })
     if (leaderHex.length <= 0) {
@@ -43,7 +95,7 @@ export function ChallengerClans(gameState: GameState, player: Player, winning_am
     });
     return clansCounter >= winning_amount
 }
-export function ChallengerSanctuaries(gameState: GameState, player: Player, winning_amount: number): boolean {
+export function PretenderSanctuaries(gameState: GameState, player: Player, winning_amount: number): boolean {
     const hexArr = gameState.map.fieldsController.GetPlayerHex(player)!
     let sanctuariesCount: number = 0
     hexArr.forEach(hex => {
@@ -51,7 +103,7 @@ export function ChallengerSanctuaries(gameState: GameState, player: Player, winn
     })
     return sanctuariesCount >= winning_amount
 }
-export function ChallengerTerritories(gameState: GameState, player: Player, winning_amount: number): boolean {
+export function PretenderTerritories(gameState: GameState, player: Player, winning_amount: number): boolean {
     const hexArr = gameState.map.fieldsController.GetPlayerHex(player)!
     return hexArr.length >= winning_amount
 }

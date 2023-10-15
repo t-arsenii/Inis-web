@@ -2,17 +2,15 @@ import { Player } from "./Player";
 import { v4 } from "uuid";
 import { HexGrid, Hexagon } from "./map/HexGrid";
 import { Deck, DeckManager } from "./DeckManager";
-import { GetRandomDirection, getKeyWithUniqueMaxValue, shuffle } from "../services/helperFunctions";
-import { MAX_CHALLENGER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES, MIN_WINNING_AMOUNT } from "./constans/constant_3_players";
-import { TurnOrder, GameStage, ChallengerTokenType, playerAction } from "../types/Enums";
+import { checkSockets, getRandomDirection } from "../services/helperFunctions";
+import { MAX_PRETENDER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES, MIN_WINNING_AMOUNT } from "./constans/constant_3_players";
+import { TurnOrder, GameStage, PretenderTokenType, playerAction } from "../types/Enums";
 import { PlayerTurnOrder } from "../types/Types";
-import { HexGridToJson, InitHexGrid } from "../services/HexGridService";
+import { InitHexGrid } from "../services/HexGridService";
 import { FightManager } from "./Fighter";
 import { TrixelManager } from "./TrixelManager";
 import EventEmitter from "events";
-import { ChallengerClans, ChallengerSanctuaries, ChallengerTerritories } from "../services/GameStateService";
-import { cardAdvantageMap } from "./constans/constant_advantage_cards";
-import { territoryMap } from "./constans/constant_territories";
+import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../services/GameStateService";
 
 export class GameState {
   //Game info
@@ -24,7 +22,7 @@ export class GameState {
   turnOrder: PlayerTurnOrder
   gameStage: GameStage = undefined!
   deedTokens: number = MAX_DEED_TOKENS
-  challengerTokens: number = MAX_CHALLENGER_TOKENS
+  pretenderTokens: number = MAX_PRETENDER_TOKENS
   brenPlayer: Player = undefined!
   //Managers
   deckManager: DeckManager = new DeckManager(this)
@@ -50,11 +48,9 @@ export class GameState {
     }
 
     //Checking for all players connection
-    // if (checkSockets(this.players)) {
+    // if (!checkSockets(this.players)) {
     //   throw new Error("Not all socket are connected");
     // }
-
-
     //Picking and setting active player and turn order
     // this.turnOrder.playersId = shuffle(this.turnOrder.playersId)
     const activePlayerId = this.turnOrder.playersId[0]
@@ -67,7 +63,7 @@ export class GameState {
     activePlayer.isActive = true
     activePlayer.isBren = true
     this.brenPlayer = activePlayer
-    this.turnOrder.direction = GetRandomDirection()
+    this.turnOrder.direction = getRandomDirection()
 
     //Setting game status and stage 
     this.gameStatus = true
@@ -85,15 +81,10 @@ export class GameState {
     this.trixelManager.Init()
 
   }
-  AddPlayer(player: Player): void {
-    if (this.players.size < this.numPlayers) {
-      this.players.set(player.id, player);
-      this.turnOrder.playersId.push(player.id)
-    }
-  }
-  AddPlayerById(userId: string): void {
+  AddPlayer({ userId, username }: { userId: string, username: string }): void {
     if (this.players.size < this.numPlayers) {
       const player: Player = new Player(userId)
+      player.username = username;
       this.players.set(player.id, player);
       this.turnOrder.playersId.push(player.id)
     }
@@ -116,36 +107,35 @@ export class GameState {
     this.deedTokens--
     player.deedTokens++
   }
-  UpdateChallenger() {
-    throw new Error("UpdateChallenger exception")
+  UpdatePretender(): void {
+    throw new Error("UpdatePretender exception")
   }
-  TakeChallengerToken(player: Player, tokenType: ChallengerTokenType) {
+  TakePretenderToken(player: Player, tokenType: PretenderTokenType): void {
     const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens
-    let challengerResult = false
+    let pretenderResult = false
     switch (tokenType) {
-      case ChallengerTokenType.Clans:
-        challengerResult = ChallengerClans(this, player, winning_amount)
-        player.challengerTokens.clans = challengerResult
+      case PretenderTokenType.Clans:
+        pretenderResult = PretenderClans(this, player, winning_amount)
+        player.pretenderTokens.clans = pretenderResult
         break;
-      case ChallengerTokenType.Sanctuaries:
-        challengerResult = ChallengerSanctuaries(this, player, winning_amount)
-        player.challengerTokens.sanctuaries = challengerResult
+      case PretenderTokenType.Sanctuaries:
+        pretenderResult = PretenderSanctuaries(this, player, winning_amount)
+        player.pretenderTokens.sanctuaries = pretenderResult
         break;
-      case ChallengerTokenType.Territories:
-        challengerResult = ChallengerTerritories(this, player, winning_amount)
-        player.challengerTokens.territories = challengerResult
+      case PretenderTokenType.Territories:
+        pretenderResult = PretenderTerritories(this, player, winning_amount)
+        player.pretenderTokens.territories = pretenderResult
         break;
       default:
-        throw new Error("GameState.TakeChallengerToken: error tokenType")
+        throw new Error("GameState.TakePretenderToken: error tokenType")
     }
-    if (!challengerResult) {
-      throw new Error("GameState.TakeChallengerToken: can't take token")
+    if (!pretenderResult) {
+      throw new Error("GameState.TakePretenderToken: can't take token")
     }
   }
-  TryEndRound() {
+  TryEndRound(): void {
     let passCheck = Array.from(this.players.values()).every(player => player.lastAction === playerAction.Pass);
     if (passCheck) {
-      this.gameStage = GameStage.Gathering;
       this.trixelManager.ClearTrixel();
       this.players.forEach(player => player.lastAction = playerAction.None);
       this.map.fieldsController.ResetHolidayField();
@@ -168,9 +158,17 @@ export class GameState {
     this.players.get(newActivePlayerId)!.isActive = true
     this.trixelManager.ClearTrixel() //clearing all trixel conditions data
   }
-  private StartGatheringStage(): void {
+  StartGatheringStage(): void {
     this.gameStage = GameStage.Gathering;
     updateBren(this);
+    updatePretenderTokens(this);
+    this.UpdateWinner()
+    this.turnOrder.direction = getRandomDirection()
+    //Card deeling
+    this.deckManager.DealAdvantageCards();
+    this.deckManager.InitDealActionCards();
+  }
+  UpdateWinner() {
     const winnerPlayer = tryGetWinnerPlayer(this);
     if (winnerPlayer) {
       this.gameStage = GameStage.END;
@@ -178,14 +176,10 @@ export class GameState {
       console.log("Winner player with id: " + winnerPlayer.id);
       return
     }
-    this.turnOrder.direction = GetRandomDirection()
-    //Card deeling
-    this.deckManager.DealSeasonCards()
-    this.deckManager.DealAdvantageCards()
   }
 }
-function updateBren(gameState: GameState) {
-  const capitalHex: Hexagon | undefined = gameState.map.fieldsController.capital
+function updateBren(gameState: GameState): void {
+  const capitalHex: Hexagon | null = gameState.map.fieldsController.capitalHex
   if (!capitalHex) {
     return;
   }
@@ -200,18 +194,18 @@ function updateBren(gameState: GameState) {
     newBrenplayer.isBren = true;
   }
 }
-function updateChallengerTokens(gameState: GameState) {
+function updatePretenderTokens(gameState: GameState): void {
   const players: Player[] = Array.from(gameState.players.values())
   players.forEach(player => {
     const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens
-    if (player.challengerTokens.clans) {
-      player.challengerTokens.clans = ChallengerClans(gameState, player, winning_amount);
+    if (player.pretenderTokens.clans) {
+      player.pretenderTokens.clans = PretenderClans(gameState, player, winning_amount);
     }
-    if (player.challengerTokens.sanctuaries) {
-      player.challengerTokens.sanctuaries = ChallengerSanctuaries(gameState, player, winning_amount);
+    if (player.pretenderTokens.sanctuaries) {
+      player.pretenderTokens.sanctuaries = PretenderSanctuaries(gameState, player, winning_amount);
     }
-    if (player.challengerTokens.territories) {
-      player.challengerTokens.sanctuaries = ChallengerTerritories(gameState, player, winning_amount);
+    if (player.pretenderTokens.territories) {
+      player.pretenderTokens.sanctuaries = PretenderTerritories(gameState, player, winning_amount);
     }
   })
 }
@@ -220,8 +214,8 @@ function tryGetWinnerPlayer(gameState: GameState): Player | null {
   let playersWithMaxTokens: Player[] = [];
   const players: Player[] = Array.from(gameState.players.values());
   for (const player of players) {
-    const { challengerTokens, isBren } = player;
-    const { sanctuaries, clans, territories } = challengerTokens;
+    const { pretenderTokens: pretenderTokens, isBren } = player;
+    const { sanctuaries, clans, territories } = pretenderTokens;
     const tokensCount = [sanctuaries, clans, territories].filter(token => token === true).length;
     if (tokensCount > 0 && tokensCount > maxTokens) {
       maxTokens = tokensCount;

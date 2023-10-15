@@ -8,7 +8,7 @@ export const ADVANTAGES_CARDS = 13;
 
 // Tokens
 export const MAX_DEED_TOKENS = 10; // жетоны подвига
-export const MAX_CHALLENGER_TOKENS = 4; // жетон претендента
+export const MAX_PRETENDER_TOKENS = 4; // жетон претендента
 export const MAX_HOLIDAY_TOKEN = 1;
 
 //Clans
