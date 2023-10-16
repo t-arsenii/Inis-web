@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { Player } from "../../core/Player";
-import { GameState } from "../../core/GameState";
+import { GameState } from "../../gameState/GameState";
 import { ActionType, AttackerAction, GameStage } from "../../types/Enums";
 import { IAttackerInputParams, IAttackerParams, IDeffenderInputParams } from "../../types/Interfaces";
 export function playerFightHandler(socket: Socket) {

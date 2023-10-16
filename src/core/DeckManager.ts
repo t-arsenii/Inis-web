@@ -2,7 +2,7 @@ import { cardActionMap } from "./constans/constant_action_cards";
 import { shuffle } from "../services/helperFunctions";
 import { Card, DealCards } from "../types/Types"
 import { Card_type } from "../types/Enums"
-import { GameState } from "./GameState";
+import { GameState } from "../gameState/GameState";
 import { Player } from "./Player";
 import { cardEposMap } from "./constans/constant_epos_cards";
 import { territoryMap } from "./constans/constant_territories";

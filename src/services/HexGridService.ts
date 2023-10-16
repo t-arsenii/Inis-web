@@ -1,7 +1,9 @@
-import { AxialToString, hexToAxialCoordinates } from "./helperFunctions";
-import { Field, HexGrid, Hexagon } from "../core/map/HexGrid";
-import { axialCoordiantes } from "../types/Types";
 import { territoryMap } from "../core/constans/constant_territories";
+import { HexGrid } from "../core/map/HexGrid";
+import { Hexagon, Field } from "../core/map/HexagonField";
+import { axialCoordiantes } from "../types/Types";
+import { hexToAxialCoordinates, AxialToString } from "./helperFunctions";
+
 export function HexGridToJson(hexGrid: HexGrid) {
     let capitalCoordinates: axialCoordiantes | null = null
     if (hexGrid.fieldsController.capitalHex) {

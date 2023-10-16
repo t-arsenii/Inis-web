@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 import { axialCoordiantes } from "../../types/Types";
 import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../services/helperFunctions";
 import { GameStage } from "../../types/Enums";
-import { GameState } from "../../core/GameState";
+import { GameState } from "../../gameState/GameState";
 import { Player } from "../../core/Player";
 export function gameSetupHandler(socket: Socket) {
     socket.on("game-setup-clans", (axial: axialCoordiantes) => {

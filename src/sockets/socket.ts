@@ -1,8 +1,8 @@
 import { Server, Socket } from "socket.io";
-import { gamesManager } from "../core/GameStateManager";
+import { gamesManager } from "../gameState/GameStateManager";
 import { Player } from "../core/Player";
 import { cardActionMap } from "../core/constans/constant_action_cards";
-import { GameState } from "../core/GameState";
+import { GameState } from "../gameState/GameState";
 import { playerInfo } from "../types/Types";
 import { axialCoordiantes } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameLobbyEvents";

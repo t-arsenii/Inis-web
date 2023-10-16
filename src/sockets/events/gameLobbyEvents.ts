@@ -1,6 +1,6 @@
 import { Server, Socket } from "socket.io";
-import { GameState } from "../../core/GameState";
-import { gamesManager } from "../../core/GameStateManager";
+import { GameState } from "../../gameState/GameState";
+import { gamesManager } from "../../gameState/GameStateManager";
 import { Player } from "../../core/Player";
 import { GetGameStateAndPlayer } from "../../services/helperFunctions";
 import { playerInfo } from "../../types/Types"

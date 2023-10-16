@@ -1,16 +1,17 @@
-import { Player } from "./Player";
+import { Player } from "../core/Player";
 import { v4 } from "uuid";
-import { HexGrid, Hexagon } from "./map/HexGrid";
-import { Deck, DeckManager } from "./DeckManager";
+import { HexGrid } from "../core/map/HexGrid";
+import { Deck, DeckManager } from "../core/DeckManager";
 import { checkSockets, getRandomDirection } from "../services/helperFunctions";
-import { MAX_PRETENDER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES, MIN_WINNING_AMOUNT } from "./constans/constant_3_players";
+import { MAX_PRETENDER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES, MIN_WINNING_AMOUNT } from "../core/constans/constant_3_players";
 import { TurnOrder, GameStage, PretenderTokenType, playerAction } from "../types/Enums";
 import { PlayerTurnOrder } from "../types/Types";
 import { InitHexGrid } from "../services/HexGridService";
-import { FightManager } from "./Fighter";
-import { TrixelManager } from "./TrixelManager";
+import { FightManager } from "../core/fight/FightManager";
+import { TrixelManager } from "../core/TrixelManager";
 import EventEmitter from "events";
 import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../services/GameStateService";
+import { Hexagon } from "../core/map/HexagonField";
 
 export class GameState {
   //Game info
@@ -100,6 +101,7 @@ export class GameState {
     }
     return undefined;
   }
+
   AddDeedToken(player: Player) {
     if (this.deedTokens < 0) {
       throw new Error("gameState.AddDeedToken: no tokens left")

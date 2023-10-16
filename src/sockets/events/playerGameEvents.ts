@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { GameState } from "../../core/GameState";
+import { GameState } from "../../gameState/GameState";
 import { Player } from "../../core/Player";
 import { cardActionMap } from "../../core/constans/constant_action_cards";
 import { cardSeasonMap, cardTrixelMap } from "../../core/cardOperations/cardMap";
@@ -8,21 +8,21 @@ import { trixelCondition_oOWJ5 } from "../../core/constans/constant_trixelCondit
 import { GameStage, playerAction } from "../../types/Enums";
 export function playerCardHandler(socket: Socket) {
     socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
         try {
             if (!player.isActive) {
-                throw new Error("PlayerCardSeason: player is not active")
+                throw new Error("PlayerCardSeason: player is not active");
             }
             if (gameState.gameStage !== GameStage.Season) {
                 throw new Error("PlayerCardSeason: Game stage is not Season");
             }
             //Check card in seasonMap
             if (!cardActionMap.has(cardId)) {
-                throw new Error(`PlayerCardSeason: card id is not found, cardId: ${cardId}`)
+                throw new Error(`PlayerCardSeason: card id is not found, cardId: ${cardId}`);
             }
             if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
-                throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`)
+                throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`);
             }
             const res = cardSeasonMap[(cardId)]
             const { Action } = res
@@ -31,13 +31,13 @@ export function playerCardHandler(socket: Socket) {
                 gameState: gameState,
                 ...params
             }
-            Action(actionParams)
-            gameState.deckManager.DiscardCard(player, cardId)
-            gameState.trixelManager.AddTrixel(player, trixelCondition_oOWJ5)
-            player.lastAction = playerAction.Card
+            Action(actionParams);
+            gameState.deckManager.DiscardCard(player, cardId);
+            gameState.trixelManager.AddTrixel(player, trixelCondition_oOWJ5);
+            player.lastAction = playerAction.Card;
         } catch (err) {
-            socket.emit("player-card-season-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`)
-            console.log(err)
+            socket.emit("player-card-season-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`);
+            console.log(err);
         }
     })
     socket.on("player-card-info", ({ cardId, params }: IPlayerCardInput) => {
@@ -131,7 +131,7 @@ export function playerCardHandler(socket: Socket) {
             gameState.deckManager.TryDealActionCards();
             gameState.deckManager.TryEndDealActionCards();
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
     })

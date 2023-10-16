@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
-import { GameState } from "../../core/GameState";
+import { GameState } from "../../gameState/GameState";
 import { Player } from "../../core/Player";
 import { GameStage } from "../../types/Enums";
 import { IPlayerCardInput } from "../../types/Interfaces";
 import { axialCoordiantes } from "../../types/Types";
 import { HexGridToJson } from "../../services/HexGridService";
-import { gamesManager } from "../../core/GameStateManager";
+import { gamesManager } from "../../gameState/GameStateManager";
 
 export function DebugTools(socket: Socket) {
     socket.on("get-fight-info", () => {

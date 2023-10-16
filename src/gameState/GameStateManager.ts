@@ -1,6 +1,6 @@
 import { playerInfo } from "../types/Types";
 import { GameState } from "./GameState";
-import { Player } from "./Player";
+import { Player } from "../core/Player";
 class GameStateManager {
     private gameStates: Map<string, GameState> = new Map();
     socketsConnInfo: Map<string, playerInfo> = new Map();

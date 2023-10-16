@@ -1,11 +1,11 @@
 import { Player } from "../core/Player";
-import { GameState } from "../core/GameState";
+import { GameState } from "../gameState/GameState";
 import { axialCoordiantes } from "../types/Types";
 import { Socket } from "socket.io";
-import { gamesManager } from "../core/GameStateManager";
+import { gamesManager } from "../gameState/GameStateManager";
 import { GameStage, TurnOrder } from "../types/Enums";
 import { Deck } from "../core/DeckManager";
-import { Hexagon } from "../core/map/HexGrid";
+import { Hexagon } from "../core/map/HexagonField";
 
 export function shuffle<T>(array: T[]): T[] {
     const shuffledArray = array.slice(); // Copy the original array

@@ -1,5 +1,5 @@
 import { Deck } from "../core/DeckManager";
-import { GameState } from "../core/GameState";
+import { GameState } from "../gameState/GameState";
 import { Player } from "../core/Player";
 import { cardAllMap } from "../core/constans/constant_all_cards";
 import { HexGridToJson } from "./HexGridService";

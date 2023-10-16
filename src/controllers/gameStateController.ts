@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express"
-import { GameState } from "../core/GameState";
+import { GameState } from "../gameState/GameState";
 import { v4 } from "uuid";
-import { gamesManager } from "../core/GameStateManager";
+import { gamesManager } from "../gameState/GameStateManager";
 import { playerInfo } from "../types/Types";
 import { GameStateToJSON, GameStateToJSONFormated } from "../services/GameStateService";
 
