@@ -1,5 +1,5 @@
 import { ICardOperationParams, ICardOperationResponse, ICardParams } from "../../types/Interfaces"
-import { axialCoordiantes } from "../../types/Types"
+import { axialCoordinates } from "../../types/Types"
 import { Deck, DeckManager } from "../DeckManager"
 import { Hexagon } from "../map/HexagonField"
 export function BardActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
@@ -41,7 +41,7 @@ export function NewClansActionInfo({ gameState, player }: ICardOperationParams):
     return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })) }
 }
 export function ExplorationActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    const axialArr: axialCoordiantes[] = gameState.map.GetAllValidPlacements()
+    const axialArr: axialCoordinates[] = gameState.map.GetAllValidPlacements()
     if (!axialArr) {
         return {}
     }
@@ -66,7 +66,7 @@ export function ConquestActionInfo({ gameState, player, axial }: ICardOperationP
         throw new Error(`ConquestActionInfo: no hexagon with axial:${axial}`)
     }
     const hexArr: Hexagon[] = gameState.map.GetNeighbors(axial)
-    const axialToNumRes: { axial: axialCoordiantes, num: number }[] = [];
+    const axialToNumRes: { axial: axialCoordinates, num: number }[] = [];
 
     hexArr.forEach(hex => {
         if (hex.field.playersClans.has(player.id)) {

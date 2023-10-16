@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
-import { axialCoordiantes } from "../../types/Types";
+import { axialCoordinates } from "../../types/Types";
 import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../services/helperFunctions";
 import { GameStage } from "../../types/Enums";
 import { GameState } from "../../gameState/GameState";
 import { Player } from "../../core/Player";
 export function gameSetupHandler(socket: Socket) {
-    socket.on("game-setup-clans", (axial: axialCoordiantes) => {
+    socket.on("game-setup-clans", (axial: axialCoordinates) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         try {
@@ -29,7 +29,7 @@ export function gameSetupHandler(socket: Socket) {
             console.log(err)
         }
     })
-    socket.on("game-setup-capital", (axial: axialCoordiantes) => {
+    socket.on("game-setup-capital", (axial: axialCoordinates) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         try {

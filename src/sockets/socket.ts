@@ -4,7 +4,7 @@ import { Player } from "../core/Player";
 import { cardActionMap } from "../core/constans/constant_action_cards";
 import { GameState } from "../gameState/GameState";
 import { playerInfo } from "../types/Types";
-import { axialCoordiantes } from "../types/Types";
+import { axialCoordinates } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameLobbyEvents";
 import { CheckSocketGameConnection } from "../services/helperFunctions";
 import { gameSetupHandler } from "./events/gameSetupEvents";
@@ -45,7 +45,7 @@ export default function handleSocketConnections(io: Server) {
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId)
             const player = gameState?.GetPlayerById(userId)
-            const axial: axialCoordiantes = {
+            const axial: axialCoordinates = {
                 q: +q,
                 r: +r
             }

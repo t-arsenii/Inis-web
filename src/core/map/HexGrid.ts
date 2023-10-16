@@ -1,5 +1,5 @@
 import { AxialToString } from "../../services/helperFunctions";
-import { axialCoordiantes } from "../../types/Types";
+import { axialCoordinates } from "../../types/Types";
 import { GameState } from "../../gameState/GameState";
 import { ClansController } from "./ClansController";
 import { FieldsController } from "./FieldsController";
@@ -16,8 +16,8 @@ export class HexGrid {
         this.gameState = gameState
         this.setupController = new SetupController(gameState)
     }
-    public GetAllValidPlacements(): axialCoordiantes[] {
-        const validPlacements: axialCoordiantes[] = [];
+    public GetAllValidPlacements(): axialCoordinates[] {
+        const validPlacements: axialCoordinates[] = [];
 
         // Find the minimum and maximum coordinates to determine the grid size
         let minQ = Infinity;
@@ -36,7 +36,7 @@ export class HexGrid {
         minR--;
         maxR++;
 
-        const axial: axialCoordiantes = {
+        const axial: axialCoordinates = {
             q: 0,
             r: 0
         }
@@ -51,7 +51,7 @@ export class HexGrid {
         }
         return validPlacements;
     }
-    public GetNeighbors(axial: axialCoordiantes): Hexagon[] {
+    public GetNeighbors(axial: axialCoordinates): Hexagon[] {
         const directions = [
             { q: 1, r: 0 },
             { q: 0, r: -1 },
@@ -61,7 +61,7 @@ export class HexGrid {
             { q: 1, r: -1 },
         ];
         const neighbors: Hexagon[] = [];
-        const axialNeighbor: axialCoordiantes = {
+        const axialNeighbor: axialCoordinates = {
             q: 0,
             r: 0
         }
@@ -74,7 +74,7 @@ export class HexGrid {
         }
         return neighbors;
     }
-    public CanPlaceFieldBetween(axial: axialCoordiantes): boolean {
+    public CanPlaceFieldBetween(axial: axialCoordinates): boolean {
         if (!this.HasHexagon(axial)) {
             const neighbors = this.GetNeighbors(axial);
             if (neighbors.length >= 2) {
@@ -83,11 +83,11 @@ export class HexGrid {
         }
         return false;
     }
-    public HasHexagon(axial: axialCoordiantes): boolean {
+    public HasHexagon(axial: axialCoordinates): boolean {
         const key = AxialToString(axial);
         return this.grid.has(key);
     }
-    public GetHex(axial: axialCoordiantes): Hexagon | undefined {
+    public GetHex(axial: axialCoordinates): Hexagon | undefined {
         return this.grid.get(AxialToString(axial))
     }
     public GetAllHex(): Hexagon[] {

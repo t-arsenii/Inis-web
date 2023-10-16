@@ -10,7 +10,7 @@ import { InitHexGrid } from "../services/HexGridService";
 import { FightManager } from "../core/fight/FightManager";
 import { TrixelManager } from "../core/TrixelManager";
 import EventEmitter from "events";
-import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../services/GameStateService";
+import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../services/gameStateService";
 import { Hexagon } from "../core/map/HexagonField";
 
 export class GameState {

@@ -3,7 +3,7 @@ import { GameState } from "../../gameState/GameState";
 import { Player } from "../../core/Player";
 import { GameStage } from "../../types/Enums";
 import { IPlayerCardInput } from "../../types/Interfaces";
-import { axialCoordiantes } from "../../types/Types";
+import { axialCoordinates } from "../../types/Types";
 import { HexGridToJson } from "../../services/HexGridService";
 import { gamesManager } from "../../gameState/GameStateManager";
 
@@ -18,7 +18,7 @@ export function DebugTools(socket: Socket) {
         const player: Player = socket.player!
         gameState.fightManager.InitFight(player, gameState.map.GetHex({ q: 0, r: 0 })!)
     })
-    socket.on("move", ({ axialFrom, axialTo, clansNum }: { axialFrom: axialCoordiantes, axialTo: axialCoordiantes, clansNum: number }) => {
+    socket.on("move", ({ axialFrom, axialTo, clansNum }: { axialFrom: axialCoordinates, axialTo: axialCoordinates, clansNum: number }) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         try {

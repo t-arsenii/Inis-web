@@ -1,5 +1,5 @@
 import { shuffle, AxialToString } from "../../services/helperFunctions";
-import { axialCoordiantes } from "../../types/Types";
+import { axialCoordinates } from "../../types/Types";
 import { Player } from "../Player";
 import { territoryMap } from "../constans/constant_territories";
 import { HexGrid } from "./HexGrid";
@@ -18,7 +18,7 @@ export class FieldsController {
         this.hexGrid = hexGrid
         this.avalibleTerritories = shuffle(Array.from(territoryMap.keys()))
     }
-    public AddRandomField(axial: axialCoordiantes): void {
+    public AddRandomField(axial: axialCoordinates): void {
         const key = AxialToString(axial);
         if (this.hexGrid.HasHexagon(axial)) {
             console.log("addHex error, grid has")
@@ -35,7 +35,7 @@ export class FieldsController {
         this.avalibleTerritories.filter(t => t !== territoryId)
         this.hexGrid.grid.set(key, hexagon);
     }
-    public SetCapital(axial: axialCoordiantes): void {
+    public SetCapital(axial: axialCoordinates): void {
         const hex = this.hexGrid.GetHex(axial);
         if (!hex) {
             throw new Error("FieldsController.SetCapital: ")
@@ -59,7 +59,7 @@ export class FieldsController {
         })
         return citadelNum
     }
-    public SetHolidayField(axial: axialCoordiantes) {
+    public SetHolidayField(axial: axialCoordinates) {
         if (!this.hexGrid.HasHexagon(axial)) {
             throw new Error("FieldsController.SetHolidayField: axial not found")
         }
@@ -69,7 +69,7 @@ export class FieldsController {
     public ResetHolidayField() {
         this.festivalHex = null
     }
-    AddSanctuary(axial: axialCoordiantes) {
+    AddSanctuary(axial: axialCoordinates) {
         const hex = this.hexGrid.GetHex(axial)!;
         if (!hex) {
             throw new Error("FieldsController.AddSanctuary: ");

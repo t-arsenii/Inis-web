@@ -3,7 +3,7 @@ import { GameState } from "../gameState/GameState";
 import { v4 } from "uuid";
 import { gamesManager } from "../gameState/GameStateManager";
 import { playerInfo } from "../types/Types";
-import { GameStateToJSON, GameStateToJSONFormated } from "../services/GameStateService";
+import { GameStateToJSON, GameStateToJSONFormated } from "../services/gameStateService";
 
 interface IUserReq {
     userId: string,

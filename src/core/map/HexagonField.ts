@@ -1,5 +1,5 @@
 import { getKeysWithMaxValue } from "../../services/helperFunctions"
-import { axialCoordiantes } from "../../types/Types"
+import { axialCoordinates } from "../../types/Types"
 import { GameState } from "../../gameState/GameState"
 import { Player } from "../Player"
 
@@ -59,7 +59,7 @@ export class Hexagon {
     public q: number
     public r: number
     public field: Field
-    constructor(axial: axialCoordiantes, field: Field) {
+    constructor(axial: axialCoordinates, field: Field) {
         this.q = axial.q
         this.r = axial.r
         this.field = field

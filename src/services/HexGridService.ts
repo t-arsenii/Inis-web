@@ -1,15 +1,15 @@
 import { territoryMap } from "../core/constans/constant_territories";
 import { HexGrid } from "../core/map/HexGrid";
 import { Hexagon, Field } from "../core/map/HexagonField";
-import { axialCoordiantes } from "../types/Types";
+import { axialCoordinates } from "../types/Types";
 import { hexToAxialCoordinates, AxialToString } from "./helperFunctions";
 
 export function HexGridToJson(hexGrid: HexGrid) {
-    let capitalCoordinates: axialCoordiantes | null = null
+    let capitalCoordinates: axialCoordinates | null = null
     if (hexGrid.fieldsController.capitalHex) {
         capitalCoordinates = hexToAxialCoordinates(hexGrid.fieldsController.capitalHex);
     }
-    let holidayCoordinates: axialCoordiantes | null = null
+    let holidayCoordinates: axialCoordinates | null = null
     if (hexGrid.fieldsController.festivalHex) {
         holidayCoordinates = hexToAxialCoordinates(hexGrid.fieldsController.festivalHex);
     }

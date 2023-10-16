@@ -1,5 +1,5 @@
 import { hexToAxialCoordinates } from "../../services/helperFunctions"
-import { axialCoordiantes } from "../../types/Types"
+import { axialCoordinates } from "../../types/Types"
 import { Player } from "../Player"
 import { HexGrid } from "./HexGrid"
 import { Hexagon, Field } from "./HexagonField"
@@ -11,7 +11,7 @@ export class ClansController {
         this.hexGrid = hexGrid
         this.playerFieldPresense = playerFieldPresense
     }
-    public AddClans(player: Player, clansNum: number, axial: axialCoordiantes): void {
+    public AddClans(player: Player, clansNum: number, axial: axialCoordinates): void {
         if (clansNum <= 0) {
             throw new Error("ClansController.AddClans: clansNum can't be negative or 0")
         }
@@ -36,7 +36,7 @@ export class ClansController {
         }
         hex.field.UpdateLeader()
     }
-    public RemoveClans(player: Player, clansNum: number, axial: axialCoordiantes): void {
+    public RemoveClans(player: Player, clansNum: number, axial: axialCoordinates): void {
         if (clansNum <= 0) {
             throw new Error("ClansController.RemoveClans: clansNum can't be negative or 0")
         }
@@ -62,7 +62,7 @@ export class ClansController {
         player.clansLeft += clansNum;
         hex.field.UpdateLeader()
     }
-    public MoveClans(player: Player, axialFrom: axialCoordiantes, axialTo: axialCoordiantes, clansNum: number) {
+    public MoveClans(player: Player, axialFrom: axialCoordinates, axialTo: axialCoordinates, clansNum: number) {
         if (clansNum <= 0) {
             throw new Error("ClansController.MoveClans: clansNum can't be negative or 0")
         }

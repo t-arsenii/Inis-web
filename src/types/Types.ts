@@ -22,7 +22,7 @@ export type Territory = {
     cardId: string
     startStructure?: StartStructure
 }
-export type axialCoordiantes = {
+export type axialCoordinates = {
     q: number
     r: number
 }
