@@ -5,8 +5,9 @@ import { PretenderTokens } from "../types/Types";
 export class Player {
     //User info
     id: string;
-    username: string | null = null;
+    username: string = undefined!;
     socket: Socket | null = null;
+    mmr: number = undefined!;
     //Game logic
     isBren: boolean = false;
     isActive = false;
