@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
-import { GameState } from "../../gameState/GameState";
 import { Player } from "../../core/Player";
 import { cardActionMap } from "../../core/constans/constant_action_cards";
 import { cardSeasonMap, cardTrixelMap } from "../../core/cardOperations/cardMap";
 import { ICardOperationParams, ICardOperationResponse, IPretenderTokenInput, IPlayerCardDealInput, IPlayerCardInput } from "../../types/Interfaces";
 import { trixelCondition_oOWJ5 } from "../../core/constans/constant_trixelConditions";
 import { GameStage, playerAction } from "../../types/Enums";
+import { GameState } from "../../core/gameState/GameState";
+import { cardAllMap } from "../../core/constans/constant_all_cards";
 export function playerCardHandler(socket: Socket) {
     socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!;
@@ -62,11 +63,10 @@ export function playerCardHandler(socket: Socket) {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         //Check card in trixelMap
-        // if (!cardActionMap.has(cardId)) {
-        //     socket.emit("player-card-season-error", `PlayerCardSeason: card id is not found, cardId: ${cardId}`)
-        //     return
-        // }
         try {
+            if (!cardAllMap.has(cardId)) {
+                throw new Error(`PlayerCardSeason: card id is not found, cardId: ${cardId}`)
+            }
             if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
                 throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`)
             }

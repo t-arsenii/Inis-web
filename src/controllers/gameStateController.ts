@@ -1,15 +1,14 @@
 import express, { Request, Response } from "express"
-import { GameState } from "../gameState/GameState";
+import { GameState } from "../core/gameState/GameState";
 import { v4 } from "uuid";
-import { gamesManager } from "../gameState/GameStateManager";
 import { playerInfo } from "../types/Types";
-import { GameStateToJSON, GameStateToJSONFormated } from "../services/gameStateService";
+import { GameStateToJSON, GameStateToJSONFormated } from "../utils/gameStateUtils";
+import { gamesManager } from "../core/gameState/GameStateManager";
 
 interface IUserReq {
     userId: string,
     username: string
 }
-
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const gameState: GameState = new GameState(gameId)

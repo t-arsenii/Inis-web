@@ -1,13 +1,13 @@
 import { Socket } from "socket.io";
 import { axialCoordinates } from "../../types/Types";
-import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../services/helperFunctions";
+import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../utils/helperFunctions";
 import { GameStage } from "../../types/Enums";
-import { GameState } from "../../gameState/GameState";
 import { Player } from "../../core/Player";
+import { GameState } from "../../core/gameState/GameState";
 export function gameSetupHandler(socket: Socket) {
     socket.on("game-setup-clans", (axial: axialCoordinates) => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
         try {
             if (!player.isActive) {
                 throw new Error("GameSetupClans: player not active");
@@ -30,25 +30,25 @@ export function gameSetupHandler(socket: Socket) {
         }
     })
     socket.on("game-setup-capital", (axial: axialCoordinates) => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
         try {
             if (!player.isBren || !player.isActive) {
-                throw new Error("GameSetupCapital: player not active or not bren")
+                throw new Error("GameSetupCapital: player not active or not bren");
             }
             if (gameState.gameStage !== GameStage.CapitalSetup) {
-                throw new Error("GameSetupCapital: game stage is not valid")
+                throw new Error("GameSetupCapital: game stage is not valid");
             }
             if (gameState.map.fieldsController.capitalHex) {
-                throw new Error("GameSetupCapital: capital already exists")
+                throw new Error("GameSetupCapital: capital already exists");
             }
             gameState.map.fieldsController.SetCapital(axial);
             gameState.map.fieldsController.AddSanctuary(axial);
-            gameState.gameStage = GameStage.ClansSetup
+            gameState.gameStage = GameStage.ClansSetup;
         }
         catch (err) {
-            socket.emit("game-setup-capital-error", `GameSetupClans: Internal server error:\n${err}`)
-            console.log(err)
+            socket.emit("game-setup-capital-error", `GameSetupClans: Internal server error:\n${err}`);
+            console.log(err);
         }
     })
 }

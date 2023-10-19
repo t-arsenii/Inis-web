@@ -1,6 +1,6 @@
 import { Player } from "../core/Player"
-import { GameState } from "../gameState/GameState"
-import { gamesManager } from "../gameState/GameStateManager"
+import { GameState } from "../core/gameState/GameState"
+import { gamesManager } from "../core/gameState/GameStateManager"
 import { TurnOrder, GameStage } from "../types/Enums"
 
 export const initGameToSeason = () => {

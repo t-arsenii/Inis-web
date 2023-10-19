@@ -1,5 +1,5 @@
-import { GameState } from "../gameState/GameState"
 import { Player } from "../core/Player"
+import { GameState } from "../core/gameState/GameState"
 import { Badge, Card_type, StartStructure, Timing_to_play, TurnOrder } from "./Enums"
 export type Card = {
     readonly id: string,

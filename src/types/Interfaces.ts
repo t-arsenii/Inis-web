@@ -1,5 +1,6 @@
-import { GameState } from "../gameState/GameState"
+
 import { Player } from "../core/Player"
+import { GameState } from "../core/gameState/GameState"
 import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction } from "./Enums"
 import { axialCoordinates } from "./Types"
 

@@ -1,17 +1,17 @@
-import { Player } from "../core/Player";
-import { v4 } from "uuid";
-import { HexGrid } from "../core/map/HexGrid";
-import { Deck, DeckManager } from "../core/DeckManager";
-import { checkSockets, getRandomDirection } from "../services/helperFunctions";
-import { MAX_PRETENDER_TOKENS, MAX_CITADELS, MAX_DEED_TOKENS, MAX_SANCTUARIES, MIN_WINNING_AMOUNT } from "../core/constans/constant_3_players";
-import { TurnOrder, GameStage, PretenderTokenType, playerAction } from "../types/Enums";
-import { PlayerTurnOrder } from "../types/Types";
-import { InitHexGrid } from "../services/HexGridService";
-import { FightManager } from "../core/fight/FightManager";
-import { TrixelManager } from "../core/TrixelManager";
 import EventEmitter from "events";
-import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../services/gameStateService";
-import { Hexagon } from "../core/map/HexagonField";
+import { v4 } from "uuid";
+import { InitHexGrid } from "../../utils/HexGridUtils";
+import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../../utils/gameStateUtils";
+import { getRandomDirection } from "../../utils/helperFunctions";
+import { GameStage, PretenderTokenType, playerAction, TurnOrder } from "../../types/Enums";
+import { PlayerTurnOrder } from "../../types/Types";
+import { DeckManager } from "../DeckManager";
+import { Player } from "../Player";
+import { TrixelManager } from "../TrixelManager";
+import { MAX_DEED_TOKENS, MAX_PRETENDER_TOKENS, MAX_SANCTUARIES, MAX_CITADELS, MIN_WINNING_AMOUNT } from "../constans/constant_3_players";
+import { FightManager } from "../fight/FightManager";
+import { HexGrid } from "../map/HexGrid";
+import { Hexagon } from "../map/HexagonField";
 
 export class GameState {
   //Game info

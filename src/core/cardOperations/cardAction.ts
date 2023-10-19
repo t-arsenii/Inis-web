@@ -4,7 +4,7 @@ import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
 import { trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { Player } from "../Player";
-import { hexToAxialCoordinates } from "../../services/helperFunctions";
+import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Hexagon } from "../map/HexagonField";
 export function BardSeason({ gameState, player }: ICardOperationParams): void {
     gameState.deckManager.AddRandomEposCard(player)

@@ -3,7 +3,7 @@ import { trixelCondition_NzLys, trixelCondition_bxaty } from "../constans/consta
 import { AttackerAction, DeffenderAction, GameStage, TurnOrder } from "../../types/Enums";
 import { IAttackerParams } from "../../types/Interfaces";
 import { AttackerCycle, PlayerTurnOrder } from "../../types/Types";
-import { GameState } from "../../gameState/GameState";
+import { GameState } from "../gameState/GameState";
 import { Hexagon } from "../map/HexagonField";
 import { Player } from "../Player";
 export class Fight {

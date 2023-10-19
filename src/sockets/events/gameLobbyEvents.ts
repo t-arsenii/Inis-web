@@ -1,9 +1,9 @@
 import { Server, Socket } from "socket.io";
-import { GameState } from "../../gameState/GameState";
-import { gamesManager } from "../../gameState/GameStateManager";
 import { Player } from "../../core/Player";
-import { GetGameStateAndPlayer } from "../../services/helperFunctions";
+import { GetGameStateAndPlayer } from "../../utils/helperFunctions";
 import { playerInfo } from "../../types/Types"
+import { GameState } from "../../core/gameState/GameState";
+import { gamesManager } from "../../core/gameState/GameStateManager";
 export function gameLobbyHandler(socket: Socket) {
     socket.on("gameLobby-join", (gameId: string, userId: string) => {
         const res = GetGameStateAndPlayer(socket, gameId, userId)

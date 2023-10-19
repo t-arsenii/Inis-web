@@ -1,5 +1,5 @@
 import { TrixelCondition } from "../types/Types";
-import { GameState } from "../gameState/GameState";
+import { GameState } from "./gameState/GameState";
 import { Player } from "./Player";
 
 export class TrixelManager {

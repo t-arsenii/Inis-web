@@ -1,7 +1,7 @@
-import { getKeysWithMaxValue } from "../../services/helperFunctions"
+import { getKeysWithMaxValue } from "../../utils/helperFunctions"
 import { axialCoordinates } from "../../types/Types"
-import { GameState } from "../../gameState/GameState"
 import { Player } from "../Player"
+import { GameState } from "../gameState/GameState"
 
 export class Field {
     territoryId: string = ""

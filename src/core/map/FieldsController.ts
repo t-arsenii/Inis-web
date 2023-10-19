@@ -1,4 +1,4 @@
-import { shuffle, AxialToString } from "../../services/helperFunctions";
+import { shuffle, AxialToString } from "../../utils/helperFunctions";
 import { axialCoordinates } from "../../types/Types";
 import { Player } from "../Player";
 import { territoryMap } from "../constans/constant_territories";

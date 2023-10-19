@@ -1,8 +1,8 @@
 import { Deck } from "../core/DeckManager";
-import { GameState } from "../gameState/GameState";
 import { Player } from "../core/Player";
 import { cardAllMap } from "../core/constans/constant_all_cards";
-import { HexGridToJson } from "./HexGridService";
+import { GameState } from "../core/gameState/GameState";
+import { HexGridToJson } from "./HexGridUtils";
 
 export function GameStateToJSON(gameState: GameState) {
     const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = gameState;

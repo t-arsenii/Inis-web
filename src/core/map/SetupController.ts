@@ -1,4 +1,4 @@
-import { GameState } from "../../gameState/GameState"
+import { GameState } from "../gameState/GameState";
 
 export class SetupController {
     private gameState: GameState

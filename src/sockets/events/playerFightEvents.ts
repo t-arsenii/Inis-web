@@ -1,8 +1,8 @@
 import { Socket } from "socket.io";
 import { Player } from "../../core/Player";
-import { GameState } from "../../gameState/GameState";
 import { ActionType, AttackerAction, GameStage } from "../../types/Enums";
 import { IAttackerInputParams, IAttackerParams, IDeffenderInputParams } from "../../types/Interfaces";
+import { GameState } from "../../core/gameState/GameState";
 export function playerFightHandler(socket: Socket) {
     socket.on("player-fight-attacker", (playerAction: IAttackerInputParams) => {
         const gameState: GameState = socket.gameState!

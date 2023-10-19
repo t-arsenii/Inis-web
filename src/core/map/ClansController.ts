@@ -1,4 +1,4 @@
-import { hexToAxialCoordinates } from "../../services/helperFunctions"
+import { hexToAxialCoordinates } from "../../utils/helperFunctions"
 import { axialCoordinates } from "../../types/Types"
 import { Player } from "../Player"
 import { HexGrid } from "./HexGrid"

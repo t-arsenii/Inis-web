@@ -1,6 +1,6 @@
 import { GameStage, AttackerAction, DeffenderAction } from "../../types/Enums"
 import { IAttackerParams } from "../../types/Interfaces"
-import { GameState } from "../../gameState/GameState"
+import { GameState } from "../gameState/GameState"
 import { Player } from "../Player"
 import { Hexagon } from "../map/HexagonField"
 import { Fight } from "./Fight"

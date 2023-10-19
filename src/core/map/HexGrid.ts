@@ -1,6 +1,6 @@
-import { AxialToString } from "../../services/helperFunctions";
+import { AxialToString } from "../../utils/helperFunctions";
 import { axialCoordinates } from "../../types/Types";
-import { GameState } from "../../gameState/GameState";
+import { GameState } from "../gameState/GameState";
 import { ClansController } from "./ClansController";
 import { FieldsController } from "./FieldsController";
 import { Hexagon } from "./HexagonField";

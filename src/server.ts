@@ -4,7 +4,8 @@ import http from 'http';
 import cors from 'cors';
 import gamesRoutes from "./routes/gamesRoutes"
 import handleSocketConnections from "./sockets/socket"
-import { initGameToGathering, initGameToSeason } from "./services/helperFunctions";
+import { initGameToGathering, initGameToSeason } from "./utils/debugTools";
+
 const PORT = 8000;
 
 const app = express();
