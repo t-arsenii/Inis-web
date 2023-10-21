@@ -17,7 +17,7 @@ export default function handleSocketConnections(io: Server) {
     //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
         socket.use((packet, next) => {
-            if (packet[0] === 'gameLobby-join') {
+            if (packet[0] === 'game-join') {
                 return next();
             }
             const pInf: playerInfo | undefined = gamesManager.getSocketInfo(socket.id)

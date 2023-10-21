@@ -28,7 +28,8 @@ export const initGameToSeason = () => {
 
     //Overriding turn order 
     gameState.turnOrderManager.turnOrder.direction = TurnOrder.clockwise
-    gameState.turnOrderManager.turnOrder.activePlayerId = player1.id
+    gameState.turnOrderManager.SetActivePlayer(player1);
+    gameState.SetBrenPlayer(player1);
 
     //Adding cards to players
     // const Cards = shuffle(Array.from(cardActionsMap.keys()))

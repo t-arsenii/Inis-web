@@ -40,6 +40,7 @@ export function playerCardHandler(socket: Socket) {
         } catch (err) {
             socket.emit("player-card-season-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`);
             console.log(err);
+            return;
         }
         socket.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
         socket.to(gameState.id).emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));

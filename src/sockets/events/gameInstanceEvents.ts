@@ -11,7 +11,7 @@ export function gameLobbyHandler(socket: Socket) {
             return
         }
         const { gameState, player } = res
-        socket.join(gameId);
+        socket.join(gameState.id);
         player.socket = socket;
         gamesManager.addSocketInfo(socket.id, player, gameState);
         socket.emit('gameLobby-info', { status: "success", info: { playerId: player.id, socket: socket.id, gameId: gameId } });

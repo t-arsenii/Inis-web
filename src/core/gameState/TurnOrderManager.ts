@@ -21,10 +21,9 @@ export class TurnOrderManager {
     return this._gameState.playerManager.GetPlayerById(this.turnOrder.activePlayerId)!;
   }
   NextTurn(): void {
+    const playerIdsInOrder = this.turnOrder.playersId;
     const numberOfPlayers = this._gameState.playerManager.numPlayers;
-    const activePlayer: Player = this.GetActivePlayer();
-    activePlayer.isActive = false;
-    const activePlayerIndex = this.turnOrder.playersId.indexOf(this.turnOrder.activePlayerId);
+    const activePlayerIndex = playerIdsInOrder.indexOf(this.turnOrder.activePlayerId);
     let nextIndex;
     if (this.turnOrder.direction === TurnOrder.clockwise) {
       nextIndex = (activePlayerIndex + 1) % numberOfPlayers;
@@ -32,10 +31,9 @@ export class TurnOrderManager {
     else {
       nextIndex = (activePlayerIndex - 1 + numberOfPlayers) % numberOfPlayers;
     }
-    const newActivePlayerId = this.turnOrder.playersId[nextIndex];
-    this.turnOrder.activePlayerId = newActivePlayerId;
-    this._gameState.playerManager.GetPlayerById(newActivePlayerId)!.isActive = true;
-    this._gameState.trixelManager.ClearTrixel(); 
+    const newActivePlayer = this._gameState.playerManager.GetPlayerById(playerIdsInOrder[nextIndex])!;
+    this.SetActivePlayer(newActivePlayer);
+    this._gameState.trixelManager.ClearTrixel();
   }
   SetRandomDirection() {
     this.turnOrder.direction = getRandomDirection();
@@ -52,7 +50,11 @@ export class TurnOrderManager {
     }
     activePlayer.isActive = true;
   }
-  SetActivePlayer(player: Player){
+  SetActivePlayer(player: Player) {
+    const currentActivePlayer: Player = this.GetActivePlayer();
+    currentActivePlayer.isActive = false;
+
     this.turnOrder.activePlayerId = player.id;
+    player.isActive = true;
   }
 }

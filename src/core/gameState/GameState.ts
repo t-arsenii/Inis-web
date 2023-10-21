@@ -163,7 +163,7 @@ export class GameState {
       return;
     }
   }
-  private SetBrenPlayer(newBrenPlayer: Player) {
+  public SetBrenPlayer(newBrenPlayer: Player) {
     if (newBrenPlayer !== this.brenPlayer) {
       this.brenPlayer.isBren = false;
       newBrenPlayer.isBren = true;
