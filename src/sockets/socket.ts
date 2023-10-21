@@ -35,8 +35,8 @@ export default function handleSocketConnections(io: Server) {
         playerCardHandler(socket)
         playerFightHandler(socket)
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
-            const gameState = gamesManager.getGame(gameId)
-            const player = gameState?.GetPlayerById(userId)
+            const gameState = gamesManager.getGame(gameId);
+            const player = gameState?.playerManager.GetPlayerById(userId);
             const axial: axialCoordinates = {
                 q: +q,
                 r: +r
@@ -47,10 +47,10 @@ export default function handleSocketConnections(io: Server) {
         socket.on("player-nextTurn", () => {
             const gameState: GameState = socket.gameState!
             const player: Player = socket.player!
-            if (player.id !== gameState.turnOrder.activePlayerId) {
+            if (player.id !== gameState.turnOrderManager.GetActivePlayer()!.id) {
                 return
             }
-            gameState.NextTurn()
+            gameState.turnOrderManager.NextTurn();
         });
     });
 }

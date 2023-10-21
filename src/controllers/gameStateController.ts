@@ -14,7 +14,7 @@ const CreateGameWithId = (req: Request, res: Response) => {
     const gameState: GameState = new GameState(gameId)
     const users: IUserReq[] | undefined = req.body.users;
     if (users) {
-        users.forEach(user => gameState.AddPlayer({ userId: user.userId, username: user.username }));
+        users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.username }));
     }
     gamesManager.createGame(gameState)
     res.status(200).send(`Game created with id: ${gameId}`)
@@ -23,7 +23,7 @@ const CreateGame = (req: Request, res: Response) => {
     const gameState: GameState = new GameState();
     const users: IUserReq[] | undefined = req.body.users;
     if (users) {
-        users.forEach(user => gameState.AddPlayer({ userId: user.userId, username: user.username }));
+        users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.username }));
     }
     gamesManager.createGame(gameState)
     res.status(200).send(`Game created with id: ${gameState.id}`)
@@ -34,11 +34,11 @@ const GetGames = (req: Request, res: Response) => {
 }
 const GetGame = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
-    const gameState = gamesManager.getGame(gameId)
+    const gameState = gamesManager.getGame(gameId);
     if (!gameState) {
-        return res.status(404).send("Game not found")
+        return res.status(404).send("Game not found");
     }
-    res.status(200).send(GameStateToJSON(gameState))
+    res.status(200).send(GameStateToJSON(gameState));
 }
 const GetGameFormated = (req: Request, res: Response) => {
     const gameId: string = req.params.id;

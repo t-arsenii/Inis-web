@@ -11,7 +11,7 @@ export function WastelandTrixel({ gameState, player, targetPlayerId }: ICardOper
     if (!targetPlayerId) {
         throw new Error("WastelandTrixel: targetPlayerId undefiend")
     }
-    if (!gameState.players.has(targetPlayerId)) {
+    if (gameState.playerManager.HasPlayer(targetPlayerId)) {
         throw new Error("WastelandTrixel: targetPlayer not found")
     }
     const eposCards = gameState.deckManager.playersDeck.get(targetPlayerId)?.EposCards
@@ -67,5 +67,5 @@ export function HillsTrixel({ gameState, player }: ICardOperationParams) {
     gameState.fightManager.SkipDeffenderAction(player)
 }
 export function SwampSeason({ gameState, player }: ICardOperationParams) {
-    gameState.NextTurn()
+    gameState.turnOrderManager.NextTurn();
 }

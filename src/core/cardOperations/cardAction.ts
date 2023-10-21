@@ -266,10 +266,10 @@ export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPl
         if (!targetPlayerId) {
             throw new Error("NewUnionSeason(2): targetPlayerId parameter error")
         }
-        if (!gameState.players.has(targetPlayerId)) {
+        if (!gameState.playerManager.HasPlayer(targetPlayerId)) {
             throw new Error("NewUnionSeason(2): targetPlayer not found")
         }
-        const targetPlayer: Player = gameState.players.get(targetPlayerId)!
+        const targetPlayer: Player = gameState.playerManager.GetPlayerById(targetPlayerId)!
         if (!singleAxial || typeof singleAxial !== 'object' || Array.isArray(singleAxial)) {
             throw new Error("NewUnionSeason(2): axial parameter error")
         }

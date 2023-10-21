@@ -58,8 +58,9 @@ export class DeckManager {
         return allCards.includes(cardId)
     }
     Init() {
-        this.gameState.players.forEach((player, pId) => {
-            this.playersDeck.set(pId, new Deck())
+        const players = this.gameState.playerManager.GetPlayers();
+        players.forEach((player) => {
+            this.playersDeck.set(player.id, new Deck())
         })
         const eposCards = shuffle(Array.from(cardEposMap.keys()))
     }
@@ -132,7 +133,7 @@ export class DeckManager {
     }
     public InitDealActionCards() {
         this.ClearActionCardsDeck(); // Clearing remaining action cards from player decks
-        const playersInOrder: string[] = this.gameState.turnOrder.playersId;
+        const playersInOrder: string[] = this.gameState.turnOrderManager.turnOrder.playersId;
         this.dealCards = { cardsToDiscardNum: 3, players: {} };
         const Cards = shuffle(Array.from(cardActionMap.keys()))
         playersInOrder.forEach((playerId) => {
@@ -188,7 +189,7 @@ export class DeckManager {
         const grid = this.gameState.map.grid;
         grid.forEach(hex => {
             if (hex.field.leaderPlayerId) {
-                const leaderPlayer = this.gameState.GetPlayerById(hex.field.leaderPlayerId)!
+                const leaderPlayer = this.gameState.playerManager.GetPlayerById(hex.field.leaderPlayerId)!
                 const advantageCardId = territoryMap.get(hex.field.territoryId)!.cardId;
                 this.AddCard(leaderPlayer, advantageCardId)
             }

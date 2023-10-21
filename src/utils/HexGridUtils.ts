@@ -25,8 +25,8 @@ export function InitHexGrid(hexGrid: HexGrid): void {
     const t2Id = hexGrid.fieldsController.avalibleTerritories.pop()!
     const t3Id = hexGrid.fieldsController.avalibleTerritories.pop()!
 
-    hexGrid.gameState.players.forEach((player, playerId) => {
-        hexGrid.fieldsController.playerFieldPresense.set(playerId, [])
+    hexGrid.gameState.playerManager.GetPlayers().forEach((player) => {
+        hexGrid.fieldsController.playerFieldPresense.set(player.id, [])
     })
 
     const hex1 = new Hexagon({ q: 0, r: 0 }, new Field(t1Id, hexGrid.gameState))

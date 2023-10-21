@@ -9,8 +9,9 @@ export class TrixelManager {
         this.gameState = gameState
     }
     Init(): void {
-        this.gameState.players.forEach((player, pId) => {
-            this.trixelArray.set(pId, new Set<string>())
+        const players = this.gameState.playerManager.GetPlayers();
+        players.forEach((player) => {
+            this.trixelArray.set(player.id, new Set<string>())
         })
     }
     AddTrixel(player: Player, trixel: TrixelCondition): void {

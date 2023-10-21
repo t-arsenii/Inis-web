@@ -27,12 +27,12 @@ export class Fight {
             this.players[pId] = { clansNum, peace: false };
         });
         hex.field.playersClans
-        let playerFighterIds: string[] = gameState.turnOrder.playersId.filter((pId) => {
+        let playerFighterIds: string[] = gameState.turnOrderManager.turnOrder.playersId.filter((pId) => {
             return pId in this.players;
         });
-        this.FightTurnOrder.playersId = playerFighterIds
-        this.FightTurnOrder.direction = gameState.turnOrder.direction
-        this.FightTurnOrder.activePlayerId = playerAttacker.id
+        this.FightTurnOrder.playersId = playerFighterIds;
+        this.FightTurnOrder.direction = gameState.turnOrderManager.turnOrder.direction;
+        this.FightTurnOrder.activePlayerId = playerAttacker.id;
     }
     AttackRequest(player: Player, targetPlayerId: string) {
         if (this.FightTurnOrder.activePlayerId !== player.id) {
@@ -43,7 +43,7 @@ export class Fight {
         }
         //Trixel for hills
         if (this.fightHex.field.territoryId === Hills_ter.id) {
-            const defPlayer = this.gameState.GetPlayerById(targetPlayerId)!
+            const defPlayer = this.gameState.playerManager.GetPlayerById(targetPlayerId)!
             this.gameState.trixelManager.AddTrixel(defPlayer, trixelCondition_NzLys)
         }
         this.attackCycle.status = true
@@ -55,11 +55,11 @@ export class Fight {
             throw new Error("Figth.PerformAttack: attacker cycle error")
         }
         if (defenderAction === DeffenderAction.Clan) {
-            this.players[this.attackCycle.defenderPlayerId].clansNum -= 1
-            this.gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r })
+            this.players[this.attackCycle.defenderPlayerId].clansNum -= 1;
+            this.gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r });
 
-            const playerAttacker: Player = this.gameState.players.get(this.attackCycle.attackerPlayerId)!
-            this.gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty)
+            const playerAttacker: Player = this.gameState.playerManager.GetPlayerById(this.attackCycle.attackerPlayerId)!;
+            this.gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty);
 
         } else if (defenderAction === DeffenderAction.Card) {
             if (!cardId) {

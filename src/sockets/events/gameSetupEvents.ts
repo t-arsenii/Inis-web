@@ -18,11 +18,11 @@ export function gameSetupHandler(socket: Socket) {
             gameState.map.clansController.AddClans(player, 1, axial);
             if (gameState.map.setupController.SetupClans()) {
                 gameState.gameStage = GameStage.Gathering;
-                gameState.NextTurn();
+                gameState.turnOrderManager.NextTurn();
                 gameState.StartGatheringStage();
                 return
             }
-            gameState.NextTurn()
+            gameState.turnOrderManager.NextTurn()
         }
         catch (err) {
             socket.emit("game-setup-clans-error", `GameSetupClans: Internal server error:\n${err}`)

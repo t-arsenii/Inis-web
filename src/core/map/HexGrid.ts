@@ -3,8 +3,9 @@ import { axialCoordinates } from "../../types/Types";
 import { GameState } from "../gameState/GameState";
 import { ClansController } from "./ClansController";
 import { FieldsController } from "./FieldsController";
-import { Hexagon } from "./HexagonField";
+import { Field, Hexagon } from "./HexagonField";
 import { SetupController } from "./SetupController";
+import { MAX_SANCTUARIES, MAX_CITADELS } from "../constans/constant_3_players";
 
 export class HexGrid {
     public grid: Map<string, Hexagon> = new Map<string, Hexagon>();
@@ -92,5 +93,29 @@ export class HexGrid {
     }
     public GetAllHex(): Hexagon[] {
         return Array.from(this.grid.values())
+    }
+    public Init(): void {
+        if (this.grid.size > 0) {
+            return;
+        }
+        const t1Id = this.fieldsController.avalibleTerritories.pop()!;
+        const t2Id = this.fieldsController.avalibleTerritories.pop()!;
+        const t3Id = this.fieldsController.avalibleTerritories.pop()!;
+
+        const players = this.gameState.playerManager.GetPlayers();
+        players.forEach((player) => {
+            this.fieldsController.playerFieldPresense.set(player.id, []);
+        })
+
+        const hex1 = new Hexagon({ q: 0, r: 0 }, new Field(t1Id, this.gameState));
+        const hex2 = new Hexagon({ q: 1, r: 0 }, new Field(t2Id, this.gameState));
+        const hex3 = new Hexagon({ q: 0, r: 1 }, new Field(t3Id, this.gameState));
+
+        this.grid.set(AxialToString({ q: hex1.q, r: hex1.r }), hex1);
+        this.grid.set(AxialToString({ q: hex2.q, r: hex2.r }), hex2);
+        this.grid.set(AxialToString({ q: hex3.q, r: hex3.r }), hex3);
+
+        this.fieldsController.sanctuariesLeft = MAX_SANCTUARIES;
+        this.fieldsController.citadelsLeft = MAX_CITADELS;
     }
 }

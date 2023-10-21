@@ -7,7 +7,9 @@ import { Hexagon } from "../core/map/HexagonField";
 import { HexGridToJson } from "./HexGridUtils";
 
 export function GameStateToJSON(gameState: GameState) {
-    const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = gameState;
+    const { id: Id, gameStage, gameStatus } = gameState;
+    const maxPlayers = gameState.playerManager.numPlayers;
+    const turnOrder = gameState.turnOrderManager.turnOrder;
     const { citadelsLeft, sanctuariesLeft } = gameState.map.fieldsController
     const deckArray: { id: string; deck: Deck }[] = [];
     gameState.deckManager.playersDeck.forEach((deck, playerId) => {
@@ -23,16 +25,18 @@ export function GameStateToJSON(gameState: GameState) {
             sanctuariesLeft,
             gameStage: gameStage || "",
         },
-        bren: Array.from(gameState.players.values()).find(p => p.isBren)?.id || "",
+        bren: gameState.playerManager.GetPlayers().find(p => p.isBren)?.id || "",
         turnOrder,
-        players: Array.from(gameState.players.values()).map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, PretenderTokens: p.pretenderTokens, deedTokens: p.deedTokens })),
+        players: gameState.playerManager.GetPlayers().map(p => ({ id: p.id, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, PretenderTokens: p.pretenderTokens, deedTokens: p.deedTokens })),
         Map: HexGridToJson(gameState.map),
         Decks: { playersDecks: deckArray, discard: gameState.deckManager.actionDiscard, defferedCard: gameState.deckManager.defferedCardId }
     };
 }
 
 export function GameStateToJSONFormated(gameState: GameState) {
-    const { id: Id, numPlayers: maxPlayers, turnOrder, gameStage, gameStatus } = gameState;
+    const { id: Id, gameStage, gameStatus } = gameState;
+    const maxPlayers = gameState.playerManager.numPlayers;
+    const turnOrder = gameState.turnOrderManager.turnOrder;
     const { citadelsLeft, sanctuariesLeft } = gameState.map.fieldsController
     const deckArray: { id: string; deck: any }[] = [];
     gameState.deckManager.playersDeck.forEach((deck, playerId) => {
@@ -77,7 +81,7 @@ export function GameStateToJSONFormated(gameState: GameState) {
         },
         bren: gameState.brenPlayer.id || "",
         turnOrder,
-        players: Array.from(gameState.players.values()).map(p => ({ id: p.id, userName: p.username, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, PretenderTokens: p.pretenderTokens, deedTokens: p.deedTokens })),
+        players: gameState.playerManager.GetPlayers().map(p => ({ id: p.id, userName: p.username, socketId: p.socket?.id, isActive: p.isActive, clansLeft: p.clansLeft, PretenderTokens: p.pretenderTokens, deedTokens: p.deedTokens })),
         Map: HexGridToJson(gameState.map),
         Decks: { playersDecks: deckArray, discard: gameState.deckManager.actionDiscard, defferedCard: gameState.deckManager.defferedCardId }
     };
@@ -123,7 +127,7 @@ export function updateBren(gameState: GameState): void {
         return;
     }
     if (capitalHex.field.leaderPlayerId !== gameState.brenPlayer.id) {
-        const newBrenplayer: Player = gameState.GetPlayerById(capitalHex.field.leaderPlayerId)!;
+        const newBrenplayer: Player = gameState.playerManager.GetPlayerById(capitalHex.field.leaderPlayerId)!;
         gameState.brenPlayer.isBren = false;
         //setting new bren
         gameState.brenPlayer = newBrenplayer;
@@ -132,7 +136,7 @@ export function updateBren(gameState: GameState): void {
 }
 
 export function updatePretenderTokens(gameState: GameState): void {
-    const players: Player[] = Array.from(gameState.players.values())
+    const players: Player[] = gameState.playerManager.GetPlayers();
     players.forEach(player => {
         const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens
         if (player.pretenderTokens.clans) {
@@ -150,7 +154,7 @@ export function updatePretenderTokens(gameState: GameState): void {
 export function tryGetWinnerPlayer(gameState: GameState): Player | null {
     let maxTokens = -Infinity;
     let playersWithMaxTokens: Player[] = [];
-    const players: Player[] = Array.from(gameState.players.values());
+    const players: Player[] = gameState.playerManager.GetPlayers();
     for (const player of players) {
         const { pretenderTokens: pretenderTokens, isBren } = player;
         const { sanctuaries, clans, territories } = pretenderTokens;

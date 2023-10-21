@@ -36,13 +36,13 @@ export function DebugTools(socket: Socket) {
         socket.emit("territory-info", gameState?.map.GetAllValidPlacements())
     })
     socket.on("next-turn", () => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
-        if (gameState.turnOrder.activePlayerId !== player.id) {
-            return
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        if (gameState.turnOrderManager.GetActivePlayer()!.id !== player.id) {
+            return;
         }
-        gameState.NextTurn()
-        socket.emit("next-turn", gameState.turnOrder)
+        gameState.turnOrderManager.NextTurn();
+        socket.emit("next-turn", gameState.turnOrderManager.turnOrder);
     })
     socket.on("get-deal-cards", () => {
         const gameState: GameState = socket.gameState!;

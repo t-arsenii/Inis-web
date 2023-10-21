@@ -85,21 +85,21 @@ export function playerCardHandler(socket: Socket) {
         }
     })
     socket.on("player-token", ({ type }: IPretenderTokenInput) => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
         try {
             if (!player.isActive) {
-                throw new Error("PlayerToken: player is not active")
+                throw new Error("PlayerToken: player is not active");
             }
             if (gameState.gameStage !== GameStage.Season) {
                 throw new Error("PlayerToken: Game stage is not Season");
             }
-            gameState.TakePretenderToken(player, type)
-            gameState.NextTurn()
-            player.lastAction = playerAction.Token
+            gameState.TakePretenderToken(player, type);
+            gameState.turnOrderManager.NextTurn();
+            player.lastAction = playerAction.Token;
         } catch (err) {
-            socket.emit("player-token-error", `PlayerToken: Internal server error on card operation:\n${err}`)
-            console.log(err)
+            socket.emit("player-token-error", `PlayerToken: Internal server error on card operation:\n${err}`);
+            console.log(err);
         }
     })
     //potential bugs when player make moves and then pass, because he's in active whole time
@@ -113,7 +113,7 @@ export function playerCardHandler(socket: Socket) {
             if (gameState.gameStage !== GameStage.Season) {
                 throw new Error("PlayerPass: Game stage is not Season");
             }
-            gameState.NextTurn();
+            gameState.turnOrderManager.NextTurn();
             player.lastAction = playerAction.Pass;
             gameState.TryEndRound();
         } catch (err) {

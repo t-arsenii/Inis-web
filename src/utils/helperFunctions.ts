@@ -14,8 +14,7 @@ export function shuffle<T>(array: T[]): T[] {
     }
     return shuffledArray;
 }
-export function checkSockets(playersMap: Map<string, Player>): boolean {
-    const players: Player[] = Array.from(playersMap.values())
+export function checkSockets(players: Player[]): boolean {
     for (const player of players) {
         if (!player.socket) {
             return false;
@@ -52,7 +51,7 @@ export function GetGameStateAndPlayer(socket: Socket, gameId: string, userId: st
         socket.emit('join-game-error', { status: "failed", message: `Game with id: ${gameId}, is not found` })
         return undefined
     }
-    const player: Player | undefined = gameState?.GetPlayerById(userId)
+    const player: Player | undefined = gameState?.playerManager.GetPlayerById(userId)
     if (!player) {
         socket.emit('join-game-error', { status: "failed", message: `Player with id: ${userId}, is not found in existing game: ${gameId}` })
         return undefined

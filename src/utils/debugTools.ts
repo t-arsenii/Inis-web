@@ -14,7 +14,7 @@ export const initGameToSeason = () => {
         { userId: player2Id, userName: "username2" },
         { userId: player3Id, userName: "username3" },
     ]
-    users.forEach(user => gameState.AddPlayer({ userId: user.userId, username: user.userName }));
+    users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.userName }));
     //Adding gameState to manager
     gamesManager.createGame(gameState)
 
@@ -22,13 +22,13 @@ export const initGameToSeason = () => {
     gameState.Init()
 
     //getting players objects
-    const player1: Player = gameState.GetPlayerById(player1Id)!
-    const player2: Player = gameState.GetPlayerById(player2Id)!
-    const player3: Player = gameState.GetPlayerById(player3Id)!
+    const player1: Player = gameState.playerManager.GetPlayerById(player1Id)!
+    const player2: Player = gameState.playerManager.GetPlayerById(player2Id)!
+    const player3: Player = gameState.playerManager.GetPlayerById(player3Id)!
 
     //Overriding turn order 
-    gameState.turnOrder.direction = TurnOrder.clockwise
-    gameState.turnOrder.activePlayerId = player1.id
+    gameState.turnOrderManager.turnOrder.direction = TurnOrder.clockwise
+    gameState.turnOrderManager.turnOrder.activePlayerId = player1.id
 
     //Adding cards to players
     // const Cards = shuffle(Array.from(cardActionsMap.keys()))
@@ -67,16 +67,16 @@ export const initGameToGathering = () => {
         { userId: player2Id, userName: "username2" },
         { userId: player3Id, userName: "username3" },
     ]
-    users.forEach(user => gameState.AddPlayer({ userId: user.userId, username: user.userName }));
+    users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.userName }));
     //Adding gameState to manager
     gamesManager.createGame(gameState)
 
     //Initing game
     gameState.Init()
     //getting players objects
-    const player1: Player = gameState.GetPlayerById(player1Id)!
-    const player2: Player = gameState.GetPlayerById(player2Id)!
-    const player3: Player = gameState.GetPlayerById(player3Id)!
+    const player1: Player = gameState.playerManager.GetPlayerById(player1Id)!
+    const player2: Player = gameState.playerManager.GetPlayerById(player2Id)!
+    const player3: Player = gameState.playerManager.GetPlayerById(player3Id)!
     //Adding two clans for each player
     gameState.map.clansController.AddClans(player1, 2, { q: 0, r: 0 })
     gameState.map.clansController.AddClans(player2, 2, { q: 0, r: 0 })
