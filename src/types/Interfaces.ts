@@ -46,3 +46,21 @@ export interface IPretenderTokenInput {
 export interface IPlayerCardDealInput {
     cardIds: string[]
 }
+
+export interface ISidebarUiInfo {
+    Players: {
+        username: string,
+        mmr: number,
+        deck: {
+            Epos: number,
+            Action: number,
+            Advantage: number
+        },
+        clans: number,
+        tokens: {
+            deed: number,
+            pretender: number
+        },
+        isBren: boolean
+    }[]
+}

@@ -52,6 +52,9 @@ export class DeckManager {
     constructor(gameState: GameState) {
         this.gameState = gameState
     }
+    getPlayerDeck(player: Player): Deck | undefined{
+        return this.playersDeck.get(player.id);
+    }
     PlayerHasCard(player: Player, cardId: string): boolean {
         const deck: Deck = this.playersDeck.get(player.id)!
         const allCards: string[] = [...deck.ActionCards, ...deck.AdvantagesCards, ...deck.EposCards]

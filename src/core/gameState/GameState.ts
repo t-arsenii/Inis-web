@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import { v4 } from "uuid";
 import { InitHexGrid } from "../../utils/HexGridUtils";
-import { PretenderClans, PretenderSanctuaries, PretenderTerritories, tryGetWinnerPlayer, updateBren, updatePretenderTokens } from "../../utils/gameStateUtils";
+import { PretenderClans, PretenderSanctuaries, PretenderTerritories, tryGetWinnerPlayer, getBrenPlayer, updatePretenderTokens } from "../../utils/gameStateUtils";
 import { checkSockets, getRandomDirection, shuffle } from "../../utils/helperFunctions";
 import { GameStage, PretenderTokenType, playerAction, TurnOrder } from "../../types/Enums";
 import { PlayerTurnOrder } from "../../types/Types";
@@ -11,92 +11,9 @@ import { TrixelManager } from "../TrixelManager";
 import { MAX_DEED_TOKENS, MAX_PRETENDER_TOKENS, MAX_SANCTUARIES, MAX_CITADELS, MIN_WINNING_AMOUNT } from "../constans/constant_3_players";
 import { FightManager } from "../fight/FightManager";
 import { HexGrid } from "../map/HexGrid";
-class PlayerManager {
-  _gameState: GameState;
-  players: Map<string, Player>;
-  numPlayers: number;
-  constructor(gameState: GameState) {
-    this._gameState = gameState;
-    this.players = new Map();
-    this.numPlayers = 3;
-  }
-  AddPlayer({ userId, username }: { userId: string, username: string }): void {
-    if (this.players.size < this.numPlayers) {
-      const player: Player = new Player(userId);
-      player.username = username;
-      this.players.set(player.id, player);
-    }
-  }
-  GetPlayerById(userId: string): Player | undefined {
-    return this.players.get(userId);
-  }
-  GetPlayers(): Player[] {
-    return Array.from(this.players.values());
-  }
-  GetPlayerBySocket(socketId: string): Player | undefined {
-    for (const player of this.players.values()) {
-      if (player.socket && player.socket.id === socketId) {
-        return player;
-      }
-    }
-    return undefined;
-  }
-  HasPlayer(playerId: string):boolean {
-    return this.players.has(playerId);
-  }
-}
-
-class TurnOrderManager {
-
-  _gameState: GameState;
-  turnOrder: PlayerTurnOrder;
-
-  constructor(gameState: GameState) {
-    this._gameState = gameState;
-    this.turnOrder = {
-      playersId: [],
-      direction: undefined!,
-      activePlayerId: ""
-    }
-  }
-  GetActivePlayer(): Player | undefined {
-    return this._gameState.playerManager.GetPlayerById(this.turnOrder.activePlayerId);
-  }
-  NextTurn(): void {
-    const numberOfPlayers = this._gameState.playerManager.numPlayers;
-    const activePlayer: Player = this.GetActivePlayer()!;
-    activePlayer.isActive = false;
-    const activePlayerIndex = this.turnOrder.playersId.indexOf(this.turnOrder.activePlayerId);
-    let nextIndex;
-    if (this.turnOrder.direction === TurnOrder.clockwise) {
-      nextIndex = (activePlayerIndex + 1) % numberOfPlayers;
-    }
-    else {
-      nextIndex = (activePlayerIndex - 1 + numberOfPlayers) % numberOfPlayers;
-    }
-    const newActivePlayerId = this.turnOrder.playersId[nextIndex];
-    this.turnOrder.activePlayerId = newActivePlayerId;
-    this._gameState.playerManager.GetPlayerById(newActivePlayerId)!.isActive = true;
-    this._gameState.trixelManager.ClearTrixel(); //clearing all trixel conditions data
-  }
-  SetRandomDirection() {
-    this.turnOrder.direction = getRandomDirection();
-  }
-  Init() {
-    const players = this._gameState.playerManager.GetPlayers();
-    const playersId = players.map((player) => player.id);
-    this.turnOrder.playersId = shuffle(playersId);
-    const activePlayerId = this.turnOrder.playersId[0];
-    this.turnOrder.activePlayerId = activePlayerId;
-    const activePlayer: Player | undefined = this._gameState.playerManager.GetPlayerById(activePlayerId);
-    if (!activePlayer) {
-      return;
-    }
-    activePlayer.isActive = true;
-  }
-}
-
-
+import { TurnOrderManager } from "./TurnOrderManager";
+import { PlayerManager } from "./PlayerManager";
+import { GameUiUpdater } from "./GameUIUpdater";
 export class GameState {
   //Game info
   id: string;
@@ -112,6 +29,7 @@ export class GameState {
   trixelManager: TrixelManager;
   playerManager: PlayerManager;
   turnOrderManager: TurnOrderManager;
+  uiUpdater: GameUiUpdater;
   map: HexGrid;
   //Statistic
   roundCounter: number;
@@ -133,13 +51,14 @@ export class GameState {
     this.playerManager = new PlayerManager(this);
     this.turnOrderManager = new TurnOrderManager(this);
     this.map = new HexGrid(this);
+    this.uiUpdater = new GameUiUpdater(this);
     //Statistic
     this.roundCounter = 0;
     //Other
     this.eventEmitter = new EventEmitter();
 
   }
-  Init(): void {
+  public Init(): void {
     //Checking if game is already initialized
     if (this.gameStatus) {
       throw new Error("Game is already initialized");
@@ -163,8 +82,6 @@ export class GameState {
 
     //Initializing map
     this.map.Init();
-    this.map.fieldsController.sanctuariesLeft = MAX_SANCTUARIES;
-    this.map.fieldsController.citadelsLeft = MAX_CITADELS;
 
     //Initializing players decks
     this.deckManager.Init();
@@ -173,14 +90,14 @@ export class GameState {
     this.trixelManager.Init();
   }
 
-  AddDeedToken(player: Player) {
+  public AddDeedToken(player: Player) {
     if (this.deedTokensLeft < 0) {
       throw new Error("gameState.AddDeedToken: no tokens left");
     }
     this.deedTokensLeft--;
     player.deedTokens++;
   }
-  TakePretenderToken(player: Player, tokenType: PretenderTokenType): void {
+  public TakePretenderToken(player: Player, tokenType: PretenderTokenType): void {
     if (this.pretenderTokensLeft <= 0) {
       throw new Error("Not pretender tokens left");
     }
@@ -217,33 +134,40 @@ export class GameState {
     }
     this.pretenderTokensLeft--;
   }
-  TryEndRound(): void {
+  public EndSeasonStage(): void {
     const players = this.playerManager.GetPlayers();
-    let passCheck = players.every(player => player.lastAction === playerAction.Pass);
-    if (passCheck) {
-      this.trixelManager.ClearTrixel();
-      players.forEach(player => player.lastAction = playerAction.None);
-      this.map.fieldsController.ResetHolidayField();
-      this.StartGatheringStage();
-    }
+    this.trixelManager.ClearTrixel();
+    players.forEach(player => player.lastAction = playerAction.None);
+    this.map.fieldsController.ResetHolidayField();
   }
-  StartGatheringStage(): void {
+  public StartGatheringStage(): void {
     this.gameStage = GameStage.Gathering;
-    updateBren(this);
+
+    const newBrenplayer = getBrenPlayer(this);
+    this.SetBrenPlayer(newBrenplayer);
+
     updatePretenderTokens(this);
     this.UpdateWinner();
     this.turnOrderManager.SetRandomDirection();
+    this.turnOrderManager.SetActivePlayer(this.brenPlayer);
     //Card deeling
     this.deckManager.DealAdvantageCards();
     this.deckManager.InitDealActionCards();
   }
-  UpdateWinner() {
+  private UpdateWinner() {
     const winnerPlayer = tryGetWinnerPlayer(this);
     if (winnerPlayer) {
       this.gameStage = GameStage.END;
       this.gameStatus = false;
       console.log("Winner player with id: " + winnerPlayer.id);
       return;
+    }
+  }
+  private SetBrenPlayer(newBrenPlayer: Player) {
+    if (newBrenPlayer !== this.brenPlayer) {
+      this.brenPlayer.isBren = false;
+      newBrenPlayer.isBren = true;
+      this.brenPlayer = newBrenPlayer;
     }
   }
 }

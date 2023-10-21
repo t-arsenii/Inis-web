@@ -5,32 +5,32 @@ import { playerInfo } from "../../types/Types"
 import { GameState } from "../../core/gameState/GameState";
 import { gamesManager } from "../../core/gameState/GameStateManager";
 export function gameLobbyHandler(socket: Socket) {
-    socket.on("gameLobby-join", (gameId: string, userId: string) => {
+    socket.on("game-join", (gameId: string, userId: string) => {
         const res = GetGameStateAndPlayer(socket, gameId, userId)
         if (res === undefined) {
             return
         }
         const { gameState, player } = res
         socket.join(gameId);
-        player.socket = socket
-        gamesManager.socketsConnInfo.set(socket.id, { gameState: gameState, player: player })
-        socket.emit('gameLobby-info', { status: "success", info: { playerId: player.id, socket: socket.id, gameId: gameId } })
+        player.socket = socket;
+        gamesManager.addSocketInfo(socket.id, player, gameState);
+        socket.emit('gameLobby-info', { status: "success", info: { playerId: player.id, socket: socket.id, gameId: gameId } });
     });
     socket.on('disconnect', () => {
         if (!gamesManager.socketsConnInfo.has(socket.id)) {
-            return
+            return;
         }
-        const playerInfo: playerInfo | undefined = gamesManager.socketsConnInfo.get(socket.id)
+        const playerInfo: playerInfo | undefined = gamesManager.socketsConnInfo.get(socket.id);
         if (!playerInfo) {
-            return
+            return;
         }
-        const gameState: GameState = playerInfo.gameState
-        const player: Player = playerInfo.player
+        const gameState: GameState = playerInfo.gameState;
+        const player: Player = playerInfo.player;
 
-        player.socket = null
-        gamesManager.socketsConnInfo.delete(socket.id)
+        player.socket = null;
+        gamesManager.removeSocketInfo(socket.id);
     });
-    socket.on("gameLobby-init", (gameId) => {
+    socket.on("game-init", (gameId) => {
         const gameState: GameState | undefined = gamesManager.getGame(gameId);
         if (!gameState) {
             return

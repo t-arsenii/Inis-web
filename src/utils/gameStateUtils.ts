@@ -4,6 +4,7 @@ import { MIN_WINNING_AMOUNT } from "../core/constans/constant_3_players";
 import { cardAllMap } from "../core/constans/constant_all_cards";
 import { GameState } from "../core/gameState/GameState";
 import { Hexagon } from "../core/map/HexagonField";
+import { playerAction } from "../types/Enums";
 import { HexGridToJson } from "./HexGridUtils";
 
 export function GameStateToJSON(gameState: GameState) {
@@ -87,6 +88,10 @@ export function GameStateToJSONFormated(gameState: GameState) {
     };
 }
 
+export function checkAllPlayersPass(players: Player[]): boolean {
+    return players.every(player => player.lastAction === playerAction.Pass);
+}
+
 export function PretenderClans(gameState: GameState, player: Player, winning_amount: number): boolean {
     const hexArr = gameState.map.fieldsController.GetPlayerHex(player)!
     const leaderHex = hexArr.filter(hex => { hex.field.leaderPlayerId === player.id })
@@ -118,21 +123,15 @@ export function PretenderTerritories(gameState: GameState, player: Player, winni
     return hexArr.length >= winning_amount
 }
 
-export function updateBren(gameState: GameState): void {
+export function getBrenPlayer(gameState: GameState): Player {
     const capitalHex: Hexagon | null = gameState.map.fieldsController.capitalHex;
     if (!capitalHex) {
         throw new Error("Capital hex not found");
     }
     if (capitalHex.field.leaderPlayerId === null) {
-        return;
+        return gameState.brenPlayer;
     }
-    if (capitalHex.field.leaderPlayerId !== gameState.brenPlayer.id) {
-        const newBrenplayer: Player = gameState.playerManager.GetPlayerById(capitalHex.field.leaderPlayerId)!;
-        gameState.brenPlayer.isBren = false;
-        //setting new bren
-        gameState.brenPlayer = newBrenplayer;
-        newBrenplayer.isBren = true;
-    }
+    return  gameState.playerManager.GetPlayerById(capitalHex.field.leaderPlayerId)!;
 }
 
 export function updatePretenderTokens(gameState: GameState): void {

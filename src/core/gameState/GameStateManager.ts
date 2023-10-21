@@ -1,4 +1,5 @@
 import { playerInfo } from "../../types/Types";
+import { Player } from "../Player";
 import { GameState } from "./GameState";
 
 class GameStateManager {
@@ -18,6 +19,12 @@ class GameStateManager {
     }
     getSocketInfo(socketId: string): playerInfo | undefined {
         return this.socketsConnInfo.get(socketId)
+    }
+    addSocketInfo(socketId: string, player: Player, gameState: GameState): void {
+        this.socketsConnInfo.set(socketId, { gameState: gameState, player: player });
+    }
+    removeSocketInfo(socketId: string): void {
+        this.socketsConnInfo.delete(socketId);
     }
 }
 

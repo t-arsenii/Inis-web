@@ -7,6 +7,7 @@ import { trixelCondition_oOWJ5 } from "../../core/constans/constant_trixelCondit
 import { GameStage, playerAction } from "../../types/Enums";
 import { GameState } from "../../core/gameState/GameState";
 import { cardAllMap } from "../../core/constans/constant_all_cards";
+import { checkAllPlayersPass } from "../../utils/gameStateUtils";
 export function playerCardHandler(socket: Socket) {
     socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!;
@@ -25,7 +26,7 @@ export function playerCardHandler(socket: Socket) {
             if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
                 throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`);
             }
-            const res = cardSeasonMap[(cardId)]
+            const res = cardSeasonMap[cardId]
             const { Action } = res
             const actionParams: ICardOperationParams = {
                 player: player,
@@ -40,6 +41,9 @@ export function playerCardHandler(socket: Socket) {
             socket.emit("player-card-season-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`);
             console.log(err);
         }
+        socket.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
+        socket.to(gameState.id).emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
+        socket.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
     })
     socket.on("player-card-info", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!
@@ -115,7 +119,10 @@ export function playerCardHandler(socket: Socket) {
             }
             gameState.turnOrderManager.NextTurn();
             player.lastAction = playerAction.Pass;
-            gameState.TryEndRound();
+            if (checkAllPlayersPass(gameState.playerManager.GetPlayers())) {
+                gameState.EndSeasonStage();
+                gameState.StartGatheringStage();
+            }
         } catch (err) {
             console.log(err)
         }
