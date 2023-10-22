@@ -1,7 +1,8 @@
 
 import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
-import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction } from "./Enums"
+import { Field } from "../core/map/HexagonField"
+import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction } from "./Enums"
 import { axialCoordinates } from "./Types"
 
 export interface ICardParams {
@@ -48,7 +49,7 @@ export interface IPlayerCardDealInput {
 }
 
 export interface ISidebarUiInfo {
-    Players: {
+    players: {
         username: string,
         mmr: number,
         deck: {
@@ -61,6 +62,31 @@ export interface ISidebarUiInfo {
             deed: number,
             pretender: number
         },
-        isBren: boolean
-    }[]
+        isBren: boolean,
+        isActive: boolean,
+        lastAction: playerAction
+    }[],
+    turnDirection: string
+}
+export interface IMyDeckUiInfo {
+    ActionCards: string[],
+    EposCards: string[],
+    AdvantagesCards: string[]
+}
+export interface IMapUiInfo {
+    capital: axialCoordinates | null;
+    holiday: axialCoordinates | null;
+    hexGrid: {
+        q: number;
+        r: number;
+        field: Field;
+    }[];
+    terLeft: number;
+}
+export interface IGameUiInfo {
+    gameStatus: boolean,
+    maxPlayers: number,
+    citadelsLeft: number,
+    sanctuariesLeft: number,
+    gameStage: string
 }

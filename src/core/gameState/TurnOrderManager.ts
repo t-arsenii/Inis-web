@@ -20,6 +20,9 @@ export class TurnOrderManager {
   GetActivePlayer(): Player {
     return this._gameState.playerManager.GetPlayerById(this.turnOrder.activePlayerId)!;
   }
+  GetDirection(): string {
+    return this.turnOrder.direction;
+  }
   NextTurn(): void {
     const playerIdsInOrder = this.turnOrder.playersId;
     const numberOfPlayers = this._gameState.playerManager.numPlayers;

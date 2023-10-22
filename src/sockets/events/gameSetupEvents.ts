@@ -1,10 +1,10 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { axialCoordinates } from "../../types/Types";
 import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../utils/helperFunctions";
 import { GameStage } from "../../types/Enums";
 import { Player } from "../../core/Player";
 import { GameState } from "../../core/gameState/GameState";
-export function gameSetupHandler(socket: Socket) {
+export function gameSetupHandler(io: Server, socket: Socket) {
     socket.on("game-setup-clans", (axial: axialCoordinates) => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;

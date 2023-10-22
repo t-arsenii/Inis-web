@@ -29,11 +29,11 @@ export default function handleSocketConnections(io: Server) {
             socket.player = pInf.player;
             return next();
         });
-        DebugTools(socket)
-        gameLobbyHandler(socket)
-        gameSetupHandler(socket)
-        playerCardHandler(socket)
-        playerFightHandler(socket)
+        DebugTools(io, socket)
+        gameLobbyHandler(io, socket)
+        gameSetupHandler(io, socket)
+        playerCardHandler(io, socket)
+        playerFightHandler(io, socket)
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId);
             const player = gameState?.playerManager.GetPlayerById(userId);

@@ -1,4 +1,4 @@
-import { ISidebarUiInfo } from "../../types/Interfaces";
+import { IGameUiInfo, IMapUiInfo, IMyDeckUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Player } from "../Player";
@@ -10,7 +10,7 @@ export class GameUiUpdater {
     constructor(gameState: GameState) {
         this._gameState = gameState;
     }
-    public getMapUiInfo() {
+    public getMapUiInfo(): IMapUiInfo {
         const hexGrid = this._gameState.map;
         let capitalCoordinates: axialCoordinates | null = null
         if (hexGrid.fieldsController.capitalHex) {
@@ -20,13 +20,22 @@ export class GameUiUpdater {
         if (hexGrid.fieldsController.festivalHex) {
             holidayCoordinates = hexToAxialCoordinates(hexGrid.fieldsController.festivalHex);
         }
-        const avalibleTerArray = hexGrid.fieldsController.avalibleTerritories.map(id => territoryMap.get(id)!.title);
-        return { capital: capitalCoordinates, holiday: holidayCoordinates, hexGrid: Array.from(hexGrid.grid.values()).map(hex => ({ q: hex.q, r: hex.r, field: hex.field })), avalibleTer: avalibleTerArray };
+        const terLeft = hexGrid.fieldsController.avalibleTerritories.length;
+        return {
+            capital: capitalCoordinates,
+            holiday: holidayCoordinates,
+            hexGrid: Array.from(hexGrid.grid.values()).map(hex => ({ q: hex.q, r: hex.r, field: hex.field })),
+            terLeft: terLeft
+        };
     }
-    public getMyDeckUiInfo(player: Player) {
+    public getMyDeckUiInfo(player: Player): IMyDeckUiInfo {
         const deck = this._gameState.deckManager.getPlayerDeck(player);
         if (!deck) {
-            return {};
+            return {
+                ActionCards: [],
+                EposCards: [],
+                AdvantagesCards: []
+            };
         }
         return {
             ActionCards: deck.ActionCards,
@@ -34,13 +43,13 @@ export class GameUiUpdater {
             AdvantagesCards: deck.AdvantagesCards
         };
     }
-    public getSidebarUiInfo() {
+    public getSidebarUiInfo(): ISidebarUiInfo {
         const players = this._gameState.playerManager.GetPlayers();
-        const sidebarUiInfo: ISidebarUiInfo = { Players: [] };
+        const sidebarUiInfo: ISidebarUiInfo = { players: [], turnDirection: this._gameState.turnOrderManager.GetDirection() };
         players.forEach(player => {
             const deck = this._gameState.deckManager.getPlayerDeck(player)!;
             const pretenderTokens = Object.values(player.pretenderTokens).filter(value => value === true).length;
-            sidebarUiInfo.Players.push({
+            sidebarUiInfo.players.push({
                 username: player.username,
                 mmr: player.mmr,
                 deck: {
@@ -53,8 +62,23 @@ export class GameUiUpdater {
                     deed: player.deedTokens,
                     pretender: pretenderTokens
                 },
-                isBren: player.isBren
+                isBren: player.isBren,
+                isActive: player.isActive,
+                lastAction: player.lastAction
             })
         });
+        return sidebarUiInfo;
+    }
+    public getGameUiInfo(): IGameUiInfo {
+        return {
+            gameStatus: this._gameState.gameStatus,
+            maxPlayers: this._gameState.playerManager.numPlayers,
+            citadelsLeft: this._gameState.map.fieldsController.citadelsLeft,
+            sanctuariesLeft: this._gameState.map.fieldsController.sanctuariesLeft,
+            gameStage: this._gameState.gameStage
+        }
+    }
+    public getDealCardUiInfo(player: Player) {
+
     }
 }

@@ -1,4 +1,4 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { Player } from "../../core/Player";
 import { GameStage } from "../../types/Enums";
 import { IPlayerCardInput } from "../../types/Interfaces";
@@ -6,7 +6,7 @@ import { axialCoordinates } from "../../types/Types";
 import { HexGridToJson } from "../../utils/HexGridUtils";
 import { GameState } from "../../core/gameState/GameState";
 
-export function DebugTools(socket: Socket) {
+export function DebugTools(io: Server, socket: Socket) {
     socket.on("get-fight-info", () => {
         const gameState: GameState = socket.gameState!
         // console.log(gameState.fightManager.currentFight)

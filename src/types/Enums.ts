@@ -23,10 +23,10 @@ export enum StartStructure {
     Shrine
 }
 export enum playerAction {
-    None,
-    Card,
-    Token,
-    Pass
+    None = "NONE",
+    Card = "CARD",
+    Token = "TOKEN",
+    Pass = "PASS"
 }
 export enum GameStage {
     CapitalSetup = "CAPITAL_SETUP",

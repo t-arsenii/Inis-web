@@ -1,4 +1,4 @@
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { Player } from "../../core/Player";
 import { cardActionMap } from "../../core/constans/constant_action_cards";
 import { cardSeasonMap, cardTrixelMap } from "../../core/cardOperations/cardMap";
@@ -8,7 +8,7 @@ import { GameStage, playerAction } from "../../types/Enums";
 import { GameState } from "../../core/gameState/GameState";
 import { cardAllMap } from "../../core/constans/constant_all_cards";
 import { checkAllPlayersPass } from "../../utils/gameStateUtils";
-export function playerCardHandler(socket: Socket) {
+export function playerCardHandler(io: Server, socket: Socket) {
     socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
@@ -42,9 +42,10 @@ export function playerCardHandler(socket: Socket) {
             console.log(err);
             return;
         }
-        socket.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
-        socket.to(gameState.id).emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
-        socket.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+        io.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
+        io.to(gameState.id).emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
+        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+        io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
     })
     socket.on("player-card-info", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!
@@ -70,10 +71,10 @@ export function playerCardHandler(socket: Socket) {
         //Check card in trixelMap
         try {
             if (!cardAllMap.has(cardId)) {
-                throw new Error(`PlayerCardSeason: card id is not found, cardId: ${cardId}`)
+                throw new Error(`PlayerCardTrixel: card id is not found, cardId: ${cardId}`)
             }
             if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
-                throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`)
+                throw new Error(`PlayerCardTrixel: player dosen't have a card with id: ${cardId}`)
             }
             const res = cardTrixelMap[(cardId)]
             const { Action } = res
@@ -106,6 +107,7 @@ export function playerCardHandler(socket: Socket) {
             socket.emit("player-token-error", `PlayerToken: Internal server error on card operation:\n${err}`);
             console.log(err);
         }
+        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
     })
     //potential bugs when player make moves and then pass, because he's in active whole time
     socket.on("player-pass", () => {
@@ -123,10 +125,12 @@ export function playerCardHandler(socket: Socket) {
             if (checkAllPlayersPass(gameState.playerManager.GetPlayers())) {
                 gameState.EndSeasonStage();
                 gameState.StartGatheringStage();
+                io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
             }
         } catch (err) {
             console.log(err)
         }
+        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
     })
     socket.on('player-card-deal', ({ cardIds }: IPlayerCardDealInput) => {
         const gameState: GameState = socket.gameState!;

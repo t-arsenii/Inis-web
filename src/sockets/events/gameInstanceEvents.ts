@@ -4,7 +4,7 @@ import { GetGameStateAndPlayer } from "../../utils/helperFunctions";
 import { playerInfo } from "../../types/Types"
 import { GameState } from "../../core/gameState/GameState";
 import { gamesManager } from "../../core/gameState/GameStateManager";
-export function gameLobbyHandler(socket: Socket) {
+export function gameLobbyHandler(io: Server, socket: Socket) {
     socket.on("game-join", (gameId: string, userId: string) => {
         const res = GetGameStateAndPlayer(socket, gameId, userId)
         if (res === undefined) {
