@@ -52,7 +52,7 @@ export class DeckManager {
     constructor(gameState: GameState) {
         this.gameState = gameState
     }
-    getPlayerDeck(player: Player): Deck | undefined{
+    getPlayerDeck(player: Player): Deck | undefined {
         return this.playersDeck.get(player.id);
     }
     PlayerHasCard(player: Player, cardId: string): boolean {
@@ -151,12 +151,15 @@ export class DeckManager {
         })
         this.defferedCardId = Cards.pop()!;
     }
-    TryDealActionCards() {
+    AllPlayersReadyToDeal(): boolean {
         if (!this.dealCards) {
-            return;
+            throw new Error("DeckManager.CanDealActionCards: dealCards not initialized")
         }
-        if (!Object.values(this.dealCards.players).every(player => player.readyToDeal)) {
-            return;
+        return Object.values(this.dealCards.players).every(player => player.readyToDeal);
+    }
+    DealActionCards() {
+        if (!this.dealCards) {
+            throw new Error("DeckManager.TryDealActionCards: dealCards not initialized");
         }
         const playersDealCardsArray = Object.values(this.dealCards.players);
         let nextIndex;
@@ -170,20 +173,23 @@ export class DeckManager {
         }
         this.dealCards.cardsToDiscardNum--;
     }
-    TryEndDealActionCards() {
+    CanEndDealActionCards(): boolean {
         if (!this.dealCards) {
-            return;
+            throw new Error("DeckManager.CanEndDealActionCards: dealCards not initialized");
         }
-        if (this.dealCards.cardsToDiscardNum > 0) {
-            return;
+        return this.dealCards.cardsToDiscardNum === 0;
+    }
+    EndDealActionCards() {
+        if (!this.dealCards) {
+            throw new Error("DeckManager.TryEndDealActionCards: dealCards not initialized");
         }
-        let playerDealCards: any = {};
+        let playerDealCards: string[];
         let deck: Deck = undefined!;
         for (const playerId in this.dealCards.players) {
             if (this.dealCards.players.hasOwnProperty(playerId)) {
-                playerDealCards = this.dealCards.players[playerId];
+                playerDealCards = this.dealCards.players[playerId].cards;
                 deck = this.playersDeck.get(playerId)!;
-                deck.ActionCards = playerDealCards.cards;
+                deck.ActionCards = playerDealCards;
             }
         }
         this.dealCards = null;

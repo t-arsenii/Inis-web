@@ -142,6 +142,7 @@ export class GameState {
   }
   public StartGatheringStage(): void {
     this.gameStage = GameStage.Gathering;
+    this.roundCounter++;
 
     const newBrenplayer = getBrenPlayer(this);
     this.SetBrenPlayer(newBrenplayer);

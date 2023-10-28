@@ -1,4 +1,4 @@
-import { IGameUiInfo, IMapUiInfo, IMyDeckUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
+import { IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMyDeckUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Player } from "../Player";
@@ -78,7 +78,36 @@ export class GameUiUpdater {
             gameStage: this._gameState.gameStage
         }
     }
-    public getDealCardUiInfo(player: Player) {
-
+    public getDealCardUiInfo(player: Player): IDealCardsInfo {
+        if (!this._gameState.deckManager.dealCards) {
+            throw new Error("No cards to discard");
+        }
+        const dealCards = { ...this._gameState.deckManager.dealCards };
+        if (!dealCards.players || !dealCards.players.hasOwnProperty(player.id)) {
+            throw new Error("Player not found in deal cards");
+        }
+        const cardIds = dealCards.players[player.id].cards;
+        return {
+            cardsToDiscardNum: dealCards.cardsToDiscardNum,
+            cardIds: cardIds
+        }
+    }
+    public getFightUiInfo(): IFightUiInfo {
+        if (!this._gameState.fightManager.currentFight) {
+            throw new Error("No active fight");
+        }
+        const players = this._gameState.fightManager.currentFight.players;
+        const activePlayerId = this._gameState.fightManager.currentFight.FightTurnOrder.activePlayerId;
+        const _players = Object.keys(players).map((playerId) => ({
+            playerId,
+            clansNum: players[playerId].clansNum,
+            peace: players[playerId].peace,
+            isActive: playerId === activePlayerId
+        }));
+        const axialHexFight = hexToAxialCoordinates(this._gameState.fightManager.currentFight.fightHex);
+        return {
+            fightHex: axialHexFight,
+            players: _players
+        }
     }
 }

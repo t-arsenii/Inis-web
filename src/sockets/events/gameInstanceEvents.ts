@@ -14,6 +14,9 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
         socket.join(gameState.id);
         player.socket = socket;
         gamesManager.addSocketInfo(socket.id, player, gameState);
+        socket.gameState = gameState;
+        socket.player = player;
+        socket.auth = true;
         socket.emit('gameLobby-info', { status: "success", info: { playerId: player.id, socket: socket.id, gameId: gameId } });
     });
     socket.on('disconnect', () => {

@@ -5,5 +5,6 @@ declare module "socket.io" {
     interface Socket {
         gameState?: GameState;
         player?: Player;
+        auth?: boolean;
     }
 }

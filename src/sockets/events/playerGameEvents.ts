@@ -43,7 +43,7 @@ export function playerCardHandler(io: Server, socket: Socket) {
             return;
         }
         io.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
-        io.to(gameState.id).emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
+        socket.emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
         io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
         io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
     })
@@ -126,6 +126,10 @@ export function playerCardHandler(io: Server, socket: Socket) {
                 gameState.EndSeasonStage();
                 gameState.StartGatheringStage();
                 io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+                const players = gameState.playerManager.GetPlayers();
+                for (const _player of players) {
+                    _player.socket!.emit("dealCards-update", gameState.uiUpdater.getDealCardUiInfo(_player));
+                }
             }
         } catch (err) {
             console.log(err)
@@ -137,11 +141,20 @@ export function playerCardHandler(io: Server, socket: Socket) {
         const player: Player = socket.player!;
         try {
             if (gameState.gameStage !== GameStage.Gathering) {
-                throw new Error("");
+                throw new Error("GameStage is not gathering");
             }
             gameState.deckManager.PlayerDealActionCardDiscard(player, cardIds);
-            gameState.deckManager.TryDealActionCards();
-            gameState.deckManager.TryEndDealActionCards();
+            if (gameState.deckManager.AllPlayersReadyToDeal()) {
+                gameState.deckManager.DealActionCards();
+                if (gameState.deckManager.CanEndDealActionCards()) {
+                    gameState.deckManager.EndDealActionCards();
+                    return;
+                }
+                const players = gameState.playerManager.GetPlayers();
+                for (const _player of players) {
+                    _player.socket!.emit("dealCards-update", gameState.uiUpdater.getDealCardUiInfo(_player));
+                }
+            }
         }
         catch (err) {
             console.log(err);

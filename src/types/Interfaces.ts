@@ -90,3 +90,17 @@ export interface IGameUiInfo {
     sanctuariesLeft: number,
     gameStage: string
 }
+export interface IDealCardsInfo {
+    cardsToDiscardNum: number,
+    cardIds: string[]
+}
+export interface IFightUiInfo {
+    fightHex: axialCoordinates,
+    players:
+    {
+        playerId: string,
+        clansNum: number,
+        peace: boolean,
+        isActive: boolean
+    }[]
+}
