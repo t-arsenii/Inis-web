@@ -134,22 +134,6 @@ export function getBrenPlayer(gameState: GameState): Player {
     return  gameState.playerManager.GetPlayerById(capitalHex.field.leaderPlayerId)!;
 }
 
-export function updatePretenderTokens(gameState: GameState): void {
-    const players: Player[] = gameState.playerManager.GetPlayers();
-    players.forEach(player => {
-        const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens
-        if (player.pretenderTokens.clans) {
-            player.pretenderTokens.clans = PretenderClans(gameState, player, winning_amount);
-        }
-        if (player.pretenderTokens.sanctuaries) {
-            player.pretenderTokens.sanctuaries = PretenderSanctuaries(gameState, player, winning_amount);
-        }
-        if (player.pretenderTokens.territories) {
-            player.pretenderTokens.sanctuaries = PretenderTerritories(gameState, player, winning_amount);
-        }
-    })
-}
-
 export function tryGetWinnerPlayer(gameState: GameState): Player | null {
     let maxTokens = -Infinity;
     let playersWithMaxTokens: Player[] = [];

@@ -17,10 +17,9 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             }
             gameState.map.clansController.AddClans(player, 1, axial);
             if (gameState.map.setupController.SetupClans()) {
-                gameState.gameStage = GameStage.Gathering;
                 gameState.turnOrderManager.NextTurn();
                 gameState.StartGatheringStage();
-                return
+                return;
             }
             gameState.turnOrderManager.NextTurn()
         }

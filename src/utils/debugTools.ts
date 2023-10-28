@@ -54,7 +54,7 @@ export const initGameToSeason = () => {
     gameState.map.clansController.AddClans(player2, 2, { q: 0, r: 0 })
     gameState.map.clansController.AddClans(player3, 2, { q: 0, r: 1 })
     //Skipping beginning stage
-    gameState.gameStage = GameStage.Season //Changing game stage
+    gameState.StartSeasonStage(); //Changing game stage
 }
 
 export const initGameToGathering = () => {

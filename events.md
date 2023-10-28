@@ -1,6 +1,6 @@
 #Events list
 ##1. Server on events
-###game **Instance** Events
+###game Events
 ```js
 socket.on("game-join", (gameId: string, userId: string))
 ```

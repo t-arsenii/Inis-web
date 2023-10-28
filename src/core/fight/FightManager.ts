@@ -113,7 +113,7 @@ export class FightManager {
             } else {
                 this.fights.pop();
                 this.currentFight = null;
-                this.gameState.gameStage = GameStage.Season;
+                this.gameState.StartSeasonStage();
             }
         }
     }

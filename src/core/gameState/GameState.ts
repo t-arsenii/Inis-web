@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import { v4 } from "uuid";
 import { InitHexGrid } from "../../utils/HexGridUtils";
-import { PretenderClans, PretenderSanctuaries, PretenderTerritories, tryGetWinnerPlayer, getBrenPlayer, updatePretenderTokens } from "../../utils/gameStateUtils";
+import { PretenderClans, PretenderSanctuaries, PretenderTerritories, tryGetWinnerPlayer, getBrenPlayer } from "../../utils/gameStateUtils";
 import { checkSockets, getRandomDirection, shuffle } from "../../utils/helperFunctions";
 import { GameStage, PretenderTokenType, playerAction, TurnOrder } from "../../types/Enums";
 import { PlayerTurnOrder } from "../../types/Types";
@@ -56,7 +56,6 @@ export class GameState {
     this.roundCounter = 0;
     //Other
     this.eventEmitter = new EventEmitter();
-
   }
   public Init(): void {
     //Checking if game is already initialized
@@ -88,8 +87,9 @@ export class GameState {
 
     //Initializing trixelManager
     this.trixelManager.Init();
-  }
 
+    //Initializing round
+  }
   public AddDeedToken(player: Player) {
     if (this.deedTokensLeft < 0) {
       throw new Error("gameState.AddDeedToken: no tokens left");
@@ -147,13 +147,16 @@ export class GameState {
     const newBrenplayer = getBrenPlayer(this);
     this.SetBrenPlayer(newBrenplayer);
 
-    updatePretenderTokens(this);
+    this.UpdatePretenderTokens();
     this.UpdateWinner();
     this.turnOrderManager.SetRandomDirection();
     this.turnOrderManager.SetActivePlayer(this.brenPlayer);
     //Card deeling
     this.deckManager.DealAdvantageCards();
     this.deckManager.InitDealActionCards();
+  }
+  public StartSeasonStage(): void {
+    this.gameStage = GameStage.Season;
   }
   private UpdateWinner() {
     const winnerPlayer = tryGetWinnerPlayer(this);
@@ -163,6 +166,21 @@ export class GameState {
       console.log("Winner player with id: " + winnerPlayer.id);
       return;
     }
+  }
+  private UpdatePretenderTokens(): void {
+    const players: Player[] = this.playerManager.GetPlayers();
+    players.forEach(player => {
+      const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens
+      if (player.pretenderTokens.clans) {
+        player.pretenderTokens.clans = PretenderClans(this, player, winning_amount);
+      }
+      if (player.pretenderTokens.sanctuaries) {
+        player.pretenderTokens.sanctuaries = PretenderSanctuaries(this, player, winning_amount);
+      }
+      if (player.pretenderTokens.territories) {
+        player.pretenderTokens.sanctuaries = PretenderTerritories(this, player, winning_amount);
+      }
+    })
   }
   public SetBrenPlayer(newBrenPlayer: Player) {
     if (newBrenPlayer !== this.brenPlayer) {

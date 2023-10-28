@@ -126,10 +126,6 @@ export function playerGameHandler(io: Server, socket: Socket) {
                 gameState.EndSeasonStage();
                 gameState.StartGatheringStage();
                 io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
-                const players = gameState.playerManager.GetPlayers();
-                for (const _player of players) {
-                    _player.socket!.emit("dealCards-update", gameState.uiUpdater.getDealCardUiInfo(_player));
-                }
             }
         } catch (err) {
             console.log(err)
@@ -148,6 +144,7 @@ export function playerGameHandler(io: Server, socket: Socket) {
                 gameState.deckManager.DealActionCards();
                 if (gameState.deckManager.CanEndDealActionCards()) {
                     gameState.deckManager.EndDealActionCards();
+                    gameState.StartSeasonStage();
                     return;
                 }
                 const players = gameState.playerManager.GetPlayers();
