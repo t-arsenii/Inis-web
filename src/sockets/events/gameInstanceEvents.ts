@@ -33,18 +33,4 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
         player.socket = null;
         gamesManager.removeSocketInfo(socket.id);
     });
-    socket.on("game-init", (gameId) => {
-        const gameState: GameState | undefined = gamesManager.getGame(gameId);
-        if (!gameState) {
-            return
-        }
-        try {
-            gameState.Init()
-        }
-        catch (err) {
-            console.log(err)
-            return
-        }
-        socket.emit("gameLobby-info", `game with id ${gameState.id} was initialized`)
-    })
 }

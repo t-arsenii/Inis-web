@@ -5,6 +5,7 @@ import { IPlayerCardInput } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { HexGridToJson } from "../../utils/HexGridUtils";
 import { GameState } from "../../core/gameState/GameState";
+import { gamesManager } from "../../core/gameState/GameStateManager";
 
 export function DebugTools(io: Server, socket: Socket) {
     socket.on("get-fight-info", () => {
@@ -54,5 +55,19 @@ export function DebugTools(io: Server, socket: Socket) {
         const player: Player = socket.player!;
         console.log(gameState.uiUpdater.getGameUiInfo());
         io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+    })
+    socket.on("game-init", (gameId) => {
+        const gameState: GameState | undefined = gamesManager.getGame(gameId);
+        if (!gameState) {
+            return
+        }
+        try {
+            gameState.Init()
+        }
+        catch (err) {
+            console.log(err)
+            return
+        }
+        socket.emit("gameLobby-info", `game with id ${gameState.id} was initialized`)
     })
 }
