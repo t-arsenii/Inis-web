@@ -134,4 +134,6 @@ GameStage {
 emit("dealCards-update", IDealCardsInfo)
 IDealCardsInfo {
     cardsToDiscardNum: number,
+    cardIds: string[]
+}
 ```    
