@@ -6,7 +6,7 @@ import { axialCoordinates } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameInstanceEvents";
 import { CheckSocketGameConnection } from "../utils/helperFunctions";
 import { gameSetupHandler } from "./events/gameSetupEvents";
-import { playerCardHandler } from "./events/playerGameEvents";
+import { playerGameHandler } from "./events/playerGameEvents";
 import { HexGridToJson } from "../utils/HexGridUtils";
 import { playerFightHandler } from "./events/playerFightEvents";
 import { DebugTools } from "./events/debugEvents";
@@ -32,7 +32,7 @@ export default function handleSocketConnections(io: Server) {
         DebugTools(io, socket)
         gameLobbyHandler(io, socket)
         gameSetupHandler(io, socket)
-        playerCardHandler(io, socket)
+        playerGameHandler(io, socket)
         playerFightHandler(io, socket)
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId);

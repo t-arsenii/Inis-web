@@ -2,7 +2,7 @@
 import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
 import { Field } from "../core/map/HexagonField"
-import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction } from "./Enums"
+import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction, GameStage } from "./Enums"
 import { axialCoordinates } from "./Types"
 
 export interface ICardParams {
@@ -88,7 +88,7 @@ export interface IGameUiInfo {
     maxPlayers: number,
     citadelsLeft: number,
     sanctuariesLeft: number,
-    gameStage: string
+    gameStage: GameStage
 }
 export interface IDealCardsInfo {
     cardsToDiscardNum: number,

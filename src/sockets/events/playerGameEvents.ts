@@ -8,7 +8,7 @@ import { GameStage, playerAction } from "../../types/Enums";
 import { GameState } from "../../core/gameState/GameState";
 import { cardAllMap } from "../../core/constans/constant_all_cards";
 import { checkAllPlayersPass } from "../../utils/gameStateUtils";
-export function playerCardHandler(io: Server, socket: Socket) {
+export function playerGameHandler(io: Server, socket: Socket) {
     socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
@@ -86,7 +86,7 @@ export function playerCardHandler(io: Server, socket: Socket) {
             Action(actionParams)
             gameState.deckManager.DiscardCard(player, cardId)
         } catch (err) {
-            socket.emit("player-card-trixel-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`)
+            //socket.emit("player-card-trixel-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`)
             console.log(err)
         }
     })
@@ -104,7 +104,7 @@ export function playerCardHandler(io: Server, socket: Socket) {
             gameState.turnOrderManager.NextTurn();
             player.lastAction = playerAction.Token;
         } catch (err) {
-            socket.emit("player-token-error", `PlayerToken: Internal server error on card operation:\n${err}`);
+            //socket.emit("player-token-error", `PlayerToken: Internal server error on card operation:\n${err}`);
             console.log(err);
         }
         io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
