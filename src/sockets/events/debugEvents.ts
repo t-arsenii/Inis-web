@@ -52,6 +52,7 @@ export function DebugTools(io: Server, socket: Socket) {
     socket.on("get-sideBar-info",()=>{
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
-        io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+        console.log(gameState.uiUpdater.getGameUiInfo());
+        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
     })
 }
