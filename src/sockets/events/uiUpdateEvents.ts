@@ -34,8 +34,3 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
         }
     })
 }
-
-// io.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
-// socket.emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
-// io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
-// io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
