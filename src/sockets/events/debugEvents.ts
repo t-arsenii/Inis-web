@@ -49,4 +49,9 @@ export function DebugTools(io: Server, socket: Socket) {
         const player: Player = socket.player!;
         socket.emit("get-deal-cards", gameState.deckManager.dealCards);
     })
+    socket.on("get-sideBar-info",()=>{
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+    })
 }
