@@ -12,10 +12,11 @@ import { playerFightHandler } from "./events/playerFightEvents";
 import { DebugTools } from "./events/debugEvents";
 import { GameState } from "../core/gameState/GameState";
 import { gamesManager } from "../core/gameState/GameStateManager";
+import { uiUpdateHandler } from "./events/uiUpdateEvents";
 export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
-    io.on('connection', (socket: Socket) => {  
+    io.on('connection', (socket: Socket) => {
         socket.use((packet, next) => {
             if (packet[0] === 'game-join') {
                 return next();
@@ -34,6 +35,7 @@ export default function handleSocketConnections(io: Server) {
         gameSetupHandler(io, socket)
         playerGameHandler(io, socket)
         playerFightHandler(io, socket)
+        uiUpdateHandler(io, socket)
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId);
             const player = gameState?.playerManager.GetPlayerById(userId);

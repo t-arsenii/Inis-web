@@ -50,12 +50,6 @@ export function DebugTools(io: Server, socket: Socket) {
         const player: Player = socket.player!;
         socket.emit("get-deal-cards", gameState.deckManager.dealCards);
     })
-    socket.on("get-sideBar-info",()=>{
-        const gameState: GameState = socket.gameState!;
-        const player: Player = socket.player!;
-        console.log(gameState.uiUpdater.getGameUiInfo());
-        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
-    })
     socket.on("game-init", (gameId) => {
         const gameState: GameState | undefined = gamesManager.getGame(gameId);
         if (!gameState) {

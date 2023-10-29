@@ -2,31 +2,7 @@ import { ICardOperationParams, ICardOperationResponse, ICardParams } from "../..
 import { axialCoordinates } from "../../types/Types"
 import { Deck, DeckManager } from "../DeckManager"
 import { Hexagon } from "../map/HexagonField"
-export function BardActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    //Don't know what info to return yet
-    return {}
-}
-export function DruidActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    const deckManager: DeckManager = gameState.deckManager
-    return { cardId: deckManager.actionDiscard }
-
-}
-export function PeasantsWorkersActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    const playerHex: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
-    if (!playerHex) {
-        return {}
-    }
-    const citadelNum: number = gameState.map.fieldsController.CountPlayerCitadels(player)
-    return { axial: playerHex.map(hex => ({ q: hex.q, r: hex.r })), num: citadelNum }
-}
 export function SanctuaryActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
-    if (!hexArr) {
-        return {}
-    }
-    return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })) }
-}
-export function CitadelActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
     if (!hexArr) {
         return {}
@@ -39,24 +15,6 @@ export function NewClansActionInfo({ gameState, player }: ICardOperationParams):
         return {}
     }
     return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })) }
-}
-export function ExplorationActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    const axialArr: axialCoordinates[] = gameState.map.GetAllValidPlacements()
-    if (!axialArr) {
-        return {}
-    }
-    return { axial: axialArr }
-}
-export function HolidayActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
-    if (!hexArr) {
-        return {}
-    }
-    const hexSanctArr: Hexagon[] = hexArr.filter(hex => hex.field.sanctuaryCount > 0)
-    if (hexSanctArr.length === 0) {
-        return {}
-    }
-    return { axial: hexSanctArr.map(hex => ({ q: hex.q, r: hex.r })) }
 }
 export function ConquestActionInfo({ gameState, player, axial }: ICardOperationParams): ICardOperationResponse {
     if (!axial || Array.isArray(axial)) {
@@ -76,6 +34,56 @@ export function ConquestActionInfo({ gameState, player, axial }: ICardOperationP
 
     return { axialToNum: axialToNumRes };
 }
-export function NewUnionActionInfo({ gameState, player, axial }: ICardOperationParams): ICardOperationResponse {
+export function BardActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    throw new Error("Not implemented exception");
+}
+export function DruidActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    const deckManager: DeckManager = gameState.deckManager
+    return { cardId: deckManager.actionDiscard }
+
+}
+export function PeasantsWorkersActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    const playerHex: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player);
+    if (!playerHex) {
+        return {};
+    }
+    const citadelNum: number = gameState.map.fieldsController.CountPlayerCitadels(player);
+    return { axial: playerHex.map(hex => ({ q: hex.q, r: hex.r })), num: citadelNum };
+}
+export function NewUnionActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    throw new Error("Not implemented exception");
+}
+export function ExplorationActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    const axialArr: axialCoordinates[] = gameState.map.GetAllValidPlacements()
+    if (!axialArr) {
+        return {}
+    }
+    return { axial: axialArr }
+}
+export function CommanderActionInfo({ gameState, player, }: ICardOperationParams): ICardOperationResponse {
+    throw new Error("Not implemented exception");
+}
+export function HolidayActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
+    if (!hexArr) {
+        return {}
+    }
+    const hexSanctArr: Hexagon[] = hexArr.filter(hex => hex.field.sanctuaryCount > 0)
+    if (hexSanctArr.length === 0) {
+        return {}
+    }
+    return { axial: hexSanctArr.map(hex => ({ q: hex.q, r: hex.r })) }
+}
+export function RelocationActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    throw new Error("Not implemented exception");
+}
+export function CitadelActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    const hexArr: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player)
+    if (!hexArr) {
+        return {}
+    }
+    return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })) }
+}
+export function GeistActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     throw new Error("Not implemented exception");
 }

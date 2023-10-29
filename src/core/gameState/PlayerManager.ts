@@ -1,5 +1,8 @@
 import { Player } from "../Player";
 import { GameState } from "./GameState"
+
+const MIN_PLAYERS = 2;
+const MAX_PLAYERS = 4;
 export class PlayerManager {
     _gameState: GameState;
     players: Map<string, Player>;
@@ -9,10 +12,17 @@ export class PlayerManager {
         this.players = new Map();
         this.numPlayers = 3;
     }
-    AddPlayer({ userId, username }: { userId: string, username: string }): void {
+    SetNumberOfPlayers(numPlayers: number): void {
+        if (numPlayers < MIN_PLAYERS || numPlayers > MAX_PLAYERS) {
+            throw new Error("Invalid number of players");
+        }
+        this.numPlayers = numPlayers;
+    }
+    AddPlayer({ id, username, mmr }: { id: string, username: string, mmr: number }): void {
         if (this.players.size < this.numPlayers) {
-            const player: Player = new Player(userId);
+            const player: Player = new Player(id);
             player.username = username;
+            player.mmr = mmr;
             this.players.set(player.id, player);
         }
     }

@@ -2,6 +2,7 @@ import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
 import { gamesManager } from "../core/gameState/GameStateManager"
 import { TurnOrder, GameStage } from "../types/Enums"
+import { IPlayer } from "../types/Interfaces"
 
 export const initGameToSeason = () => {
     const DebugGameId = "54a94296-eb0b-45dc-a6f6-544559cf6b8b"
@@ -9,12 +10,12 @@ export const initGameToSeason = () => {
     const player1Id = "6dd6246a-f15b-43f8-bd67-5a38aa91184e"
     const player2Id = "66182a83-8824-481a-8889-39b60ab361fd"
     const player3Id = "363ed71a-056c-4fc6-9779-7dcc38d31e9c"
-    const users: { userId: string, userName: string }[] = [
-        { userId: player1Id, userName: "username1" },
-        { userId: player2Id, userName: "username2" },
-        { userId: player3Id, userName: "username3" },
+    const users: IPlayer[] = [
+        { id: player1Id, username: "username1", mmr: 1234 },
+        { id: player2Id, username: "username2", mmr: 1582 },
+        { id: player3Id, username: "username3", mmr: 1345 },
     ]
-    users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.userName }));
+    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr }));
     //Adding gameState to manager
     gamesManager.createGame(gameState)
 
@@ -63,12 +64,12 @@ export const initGameToGathering = () => {
     const player1Id = "6dd6246a-f15b-43f8-bd67-5a38aa91184e"
     const player2Id = "66182a83-8824-481a-8889-39b60ab361fd"
     const player3Id = "363ed71a-056c-4fc6-9779-7dcc38d31e9c"
-    const users: { userId: string, userName: string }[] = [
-        { userId: player1Id, userName: "username1" },
-        { userId: player2Id, userName: "username2" },
-        { userId: player3Id, userName: "username3" },
+    const users: IPlayer[] = [
+        { id: player1Id, username: "username1", mmr: 1234 },
+        { id: player2Id, username: "username2", mmr: 1582 },
+        { id: player3Id, username: "username3", mmr: 1345 },
     ]
-    users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.userName }));
+    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr }));
     //Adding gameState to manager
     gamesManager.createGame(gameState)
 

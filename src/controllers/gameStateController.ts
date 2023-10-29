@@ -4,27 +4,37 @@ import { v4 } from "uuid";
 import { playerInfo } from "../types/Types";
 import { GameStateToJSON, GameStateToJSONFormated } from "../utils/gameStateUtils";
 import { gamesManager } from "../core/gameState/GameStateManager";
+import { ICreateGameDto, IPlayer } from "../types/Interfaces";
 
-interface IUserReq {
-    userId: string,
-    username: string
-}
 const CreateGameWithId = (req: Request, res: Response) => {
     const gameId: string = req.params.id;
-    const gameState: GameState = new GameState(gameId)
-    const users: IUserReq[] | undefined = req.body.users;
-    if (users) {
-        users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.username }));
+    const data: ICreateGameDto = req.body;
+    if (data.players.length != data.numPlayers) {
+        return res.status(500).send("Number of player error");
     }
+    const gameState: GameState = new GameState(gameId);
+    const players: IPlayer[] | undefined = data.players;
+    if (!players) {
+        return res.status(500).send("Player error");
+    }
+    gameState.playerManager.SetNumberOfPlayers(data.numPlayers);
+    players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
-    res.status(200).send(`Game created with id: ${gameId}`)
+    res.status(200).send(`Game created with id: ${gameState.id}`)
 }
 const CreateGame = (req: Request, res: Response) => {
-    const gameState: GameState = new GameState();
-    const users: IUserReq[] | undefined = req.body.users;
-    if (users) {
-        users.forEach(user => gameState.playerManager.AddPlayer({ userId: user.userId, username: user.username }));
+    const data: ICreateGameDto = req.body;
+    if (data.players.length != data.numPlayers) {
+        return res.status(500).send("Number of player error");
     }
+    const gameState: GameState = new GameState();
+    const players: IPlayer[] | undefined = data.players;
+
+    if (!players) {
+        return res.status(500).send("Player error");
+    }
+    gameState.playerManager.SetNumberOfPlayers(data.numPlayers);
+    players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
     res.status(200).send(`Game created with id: ${gameState.id}`)
 }

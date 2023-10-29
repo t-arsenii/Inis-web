@@ -246,7 +246,7 @@ export function ConquestSeason({ gameState, player, axial: singleAxial, axialToN
 }
 export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPlayerId, CardVariation }: ICardOperationParams) {
     if (!CardVariation) {
-        throw new Error("NewUnionSeason(1): card variation parameter error")
+        throw new Error("NewUnionSeason: card variation parameter error")
     }
     if (CardVariation === 1) {
         if (!singleAxial || typeof singleAxial !== 'object' || Array.isArray(singleAxial)) {

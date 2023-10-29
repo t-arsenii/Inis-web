@@ -104,3 +104,14 @@ export interface IFightUiInfo {
         isActive: boolean
     }[]
 }
+export interface IPlayer {
+    id: string
+    username: string,
+    mmr: number,
+    color?: string,
+}
+export interface ICreateGameDto {
+    players: IPlayer[],
+    numPlayers: number,
+    settings?: string
+}

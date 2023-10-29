@@ -42,15 +42,17 @@ export class Deck {
 }
 export class DeckManager {
     readonly deckSize: number = 4;
-    gameState: GameState;
     playersDeck: Map<string, Deck> = new Map();
     eposCards: string[] = [];
     eposDiscard: string[] = [];
     actionDiscard: string[] = [];
     defferedCardId: string = "";
+    //Dealing cards logic
     dealCards: DealCards | null = null
+    //DI
+    _gameState: GameState;
     constructor(gameState: GameState) {
-        this.gameState = gameState
+        this._gameState = gameState
     }
     getPlayerDeck(player: Player): Deck | undefined {
         return this.playersDeck.get(player.id);
@@ -61,7 +63,7 @@ export class DeckManager {
         return allCards.includes(cardId)
     }
     Init() {
-        const players = this.gameState.playerManager.GetPlayers();
+        const players = this._gameState.playerManager.GetPlayers();
         players.forEach((player) => {
             this.playersDeck.set(player.id, new Deck())
         })
@@ -136,7 +138,7 @@ export class DeckManager {
     }
     public InitDealActionCards() {
         this.ClearActionCardsDeck(); // Clearing remaining action cards from player decks
-        const playersInOrder: string[] = this.gameState.turnOrderManager.turnOrder.playersId;
+        const playersInOrder: string[] = this._gameState.turnOrderManager.turnOrder.playersId;
         this.dealCards = { cardsToDiscardNum: 3, players: {} };
         const Cards = shuffle(Array.from(cardActionMap.keys()))
         playersInOrder.forEach((playerId) => {
@@ -195,10 +197,10 @@ export class DeckManager {
         this.dealCards = null;
     }
     DealAdvantageCards() {
-        const grid = this.gameState.map.grid;
+        const grid = this._gameState.map.grid;
         grid.forEach(hex => {
             if (hex.field.leaderPlayerId) {
-                const leaderPlayer = this.gameState.playerManager.GetPlayerById(hex.field.leaderPlayerId)!
+                const leaderPlayer = this._gameState.playerManager.GetPlayerById(hex.field.leaderPlayerId)!
                 const advantageCardId = territoryMap.get(hex.field.territoryId)!.cardId;
                 this.AddCard(leaderPlayer, advantageCardId)
             }
