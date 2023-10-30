@@ -2,10 +2,11 @@ import { Hills_ter } from "../constans/constant_territories";
 import { trixelCondition_NzLys, trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { AttackerAction, DeffenderAction, GameStage, TurnOrder } from "../../types/Enums";
 import { IAttackerParams } from "../../types/Interfaces";
-import { AttackerCycle, PlayerTurnOrder } from "../../types/Types";
+import { AttackerCycle, PlayerTurnOrder, axialCoordinates } from "../../types/Types";
 import { GameState } from "../gameState/GameState";
 import { Hexagon } from "../map/HexagonField";
 import { Player } from "../Player";
+import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 export class Fight {
     gameState: GameState
     players: Record<string, { clansNum: number, peace: boolean }> = {};
@@ -74,8 +75,18 @@ export class Fight {
         this.attackCycle.attackerPlayerId = null
         this.attackCycle.defenderPlayerId = null
     }
-    PerformMove(player: Player, hex: Hexagon) {
-        //In development
+    PerformMove(player: Player, axialTo: axialCoordinates, clansNum: number) {
+        const clansFighLeft = this.players[player.id].clansNum;
+        if (clansNum < 0 || clansNum > clansFighLeft) {
+            throw new Error("Figth.PerformMove: insufficient number of clans")
+        }
+        try {
+            this.gameState.map.clansController.MoveClans(player, hexToAxialCoordinates(this.fightHex), axialTo, clansNum);
+            this.players[player.id].clansNum = clansFighLeft - clansNum;
+        } catch (err) {
+            throw err;
+
+        }
     }
     PerformEpos() {
         //In development

@@ -25,37 +25,37 @@ export class FightManager {
         this.status = true
         this.gameState.gameStage = GameStage.Fight
     }
-    AttackerAction({ player, attackerAction, targetPlayerId, axial }: IAttackerParams): void {
+    AttackerAction({ player, attackerAction, targetPlayerId, axial, clansNum }: IAttackerParams): void {
         if (!this.currentFight) {
-            throw new Error("FightManager.AttackerAction: no current fight")
+            throw new Error("FightManager.AttackerAction: no current fight");
         }
         if (this.currentFight.FightTurnOrder.activePlayerId !== player.id) {
-            throw new Error("FightManager.AttackerAction: wrong active player id")
+            throw new Error("FightManager.AttackerAction: wrong active player id");
         }
         if (this.currentFight.attackCycle.status === true) {
-            throw new Error("FightManager.AttackerAction: attack cycle not resolved")
+            throw new Error("FightManager.AttackerAction: attack cycle not resolved");
         }
         if (attackerAction === AttackerAction.Atack) {
             if (!targetPlayerId) {
-                throw new Error("FightManager.AttackerAction: no target playerId provided")
+                throw new Error("FightManager.AttackerAction: no target playerId provided");
             }
             try {
-                this.currentFight.AttackRequest(player, targetPlayerId)
+                this.currentFight.AttackRequest(player, targetPlayerId);
             } catch (err) {
-                console.error(err)
-                throw err
+                console.error(err);
+                throw err;
             }
         } else if (attackerAction === AttackerAction.Move) {
             if (!axial) {
                 throw new Error("FightManager.AttackerAction: no axial is provided")
             }
-            if (!this.gameState.map.HasHexagon(axial)) {
-                throw new Error(`FightManager: no hexagon with axial:${axial}`)
+            if (!clansNum) {
+                throw new Error("FightManager.AttackerAction: no clansNum provided");
             }
             //In development
-            // this.currentFight.PerformMove(player, axial)
-            this.currentFight.UpdateFight()
-            this.TryCurrentFightTermination()
+            this.currentFight.PerformMove(player, axial, clansNum);
+            this.currentFight.UpdateFight();
+            this.TryCurrentFightTermination();
         } else if (attackerAction === AttackerAction.Epos) {
             //In development
             this.currentFight.UpdateFight()
@@ -75,9 +75,9 @@ export class FightManager {
             console.error(err)
             throw err
         }
-        this.currentFight.startTimerAndListenForTrixel(10000)
-        this.currentFight.UpdateFight()
-        this.TryCurrentFightTermination()
+        this.currentFight.startTimerAndListenForTrixel(10000);
+        this.currentFight.UpdateFight();
+        this.TryCurrentFightTermination();
     }
     SkipDeffenderAction(deffenderPlayer: Player) {
         if (!this.currentFight) {

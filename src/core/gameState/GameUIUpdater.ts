@@ -1,4 +1,4 @@
-import { IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMyDeckUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
+import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMyDeckUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Player } from "../Player";
@@ -109,5 +109,19 @@ export class GameUiUpdater {
             fightHex: axialHexFight,
             players: _players
         }
+    }
+    public getAttackCycleUiInfo(): IAttackCycleUiInfo {
+        if (!this._gameState.fightManager.currentFight) {
+            throw new Error("No active fight");
+        }
+        const currentFight = this._gameState.fightManager.currentFight;
+        if (!currentFight.attackCycle) {
+            return {
+                status: false,
+                attackerPlayerId: null,
+                defenderPlayerId: null
+            }
+        }
+        return currentFight.attackCycle;
     }
 }

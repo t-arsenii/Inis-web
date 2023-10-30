@@ -44,9 +44,6 @@ export class FieldsController {
         hex.field.citadelsCount++
     }
     public GetPlayerHex(player: Player): Hexagon[] | undefined {
-        if (!this.playerFieldPresense.has(player.id)) {
-            return undefined
-        }
         return this.playerFieldPresense.get(player.id)
     }
     public CountPlayerCitadels(player: Player): number {

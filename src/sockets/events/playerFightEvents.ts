@@ -14,7 +14,21 @@ export function playerFightHandler(io: Server, socket: Socket) {
             targetPlayerId: playerAction.targetPlayerId
         }
         try {
-            gameState.fightManager.AttackerAction(FightParams)
+            gameState.fightManager.AttackerAction(FightParams);
+            if (FightParams.attackerAction === AttackerAction.Atack) {
+                io.to(gameState.id).emit("attackCycle-update", gameState.uiUpdater.getAttackCycleUiInfo());
+            }
+            else if (FightParams.attackerAction === AttackerAction.Move) {
+                io.to(gameState.id).emit("fight-update", gameState.uiUpdater.getFightUiInfo());
+                io.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
+            } else {
+                throw new Error("Not implemented");
+            }
+
+            if (gameState.fightManager.currentFight === null) {
+                io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+                io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+            }
         } catch (err) {
             console.log("PlayerFightAction: Error")
         }
@@ -23,7 +37,13 @@ export function playerFightHandler(io: Server, socket: Socket) {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         try {
-            gameState.fightManager.DeffenderAction(player, params.deffenderAction, params.cardId)
+            gameState.fightManager.DeffenderAction(player, params.deffenderAction, params.cardId);
+            io.to(gameState.id).emit("fight-update", gameState.uiUpdater.getFightUiInfo());
+            io.to(gameState.id).emit("attackCycle-update", gameState.uiUpdater.getAttackCycleUiInfo());
+            if (gameState.fightManager.currentFight === null) {
+                io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+                io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+            }
         } catch (err) {
             console.log(err)
         }
@@ -32,7 +52,8 @@ export function playerFightHandler(io: Server, socket: Socket) {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         try {
-            gameState.fightManager.PlayerPeaceVote(player)
+            gameState.fightManager.PlayerPeaceVote(player);
+            io.to(gameState.id).emit("fight-update", gameState.uiUpdater.getFightUiInfo());
         } catch (err) {
             console.log(`PlayerFightPeaceVote:\n${err}`)
         }

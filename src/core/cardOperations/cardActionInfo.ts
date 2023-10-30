@@ -1,5 +1,6 @@
 import { ICardOperationParams, ICardOperationResponse, ICardParams } from "../../types/Interfaces"
 import { axialCoordinates } from "../../types/Types"
+import { hexToAxialCoordinates } from "../../utils/helperFunctions"
 import { Deck, DeckManager } from "../DeckManager"
 import { Hexagon } from "../map/HexagonField"
 export function SanctuaryActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
@@ -50,8 +51,36 @@ export function PeasantsWorkersActionInfo({ gameState, player }: ICardOperationP
     const citadelNum: number = gameState.map.fieldsController.CountPlayerCitadels(player);
     return { axial: playerHex.map(hex => ({ q: hex.q, r: hex.r })), num: citadelNum };
 }
-export function NewUnionActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    throw new Error("Not implemented exception");
+export function NewUnionActionInfo({ gameState, player, cardVariation }: ICardOperationParams): ICardOperationResponse {
+    if (!cardVariation) {
+        throw new Error("NewUnionSeason: card variation parameter error")
+    }
+    if (cardVariation === 1) {
+        const playerHex: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player);
+        if (!playerHex) {
+            return {};
+        }
+        return { axial: playerHex.map(hex => (hexToAxialCoordinates(hex))) };
+    }
+    else if (cardVariation === 2) {
+        const playerHex: Hexagon[] | undefined = gameState.map.fieldsController.GetPlayerHex(player);
+        if (!playerHex) {
+            return {};
+        }
+        let axialToPlayerId: { axialCoordinates: axialCoordinates, playerIds: string[] }[] = []
+        playerHex.forEach(hex => {
+            const playerIds = Object.entries(hex.field.playersClans)
+                .filter(([id, number]) => number > 1)
+                .map(([id, _]) => id);
+            if (playerIds.length > 0) {
+                axialToPlayerId.push({ axialCoordinates: hexToAxialCoordinates(hex), playerIds })
+            }
+        })
+        return { axialToPlayerId: axialToPlayerId }
+    }
+    else {
+        throw new Error("NewUnionActionInfo: CardVariation parameter error")
+    }
 }
 export function ExplorationActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const axialArr: axialCoordinates[] = gameState.map.GetAllValidPlacements()

@@ -10,7 +10,7 @@ export interface ICardParams {
     targetPlayerId?: string,
     axialToNum?: { axial: axialCoordinates, num: number }[] | { axial: axialCoordinates, num: number }
     targetCardId?: string,
-    CardVariation?: number
+    cardVariation?: number
 }
 export interface IPlayerCardInput {
     cardId: string,
@@ -24,18 +24,21 @@ export interface ICardOperationResponse {
     axial?: axialCoordinates | axialCoordinates[],
     cardId?: string | string[],
     num?: number,
-    axialToNum?: { axial: axialCoordinates, num: number }[] | { axial: axialCoordinates, num: number }
+    axialToNum?: { axial: axialCoordinates, num: number }[] | { axial: axialCoordinates, num: number },
+    axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[]
 }
 export interface IAttackerInputParams {
     attackerAction: AttackerAction,
     axial?: axialCoordinates,
-    targetPlayerId?: string
+    targetPlayerId?: string,
+    clansNum?: number
 }
 export interface IAttackerParams {
     player: Player,
     attackerAction: AttackerAction
     axial?: axialCoordinates,
-    targetPlayerId?: string
+    targetPlayerId?: string,
+    clansNum?: number
 }
 export interface IDeffenderInputParams {
     deffenderAction: DeffenderAction,
@@ -103,6 +106,11 @@ export interface IFightUiInfo {
         peace: boolean,
         isActive: boolean
     }[]
+}
+export interface IAttackCycleUiInfo {
+    status: boolean,
+    attackerPlayerId: string | null,
+    defenderPlayerId: string | null
 }
 export interface IPlayer {
     id: string

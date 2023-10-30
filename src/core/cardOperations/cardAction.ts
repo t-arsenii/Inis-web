@@ -244,11 +244,11 @@ export function ConquestSeason({ gameState, player, axial: singleAxial, axialToN
         gameState.fightManager.InitFight(player, targetHexagon)
     }
 }
-export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPlayerId, CardVariation }: ICardOperationParams) {
-    if (!CardVariation) {
+export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPlayerId, cardVariation }: ICardOperationParams) {
+    if (!cardVariation) {
         throw new Error("NewUnionSeason: card variation parameter error")
     }
-    if (CardVariation === 1) {
+    if (cardVariation === 1) {
         if (!singleAxial || typeof singleAxial !== 'object' || Array.isArray(singleAxial)) {
             throw new Error("NewUnionSeason(1): axial parameter error")
         }
@@ -262,7 +262,7 @@ export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPl
         }
         gameState.map.clansController.AddClans(player, 1, singleAxial)
     }
-    else if (CardVariation === 2) {
+    else if (cardVariation === 2) {
         if (!targetPlayerId) {
             throw new Error("NewUnionSeason(2): targetPlayerId parameter error")
         }

@@ -1,14 +1,14 @@
 #Events list
 ##1. Server on events
-###game Events
+###Game Events
 ```js
-socket.on("game-join", (gameId: string, userId: string))
+on("game-join", (gameId: string, userId: string))
 ```
 Использовать в useEffect для подключения к игре
 
-###game **Setup** Events
+###Game **Setup** Events
 ```js
-socket.on("game-setup-clans", (axial: axialCoordinates))
+on("game-setup-clans", (axial: axialCoordinates))
 axialCoordinates = {
     q: number
     r: number
@@ -17,13 +17,13 @@ axialCoordinates = {
 Во время фазы "установки кланов", **когда игрок активен**, yстанавливает 1 клан
 
 ```js
-socket.on("game-setup-capital", (axial: axialCoordinates))
+on("game-setup-capital", (axial: axialCoordinates))
 ```
 Во время фазы "установки столицы", **когда игрок активен и является бреном**, yстанавливает столицу
 
-###player **Game** Events
+###Player **Game** Events
 ```js
-socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput))
+on("player-card-season", ({ cardId, params }: IPlayerCardInput))
 IPlayerCardInput {
     cardId: string,
     params?: ICardParams
@@ -38,10 +38,10 @@ ICardParams {
 ```
 
 ```js
-socket.on("player-card-info", ({ cardId, params }: IPlayerCardInput))
+on("player-card-info", ({ cardId, params }: IPlayerCardInput))
 ```
 ```js
-socket.on("player-token", ({ type }: IPretenderTokenInput))
+on("player-token", ({ type }: IPretenderTokenInput))
 IPretenderTokenInput {
     type: PretenderTokenType
 }
@@ -52,16 +52,38 @@ PretenderTokenType {
 }
 ```
 ```js
-socket.on("player-pass", ())
+on("player-pass", ())
 ```
 
 ```js
-socket.on('player-card-deal', ({ cardIds }: IPlayerCardDealInput))
+on('player-card-deal', ({ cardIds }: IPlayerCardDealInput))
 IPlayerCardDealInput {
     cardIds: string[]
 }
 ```
+###Player fight Events
+```js
+on("player-fight-attacker", (playerAction: IAttackerInputParams))
+IAttackerInputParams {
+    attackerAction: AttackerAction,
+    axial?: axialCoordinates,
+    targetPlayerId?: string,
+    clansNum?: number
+}
+AttackerAction {
+    Atack = "ATACK",
+    Move = "MOVE",
+    Epos = "EPOS"
+}
+```
 
+```js
+on("player-fight-deffender", (params: IDeffenderInputParams))
+IDeffenderInputParams {
+    deffenderAction: DeffenderAction,
+    cardId?: string
+}
+```
 ##1. Server emit events
 
 ```js
@@ -135,5 +157,28 @@ emit("dealCards-update", IDealCardsInfo)
 IDealCardsInfo {
     cardsToDiscardNum: number,
     cardIds: string[]
+}
+```
+
+```js
+emit("fight-update", IFightUiInfo);
+IFightUiInfo {
+    fightHex: axialCoordinates,
+    players:
+    {
+        playerId: string,
+        clansNum: number,
+        peace: boolean,
+        isActive: boolean
+    }[]
+}
+```
+
+```js
+emit("attackCycle-update", IAttackCycleUiInfo);
+IAttackCycleUiInfo {
+    status: boolean,
+    attackerPlayerId: string | null,
+    defenderPlayerId: string | null
 }
 ```

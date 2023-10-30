@@ -45,13 +45,13 @@ export enum ActionType {
     Defend
 }
 export enum AttackerAction {
-    Atack,
-    Move,
-    Epos
+    Atack = "ATACK",
+    Move = "MOVE",
+    Epos = "EPOS"
 }
 export enum DeffenderAction {
-    Clan,
-    Card
+    Clan = "CLAN",
+    Card = "CARD"
 }
 export enum PretenderTokenType {
     Clans = "CLANS",
