@@ -98,6 +98,15 @@ IMapUiInfo {
     }[];
     terLeft: number;
 }
+Field{
+    territoryId: string;
+    sanctuaryCount: number;
+    citadelsCount: number;
+    leaderPlayerId: string | null;
+    playerClans: {
+        [k: string]: number;
+    };
+}
 ```
 
 ```js
