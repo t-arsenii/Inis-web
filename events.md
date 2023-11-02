@@ -127,6 +127,7 @@ IMyDeckUiInfo {
 emit("sidebar-update", ISidebarUiInfo)
 ISidebarUiInfo {
     players: {
+        id: string,
         username: string,
         mmr: number,
         deck: {
@@ -194,5 +195,15 @@ IAttackCycleUiInfo {
     status: boolean,
     attackerPlayerId: string | null,
     defenderPlayerId: string | null
+}
+```
+
+```js
+emit("me-info", IMeUiInfo);
+interface IMeUiInfo {
+    id: string
+    username: string,
+    mmr: number,
+    color?: string
 }
 ```
