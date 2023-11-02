@@ -1,4 +1,4 @@
-import { GameStage, AttackerAction, DeffenderAction } from "../../types/Enums"
+import { GameStage, AttackerAction, DeffenderAction, FightStage } from "../../types/Enums"
 import { IAttackerParams } from "../../types/Interfaces"
 import { GameState } from "../gameState/GameState"
 import { Player } from "../Player"
@@ -29,6 +29,9 @@ export class FightManager {
         if (!this.currentFight) {
             throw new Error("FightManager.AttackerAction: no current fight");
         }
+        if(this.currentFight.fightStage !== FightStage.fight){
+            throw new Error("FightManager.AttackerAction: gameStage is not fight");
+        }
         if (this.currentFight.FightTurnOrder.activePlayerId !== player.id) {
             throw new Error("FightManager.AttackerAction: wrong active player id");
         }
@@ -52,8 +55,12 @@ export class FightManager {
             if (!clansNum) {
                 throw new Error("FightManager.AttackerAction: no clansNum provided");
             }
-            //In development
-            this.currentFight.PerformMove(player, axial, clansNum);
+            try {
+                this.currentFight.PerformMove(player, axial, clansNum);
+            }
+            catch (err) {
+                throw err;
+            }
             this.currentFight.UpdateFight();
             this.TryCurrentFightTermination();
         } else if (attackerAction === AttackerAction.Epos) {
@@ -78,6 +85,9 @@ export class FightManager {
         this.currentFight.startTimerAndListenForTrixel(10000);
         this.currentFight.UpdateFight();
         this.TryCurrentFightTermination();
+    }
+    ProtectClanAction(){
+        
     }
     SkipDeffenderAction(deffenderPlayer: Player) {
         if (!this.currentFight) {

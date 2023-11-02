@@ -53,6 +53,7 @@ export interface IPlayerCardDealInput {
 
 export interface ISidebarUiInfo {
     players: {
+        id: string,
         username: string,
         mmr: number,
         deck: {
@@ -122,4 +123,18 @@ export interface ICreateGameDto {
     players: IPlayer[],
     numPlayers: number,
     settings?: string
+}
+export interface IPlayerUiInfo {
+    players: {
+        id: string
+        username: string,
+        mmr: number,
+        color?: string
+    }[]
+}
+export interface IMeUiInfo {
+    id: string
+    username: string,
+    mmr: number,
+    color?: string
 }

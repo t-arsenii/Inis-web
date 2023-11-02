@@ -84,6 +84,11 @@ IDeffenderInputParams {
     cardId?: string
 }
 ```
+
+```js
+on("player-fight-peace-vote", ())
+Голосование за мир во время сражения. Голосовать можно в любой момент сражения, даже не в свой ход
+```
 ##1. Server emit events
 
 ```js

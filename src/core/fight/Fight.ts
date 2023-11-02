@@ -1,6 +1,6 @@
 import { Hills_ter } from "../constans/constant_territories";
 import { trixelCondition_NzLys, trixelCondition_bxaty } from "../constans/constant_trixelConditions";
-import { AttackerAction, DeffenderAction, GameStage, TurnOrder } from "../../types/Enums";
+import { AttackerAction, DeffenderAction, FightStage, GameStage, TurnOrder } from "../../types/Enums";
 import { IAttackerParams } from "../../types/Interfaces";
 import { AttackerCycle, PlayerTurnOrder, axialCoordinates } from "../../types/Types";
 import { GameState } from "../gameState/GameState";
@@ -8,22 +8,17 @@ import { Hexagon } from "../map/HexagonField";
 import { Player } from "../Player";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 export class Fight {
-    gameState: GameState
-    players: Record<string, { clansNum: number, peace: boolean }> = {};
-    FightTurnOrder: PlayerTurnOrder = {
-        playersId: [],
-        direction: undefined!,
-        activePlayerId: ""
-    }
-    attackCycle: AttackerCycle = {
-        status: false,
-        attackerPlayerId: null,
-        defenderPlayerId: null
-    }
+    _gameState: GameState;
+    players: Record<string, { clansNum: number, peace: boolean }>;
+    FightTurnOrder: PlayerTurnOrder;
+    attackCycle: AttackerCycle;
     fightHex: Hexagon;
+    fightStage: FightStage;
     constructor(hex: Hexagon, playerAttacker: Player, gameState: GameState) {
         this.fightHex = hex
-        this.gameState = gameState
+        this._gameState = gameState
+
+        this.players = {}
         hex.field.playersClans.forEach((clansNum, pId) => {
             this.players[pId] = { clansNum, peace: false };
         });
@@ -31,9 +26,22 @@ export class Fight {
         let playerFighterIds: string[] = gameState.turnOrderManager.turnOrder.playersId.filter((pId) => {
             return pId in this.players;
         });
+
+        this.FightTurnOrder = {
+            playersId: [],
+            direction: undefined!,
+            activePlayerId: ""
+        }
         this.FightTurnOrder.playersId = playerFighterIds;
         this.FightTurnOrder.direction = gameState.turnOrderManager.turnOrder.direction;
         this.FightTurnOrder.activePlayerId = playerAttacker.id;
+
+        this.attackCycle = {
+            status: false,
+            attackerPlayerId: null,
+            defenderPlayerId: null
+        }
+        this.fightStage = FightStage.setup;
     }
     AttackRequest(player: Player, targetPlayerId: string) {
         if (this.FightTurnOrder.activePlayerId !== player.id) {
@@ -44,8 +52,8 @@ export class Fight {
         }
         //Trixel for hills
         if (this.fightHex.field.territoryId === Hills_ter.id) {
-            const defPlayer = this.gameState.playerManager.GetPlayerById(targetPlayerId)!
-            this.gameState.trixelManager.AddTrixel(defPlayer, trixelCondition_NzLys)
+            const defPlayer = this._gameState.playerManager.GetPlayerById(targetPlayerId)!
+            this._gameState.trixelManager.AddTrixel(defPlayer, trixelCondition_NzLys)
         }
         this.attackCycle.status = true
         this.attackCycle.attackerPlayerId = player.id
@@ -57,16 +65,16 @@ export class Fight {
         }
         if (defenderAction === DeffenderAction.Clan) {
             this.players[this.attackCycle.defenderPlayerId].clansNum -= 1;
-            this.gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r });
+            this._gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r });
 
-            const playerAttacker: Player = this.gameState.playerManager.GetPlayerById(this.attackCycle.attackerPlayerId)!;
-            this.gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty);
+            const playerAttacker: Player = this._gameState.playerManager.GetPlayerById(this.attackCycle.attackerPlayerId)!;
+            this._gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty);
 
         } else if (defenderAction === DeffenderAction.Card) {
             if (!cardId) {
                 throw new Error("Figth.PerformAttack: no card id provided")
             }
-            this.gameState.deckManager.DiscardCard(deffenderPlayer, cardId)
+            this._gameState.deckManager.DiscardCard(deffenderPlayer, cardId)
         }
         this.RestoreAttackCycle()
     }
@@ -78,14 +86,16 @@ export class Fight {
     PerformMove(player: Player, axialTo: axialCoordinates, clansNum: number) {
         const clansFighLeft = this.players[player.id].clansNum;
         if (clansNum < 0 || clansNum > clansFighLeft) {
-            throw new Error("Figth.PerformMove: insufficient number of clans")
+            throw new Error("Figth.PerformMove: insufficient number of clans");
+        }
+        if (!this._gameState.map.fieldsController.IsLeader(player, axialTo)) {
+            throw new Error("Figth.PerformMove: player is not a leader on axialTo");
         }
         try {
-            this.gameState.map.clansController.MoveClans(player, hexToAxialCoordinates(this.fightHex), axialTo, clansNum);
+            this._gameState.map.clansController.MoveClans(player, hexToAxialCoordinates(this.fightHex), axialTo, clansNum);
             this.players[player.id].clansNum = clansFighLeft - clansNum;
         } catch (err) {
             throw err;
-
         }
     }
     PerformEpos() {
@@ -99,7 +109,7 @@ export class Fight {
         });
     }
     private NextFightTurn(): void {
-        this.gameState.trixelManager.ClearTrixel()
+        this._gameState.trixelManager.ClearTrixel()
         const activePlayerId = this.FightTurnOrder.activePlayerId
         const activePlayerIndex = this.FightTurnOrder.playersId.indexOf(activePlayerId)
         let nextIndex: number = 0
@@ -119,7 +129,7 @@ export class Fight {
             this.NextFightTurn();
         }, timeoutMs);
 
-        this.gameState.eventEmitter.on('TrixelEvent', () => {
+        this._gameState.eventEmitter.on('TrixelEvent', () => {
             clearTimeout(timer);
             console.log("Action occurred.");
             this.NextFightTurn();

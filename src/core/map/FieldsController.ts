@@ -76,6 +76,12 @@ export class FieldsController {
         }
         hex.field.sanctuaryCount++;
         this.sanctuariesLeft--;
-
+    }
+    IsLeader(player: Player, axial: axialCoordinates): boolean {
+        if (!this.hexGrid.HasHexagon(axial)) {
+            throw new Error("No hexagon found");
+        }
+        const hex = this.hexGrid.GetHex(axial)!;
+        return hex.field.leaderPlayerId === player.id;
     }
 }

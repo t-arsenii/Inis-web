@@ -11,7 +11,8 @@ export function playerFightHandler(io: Server, socket: Socket) {
             player,
             attackerAction: playerAction.attackerAction,
             axial: playerAction.axial,
-            targetPlayerId: playerAction.targetPlayerId
+            targetPlayerId: playerAction.targetPlayerId,
+            clansNum: playerAction.clansNum
         }
         try {
             gameState.fightManager.AttackerAction(FightParams);
@@ -30,7 +31,7 @@ export function playerFightHandler(io: Server, socket: Socket) {
                 io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
             }
         } catch (err) {
-            console.log("PlayerFightAction: Error")
+            console.log("PlayerFightAction: Error\n" + err)
         }
     })
     socket.on("player-fight-deffender", (params: IDeffenderInputParams) => {
@@ -47,6 +48,9 @@ export function playerFightHandler(io: Server, socket: Socket) {
         } catch (err) {
             console.log(err)
         }
+    })
+    socket.on("player-protectClan", () => {
+        throw new Error("Not implemented exception");
     })
     socket.on("player-fight-peace-vote", () => {
         const gameState: GameState = socket.gameState!

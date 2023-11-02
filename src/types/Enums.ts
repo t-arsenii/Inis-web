@@ -58,3 +58,7 @@ export enum PretenderTokenType {
     Sanctuaries = "SAN",
     Territories = "TER"
 }
+export enum FightStage {
+    setup = "SETUP",
+    fight = "FIGHT"
+}

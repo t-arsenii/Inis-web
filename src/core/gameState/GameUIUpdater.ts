@@ -1,4 +1,4 @@
-import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMyDeckUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
+import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayerUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Player } from "../Player";
@@ -50,6 +50,7 @@ export class GameUiUpdater {
             const deck = this._gameState.deckManager.getPlayerDeck(player)!;
             const pretenderTokens = Object.values(player.pretenderTokens).filter(value => value === true).length;
             sidebarUiInfo.players.push({
+                id: player.id,
                 username: player.username,
                 mmr: player.mmr,
                 deck: {
@@ -123,5 +124,13 @@ export class GameUiUpdater {
             }
         }
         return currentFight.attackCycle;
+    }
+    public getMeUiInfo(player: Player): IMeUiInfo {
+        return {
+            id: player.id,
+            username: player.username,
+            mmr: player.mmr,
+            color: player.color
+        }
     }
 }
