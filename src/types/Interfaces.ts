@@ -124,7 +124,7 @@ export interface ICreateGameDto {
     numPlayers: number,
     settings?: string
 }
-export interface IPlayerUiInfo {
+export interface IPlayersUiInfo {
     players: {
         id: string
         username: string,

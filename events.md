@@ -209,8 +209,8 @@ interface IMeUiInfo {
 ```
 
 ```js
-emit("allPlayers-info", IPlayerUiInfo)
-IPlayerUiInfo {
+emit("allPlayers-info", IPlayersUiInfo)
+IPlayersUiInfo {
     players: {
         id: string
         username: string,

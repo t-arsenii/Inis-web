@@ -1,4 +1,4 @@
-import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayerUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
+import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayersUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Player } from "../Player";
@@ -133,9 +133,9 @@ export class GameUiUpdater {
             color: player.color
         }
     }
-    public getAllPlayerUiInfo(): IPlayerUiInfo {
+    public getAllPlayerUiInfo(): IPlayersUiInfo {
         const players = this._gameState.playerManager.GetPlayers();
-        let playerUiInfo: IPlayerUiInfo = { players: [] }
+        let playerUiInfo: IPlayersUiInfo = { players: [] }
         players.forEach(player => {
             playerUiInfo.players.push({
                 id: player.id,
