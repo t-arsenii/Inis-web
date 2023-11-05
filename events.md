@@ -207,3 +207,15 @@ interface IMeUiInfo {
     color?: string
 }
 ```
+
+```js
+emit("allPlayers-info", IPlayerUiInfo)
+IPlayerUiInfo {
+    players: {
+        id: string
+        username: string,
+        mmr: number,
+        color?: string
+    }[]
+}
+```

@@ -133,4 +133,17 @@ export class GameUiUpdater {
             color: player.color
         }
     }
+    public getAllPlayerUiInfo(): IPlayerUiInfo {
+        const players = this._gameState.playerManager.GetPlayers();
+        let playerUiInfo: IPlayerUiInfo = { players: [] }
+        players.forEach(player => {
+            playerUiInfo.players.push({
+                id: player.id,
+                username: player.username,
+                mmr: player.mmr,
+                color: player.color
+            })
+        })
+        return playerUiInfo;
+    }
 }

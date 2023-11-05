@@ -42,4 +42,13 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
             console.log(err)
         }
     })
+    socket.on("allPlayers-info", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            player.socket!.emit("allPlayers-info", gameState.uiUpdater.getAllPlayerUiInfo());
+        } catch (err) {
+            console.log(err)
+        }
+    })
 }
