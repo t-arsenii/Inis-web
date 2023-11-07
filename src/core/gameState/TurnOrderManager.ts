@@ -60,4 +60,7 @@ export class TurnOrderManager {
     this.turnOrder.activePlayerId = player.id;
     player.isActive = true;
   }
+  GetPlayerIdsInOrder(): string[] {
+    return this.turnOrder.playersId.slice();
+  }
 }

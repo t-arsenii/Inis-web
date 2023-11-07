@@ -46,27 +46,37 @@ export class GameUiUpdater {
     public getSidebarUiInfo(): ISidebarUiInfo {
         const players = this._gameState.playerManager.GetPlayers();
         const sidebarUiInfo: ISidebarUiInfo = { players: [], turnDirection: this._gameState.turnOrderManager.GetDirection() };
+        const playerIdsInOrder = this._gameState.turnOrderManager.GetPlayerIdsInOrder();
+
+        const playersById: Record<string, Player> = {};
         players.forEach(player => {
-            const deck = this._gameState.deckManager.getPlayerDeck(player)!;
-            const pretenderTokens = Object.values(player.pretenderTokens).filter(value => value === true).length;
-            sidebarUiInfo.players.push({
-                id: player.id,
-                username: player.username,
-                mmr: player.mmr,
-                deck: {
-                    Epos: deck.EposCards.length,
-                    Action: deck.ActionCards.length,
-                    Advantage: deck.AdvantagesCards.length
-                },
-                clans: player.clansLeft,
-                tokens: {
-                    deed: player.deedTokens,
-                    pretender: pretenderTokens
-                },
-                isBren: player.isBren,
-                isActive: player.isActive,
-                lastAction: player.lastAction
-            })
+            playersById[player.id] = player;
+        });
+
+        playerIdsInOrder.forEach(playerId  => {
+            const player = playersById[playerId];
+            if(player){
+                const deck = this._gameState.deckManager.getPlayerDeck(player)!;
+                const pretenderTokens = Object.values(player.pretenderTokens).filter(value => value === true).length;
+                sidebarUiInfo.players.push({
+                    id: player.id,
+                    username: player.username,
+                    mmr: player.mmr,
+                    deck: {
+                        Epos: deck.EposCards.length,
+                        Action: deck.ActionCards.length,
+                        Advantage: deck.AdvantagesCards.length
+                    },
+                    clans: player.clansLeft,
+                    tokens: {
+                        deed: player.deedTokens,
+                        pretender: pretenderTokens
+                    },
+                    isBren: player.isBren,
+                    isActive: player.isActive,
+                    lastAction: player.lastAction
+                })
+            }
         });
         return sidebarUiInfo;
     }
