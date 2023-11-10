@@ -21,10 +21,10 @@ export interface ICardOperationParams extends ICardParams {
     player: Player
 }
 export interface ICardOperationResponse {
-    axial?: axialCoordinates | axialCoordinates[],
-    cardId?: string | string[],
+    axial?: axialCoordinates[],
+    cardIds?: string[],
     num?: number,
-    axialToNum?: { axial: axialCoordinates, num: number }[] | { axial: axialCoordinates, num: number },
+    axialToNum?: { axial: axialCoordinates, num: number }[],
     axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[]
 }
 export interface IAttackerInputParams {
@@ -119,8 +119,14 @@ export interface IPlayer {
     mmr: number,
     color?: string,
 }
+export interface IPlayerDto {
+    id: string
+    username: string,
+    mmr: number,
+    color?: string,
+}
 export interface ICreateGameDto {
-    players: IPlayer[],
+    players: IPlayerDto[],
     numPlayers: number,
     settings?: string
 }

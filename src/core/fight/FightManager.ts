@@ -29,7 +29,7 @@ export class FightManager {
         if (!this.currentFight) {
             throw new Error("FightManager.AttackerAction: no current fight");
         }
-        if(this.currentFight.fightStage !== FightStage.fight){
+        if (this.currentFight.fightStage !== FightStage.fight) {
             throw new Error("FightManager.AttackerAction: gameStage is not fight");
         }
         if (this.currentFight.FightTurnOrder.activePlayerId !== player.id) {
@@ -86,10 +86,10 @@ export class FightManager {
         this.currentFight.UpdateFight();
         this.TryCurrentFightTermination();
     }
-    ProtectClanAction(){
-        
+    ProtectClanAction(player: Player, ifProtectClan: boolean): void {
+
     }
-    SkipDeffenderAction(deffenderPlayer: Player) {
+    SkipDeffenderAction(deffenderPlayer: Player):void {
         if (!this.currentFight) {
             return
         }

@@ -40,7 +40,7 @@ export function BardActionInfo({ gameState, player }: ICardOperationParams): ICa
 }
 export function DruidActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     const deckManager: DeckManager = gameState.deckManager
-    return { cardId: deckManager.actionDiscard }
+    return { cardIds: deckManager.actionDiscard }
 
 }
 export function PeasantsWorkersActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {

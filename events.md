@@ -49,10 +49,10 @@ on("player-card-info", ({ cardId, params }: IPlayerCardInput)) ->
 
 socket.emit("player-card-info", ICardOperationResponse)
 ICardOperationResponse {
-    axial?: axialCoordinates | axialCoordinates[],
-    cardId?: string | string[],
+    axial?: axialCoordinates[],
+    cardIds?: string[],
     num?: number,
-    axialToNum?: { axial: axialCoordinates, num: number }[] | { axial: axialCoordinates, num: number },
+    axialToNum?: { axial: axialCoordinates, num: number }[],
     axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[]
 }
 ```

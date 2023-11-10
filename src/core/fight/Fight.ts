@@ -109,19 +109,9 @@ export class Fight {
         });
     }
     private NextFightTurn(): void {
-        this._gameState.trixelManager.ClearTrixel()
-        const activePlayerId = this.FightTurnOrder.activePlayerId
-        const activePlayerIndex = this.FightTurnOrder.playersId.indexOf(activePlayerId)
-        let nextIndex: number = 0
-        const numPlayers = this.FightTurnOrder.playersId.length
-        if (this.FightTurnOrder.direction === TurnOrder.clockwise) {
-            nextIndex = (activePlayerIndex + 1) % numPlayers;
-        }
-        else {
-            nextIndex = (activePlayerIndex - 1 + numPlayers) % numPlayers;
-        }
-        const newActivePlayerId = this.FightTurnOrder.playersId[nextIndex]
-        this.FightTurnOrder.activePlayerId = newActivePlayerId
+        this._gameState.trixelManager.ClearTrixel();
+        const newActivePlayerId = this.FightTurnOrder.playersId[this.GetNextPlayerIndex()];
+        this.FightTurnOrder.activePlayerId = newActivePlayerId;
     }
     public startTimerAndListenForTrixel(timeoutMs: number) {
         const timer = setTimeout(() => {
@@ -143,6 +133,18 @@ export class Fight {
             attackCycle,
             fightHex
         }
+    }
+    private GetNextPlayerIndex() {
+        let nextIndex: number = 0;
+        const activePlayerIndex = this.FightTurnOrder.playersId.indexOf(this.FightTurnOrder.activePlayerId);
+        const numPlayers = this.FightTurnOrder.playersId.length;
+        if (this.FightTurnOrder.direction === TurnOrder.clockwise) {
+            nextIndex = (activePlayerIndex + 1) % numPlayers;
+        }
+        else {
+            nextIndex = (activePlayerIndex - 1 + numPlayers) % numPlayers;
+        }
+        return nextIndex;
     }
 }
 
