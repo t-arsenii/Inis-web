@@ -13,11 +13,13 @@ import { DebugTools } from "./events/debugEvents";
 import { GameState } from "../core/gameState/GameState";
 import { gamesManager } from "../core/gameState/GameStateManager";
 import { uiUpdateHandler } from "./events/uiUpdateEvents";
-export default function handleSocketConnections(io: Server) {
+import { RedisClientType } from "redis";
+import { RedisConverter } from "../core/RedisConverter";
+export default function handleSocketConnections(io: Server, redisClinet: RedisClientType) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
-        //middleware 
+        //middlewares 
         socket.use((packet, next) => {
             if (packet[0] === 'game-join') {
                 return next();
@@ -26,7 +28,13 @@ export default function handleSocketConnections(io: Server) {
                 console.log("Socket not found");
                 return next(new Error("Socket not found"));
             }
+            const redisConverter = new RedisConverter(redisClinet);
             return next();
+        });
+        
+        socket.use((packet, next) => {
+            next();
+            console.log("Middleware after evetns");
         });
         
         DebugTools(io, socket)
@@ -42,7 +50,7 @@ export default function handleSocketConnections(io: Server) {
                 q: +q,
                 r: +r
             }
-            const isTerritory = gameState?.map.fieldsController.AddRandomField(axial)
+            const isTerritory = gameState?.hexGridManager.fieldsController.AddRandomField(axial)
             socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
         })
         socket.on("player-nextTurn", () => {

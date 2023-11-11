@@ -1,0 +1,49 @@
+{
+    gameState:{
+        Id: string;
+        gameStatus: boolean;
+        gameStage: GameStage;
+        deedTokensLeft: number;
+        pretenderTokensLeft: number;
+        brenPlayer: Player;
+        roundCounter: number;
+    },
+    deckManager: {
+        actionCardsDeckSize:number,
+        playersDeck: Map<string, Deck>,
+        eposCards: string[],
+        eposDiscard: string[],
+        actionDiscard: string[],
+        defferedCardId: string,
+        dealCards: DealCards | null,
+    },
+    fightManager:{
+        private fights: Fight[];
+        public currentFight: Fight | null;
+        private status: boolean;
+    },
+    TrixelManager:{
+        trixelArray: Map<string, Set<string>>
+    },
+    playerManager:{
+        players: Map<string, Player>,
+        numPlayers: number
+    },
+    turnOrderManager{
+        turnOrder: PlayerTurnOrder;
+    },
+    hexGridManager{
+        hexGrid: Map<string, Hexagon>;
+        fieldsController: {
+            playerFieldPresense: Map<string, Hexagon[]>;
+            avalibleTerritories: string[];
+            capitalHex: Hexagon | null;
+            festivalHex: Hexagon | null;
+            sanctuariesLeft: number;
+            citadelsLeft: number;
+        }
+        setupController: {
+            setupClansCounter: number;
+        }
+    }    
+}

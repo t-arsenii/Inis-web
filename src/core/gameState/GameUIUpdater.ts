@@ -11,7 +11,7 @@ export class GameUiUpdater {
         this._gameState = gameState;
     }
     public getMapUiInfo(): IMapUiInfo {
-        const hexGrid = this._gameState.map;
+        const hexGrid = this._gameState.hexGridManager;
         let capitalCoordinates: axialCoordinates | null = null
         if (hexGrid.fieldsController.capitalHex) {
             capitalCoordinates = hexToAxialCoordinates(hexGrid.fieldsController.capitalHex);
@@ -24,7 +24,7 @@ export class GameUiUpdater {
         return {
             capital: capitalCoordinates,
             holiday: holidayCoordinates,
-            hexGrid: Array.from(hexGrid.grid.values()).map(hex => ({ q: hex.q, r: hex.r, field: hex.field })),
+            hexGrid: Array.from(hexGrid.hexGrid.values()).map(hex => ({ q: hex.q, r: hex.r, field: hex.field })),
             terLeft: terLeft
         };
     }
@@ -38,9 +38,9 @@ export class GameUiUpdater {
             };
         }
         return {
-            ActionCards: deck.ActionCards,
-            EposCards: deck.EposCards,
-            AdvantagesCards: deck.AdvantagesCards
+            ActionCards: deck.actionCards,
+            EposCards: deck.eposCards,
+            AdvantagesCards: deck.advantagesCards
         };
     }
     public getSidebarUiInfo(): ISidebarUiInfo {
@@ -63,9 +63,9 @@ export class GameUiUpdater {
                     username: player.username,
                     mmr: player.mmr,
                     deck: {
-                        Epos: deck.EposCards.length,
-                        Action: deck.ActionCards.length,
-                        Advantage: deck.AdvantagesCards.length
+                        Epos: deck.eposCards.length,
+                        Action: deck.actionCards.length,
+                        Advantage: deck.advantagesCards.length
                     },
                     clans: player.clansLeft,
                     tokens: {
@@ -84,8 +84,8 @@ export class GameUiUpdater {
         return {
             gameStatus: this._gameState.gameStatus,
             maxPlayers: this._gameState.playerManager.numPlayers,
-            citadelsLeft: this._gameState.map.fieldsController.citadelsLeft,
-            sanctuariesLeft: this._gameState.map.fieldsController.sanctuariesLeft,
+            citadelsLeft: this._gameState.hexGridManager.fieldsController.citadelsLeft,
+            sanctuariesLeft: this._gameState.hexGridManager.fieldsController.sanctuariesLeft,
             gameStage: this._gameState.gameStage
         }
     }

@@ -2,8 +2,8 @@ import { StoneCircle } from "../constans/constant_advantage_cards";
 import { territoryMap } from "../constans/constant_territories";
 import { trixelCondition_1WIFg, trixelCondition_NzLys, trixelCondition_oOWJ5 } from "../constans/constant_trixelConditions";
 import { ICardOperationParams } from "../../types/Interfaces";
-import { Hexagon } from "../map/HexagonField";
-import { HexGrid } from "../map/HexGrid";
+import { Hexagon } from "../map/Field";
+import { HexGridManager } from "../map/HexGridManager";
 
 //пустошь, лес, каменный круг, долина, холмы, горы
 export function WastelandTrixel({ gameState, player, targetPlayerId }: ICardOperationParams) {
@@ -14,7 +14,7 @@ export function WastelandTrixel({ gameState, player, targetPlayerId }: ICardOper
     if (gameState.playerManager.HasPlayer(targetPlayerId)) {
         throw new Error("WastelandTrixel: targetPlayer not found")
     }
-    const eposCards = gameState.deckManager.playersDeck.get(targetPlayerId)?.EposCards
+    const eposCards = gameState.deckManager.playersDeck.get(targetPlayerId)?.eposCards
     return eposCards
 }
 export function ValleyTrixel({ gameState, player, axial }: ICardOperationParams) {
@@ -24,8 +24,8 @@ export function ValleyTrixel({ gameState, player, axial }: ICardOperationParams)
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
         throw new Error(`ValleyTrixel: axial field error`)
     }
-    const map: HexGrid = gameState.map
-    if (!gameState.map.GetHex(axial)) {
+    const map: HexGridManager = gameState.hexGridManager
+    if (!gameState.hexGridManager.GetHex(axial)) {
         throw new Error(`ValleyTrixel: no hexagon with axial:${axial}`)
     }
     const hex: Hexagon = map.GetHex(axial)!
@@ -33,7 +33,7 @@ export function ValleyTrixel({ gameState, player, axial }: ICardOperationParams)
     if (!playerHex.includes(hex)) {
         throw new Error(`ValleyTrixel: player is not present on axial:${axial}`)
     }
-    gameState.map.clansController.AddClans(player, 1, axial)
+    gameState.hexGridManager.clansController.AddClans(player, 1, axial)
 }
 export function ForestTrixel({ gameState, player }: ICardOperationParams) {
     if (!gameState.trixelManager.HasTrixel(player, trixelCondition_1WIFg)) {
@@ -45,7 +45,7 @@ export function StoneCircleTrixel({ gameState, player }: ICardOperationParams) {
     if (!gameState.trixelManager.HasTrixel(player, trixelCondition_1WIFg)) {
         throw new Error("StoneCircleTrixel: player dosen't have condition to play trixel")
     }
-    const hexArr: Hexagon[] = gameState.map.GetAllHex()
+    const hexArr: Hexagon[] = gameState.hexGridManager.GetAllHex()
     const stoneCircle = hexArr.find(hex => hex.field.territoryId === StoneCircle.id)
     if (!stoneCircle) {
         throw new Error("StoneCircleTrixel: player dosen't have condition to play trixel")
@@ -53,7 +53,7 @@ export function StoneCircleTrixel({ gameState, player }: ICardOperationParams) {
     if (!stoneCircle.field.hasClans(player)) {
         throw new Error("StoneCircleTrixel: player has no clans")
     }
-    gameState.map.clansController.RemoveClans(player, 1, { q: stoneCircle.q, r: stoneCircle.r })
+    gameState.hexGridManager.clansController.RemoveClans(player, 1, { q: stoneCircle.q, r: stoneCircle.r })
     const lastEposCardId = gameState.deckManager.eposDiscard.pop()!
     gameState.deckManager.AddCard(player, lastEposCardId)
 }

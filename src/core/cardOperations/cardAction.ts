@@ -1,11 +1,11 @@
-import { HexGrid } from "../map/HexGrid";
+import { HexGridManager } from "../map/HexGridManager";
 import { Sanctuary, cardActionMap } from "../constans/constant_action_cards";
 import { ICardOperationParams } from "../../types/Interfaces";
 import { Deck, DeckManager } from "../DeckManager";
 import { trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { Player } from "../Player";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
-import { Hexagon } from "../map/HexagonField";
+import { Hexagon } from "../map/Field";
 export function BardSeason({ gameState, player }: ICardOperationParams): void {
     gameState.deckManager.AddRandomEposCard(player)
 }
@@ -22,7 +22,7 @@ export function DruidSeason({ gameState, player, targetCardId }: ICardOperationP
     }
     const deckManager: DeckManager = gameState.deckManager
     const deck: Deck = deckManager.playersDeck.get(player.id)!
-    if (deck.ActionCards.length === 1) {
+    if (deck.actionCards.length === 1) {
         throw new Error("DruidSeason: druid is a last card")
     }
     if (!deckManager.actionDiscard.includes(targetCardId)) {
@@ -35,8 +35,8 @@ export function PeasantsWorkersSeason({ gameState, player, axialToNum }: ICardOp
     if (!axialToNum) {
         throw new Error("PeasantsWorkersSeason: axialToNum field is undefiend")
     }
-    const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
-    let citadelNum: number = gameState.map.fieldsController.CountPlayerCitadels(player)
+    const playerHex: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
+    let citadelNum: number = gameState.hexGridManager.fieldsController.CountPlayerCitadels(player)
 
     if (Array.isArray(axialToNum)) {
         const clansNum = axialToNum.reduce((sum, axNum) => sum + axNum.num, 0);
@@ -44,16 +44,16 @@ export function PeasantsWorkersSeason({ gameState, player, axialToNum }: ICardOp
             throw new Error("PeasantsWorkersSeason: wrong number of clans")
         }
         for (var axNum of axialToNum) {
-            if (!gameState.map.HasHexagon(axNum.axial)) {
+            if (!gameState.hexGridManager.HasHexagon(axNum.axial)) {
                 throw new Error(`PeasantsWorkersSeason: no hexagon with axial:${axNum.axial}`)
             }
-            let hex: Hexagon = gameState.map.GetHex(axNum.axial)!
+            let hex: Hexagon = gameState.hexGridManager.GetHex(axNum.axial)!
             if (!playerHex.includes(hex)) {
                 throw new Error(`PeasantsWorkersSeason: player is not present on axial:${axNum.axial}`)
             }
         }
         for (var axNum of axialToNum) {
-            gameState.map.clansController.AddClans(player, axNum.num, axNum.axial)
+            gameState.hexGridManager.clansController.AddClans(player, axNum.num, axNum.axial)
         }
     }
 
@@ -62,25 +62,25 @@ export function PeasantsWorkersSeason({ gameState, player, axialToNum }: ICardOp
         if (clansNum > player.clansLeft || clansNum !== citadelNum) {
             throw new Error("PeasantsWorkersSeason: wrong number of clans")
         }
-        if (!gameState.map.HasHexagon(axialToNum.axial)) {
+        if (!gameState.hexGridManager.HasHexagon(axialToNum.axial)) {
             throw new Error(`PeasantsWorkersSeason: no hexagon with axial:${axialToNum.axial}`)
         }
-        let hex: Hexagon = gameState.map.GetHex(axialToNum.axial)!
+        let hex: Hexagon = gameState.hexGridManager.GetHex(axialToNum.axial)!
         if (!playerHex.includes(hex)) {
             throw new Error(`PeasantsWorkersSeason: player is not present on axial:${axialToNum.axial}`)
         }
-        gameState.map.clansController.AddClans(player, axialToNum.num, axialToNum.axial)
+        gameState.hexGridManager.clansController.AddClans(player, axialToNum.num, axialToNum.axial)
     }
 }
 export function SanctuarySeason({ gameState, player, axial }: ICardOperationParams): void {
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
         throw new Error(`SanctuarySeason: axial field error`)
     }
-    if (gameState.map.fieldsController.sanctuariesLeft <= 0) {
+    if (gameState.hexGridManager.fieldsController.sanctuariesLeft <= 0) {
         throw new Error(`SanctuarySeason: no sancturies left`)
     }
-    const map: HexGrid = gameState.map
-    if (!gameState.map.GetHex(axial)) {
+    const map: HexGridManager = gameState.hexGridManager
+    if (!gameState.hexGridManager.GetHex(axial)) {
         throw new Error(`SanctuarySeason: no hexagon with axial:${axial}`)
     }
     const hex: Hexagon = map.GetHex(axial)!
@@ -96,18 +96,18 @@ export function CitadelSeason({ gameState, player, axial }: ICardOperationParams
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
         throw new Error(`CitadelSeason: axial field error`)
     }
-    if (gameState.map.fieldsController.citadelsLeft <= 0) {
+    if (gameState.hexGridManager.fieldsController.citadelsLeft <= 0) {
         throw new Error(`CitadelSeason: no citadels left`)
     }
-    if (!gameState.map.HasHexagon(axial)) {
+    if (!gameState.hexGridManager.HasHexagon(axial)) {
         throw new Error(`CitadelSeason: no hexagon with axial:${axial}`)
     }
-    const hex: Hexagon = gameState.map.GetHex(axial)!
-    const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+    const hex: Hexagon = gameState.hexGridManager.GetHex(axial)!
+    const playerHex: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
     if (!playerHex.includes(hex)) {
         throw new Error(`CitadelSeason: player is not present on axial:${axial}`)
     }
-    gameState.map.fieldsController.citadelsLeft--
+    gameState.hexGridManager.fieldsController.citadelsLeft--
     hex.field.citadelsCount++
     //Add Advantage card to player if possible
 }
@@ -119,35 +119,35 @@ export function NewClansSeason({ gameState, player, axial }: ICardOperationParam
         if (axial.length !== 2) {
             throw new Error(`NewClansSeason: axial array length error`)
         }
-        if (!gameState.map.HasHexagon(axial[0])) {
+        if (!gameState.hexGridManager.HasHexagon(axial[0])) {
             throw new Error(`NewClansSeason: no hexagon with axial:${axial[0]}`)
         }
-        if (!gameState.map.HasHexagon(axial[1])) {
+        if (!gameState.hexGridManager.HasHexagon(axial[1])) {
             throw new Error(`NewClansSeason: no hexagon with axial:${axial[1]}`)
         }
-        const hex1: Hexagon = gameState.map.GetHex(axial[0])!
-        const hex2: Hexagon = gameState.map.GetHex(axial[1])!
-        const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+        const hex1: Hexagon = gameState.hexGridManager.GetHex(axial[0])!
+        const hex2: Hexagon = gameState.hexGridManager.GetHex(axial[1])!
+        const playerHex: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
         if (!playerHex.includes(hex1)) {
             throw new Error(`NewClansSeason: player is not present on axial:${axial[0]}`)
         }
         if (!playerHex.includes(hex2)) {
             throw new Error(`NewClansSeason: player is not present on axial:${axial[1]}`)
         }
-        gameState.map.clansController.AddClans(player, 1, axial[0])
-        gameState.map.clansController.AddClans(player, 1, axial[1])
+        gameState.hexGridManager.clansController.AddClans(player, 1, axial[0])
+        gameState.hexGridManager.clansController.AddClans(player, 1, axial[1])
     }
 
     if (typeof axial === 'object' && !Array.isArray(axial)) {
-        if (!gameState.map.HasHexagon(axial)) {
+        if (!gameState.hexGridManager.HasHexagon(axial)) {
             throw new Error(`NewClansSeason: no hexagon with axial:${axial}`)
         }
-        const hex: Hexagon = gameState.map.GetHex(axial)!
-        const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+        const hex: Hexagon = gameState.hexGridManager.GetHex(axial)!
+        const playerHex: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
         if (!playerHex.includes(hex)) {
             throw new Error(`NewClansSeason: player is not present on axial:${axial}`)
         }
-        gameState.map.clansController.AddClans(player, 2, axial)
+        gameState.hexGridManager.clansController.AddClans(player, 2, axial)
     }
 
 }
@@ -155,21 +155,21 @@ export function ExplorationSeason({ gameState, player, axial }: ICardOperationPa
     if (!axial || typeof axial !== 'object' || Array.isArray(axial)) {
         throw new Error(`ExplorationSeason: axial field error`)
     }
-    if (!gameState.map.HasHexagon(axial)) {
+    if (!gameState.hexGridManager.HasHexagon(axial)) {
         throw new Error(`ExplorationSeason: no hexagon with axial:${axial}`)
     }
-    gameState.map.fieldsController.AddRandomField(axial)
-    gameState.map.clansController.AddClans(player, 1, axial)
+    gameState.hexGridManager.fieldsController.AddRandomField(axial)
+    gameState.hexGridManager.clansController.AddClans(player, 1, axial)
 }
 export function HolidaySeason({ gameState, player, axial }: ICardOperationParams): void {
     if (!axial || typeof axial !== `object` || Array.isArray(axial)) {
         throw new Error(`HolidaySeason: axial field error`);
     }
-    const hex: Hexagon | undefined = gameState.map.GetHex(axial);
+    const hex: Hexagon | undefined = gameState.hexGridManager.GetHex(axial);
     if (!hex) {
         throw new Error(`HolidaySeason: no hexagon with axial:${axial}`);
     }
-    const hexArr: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+    const hexArr: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
     if (!hexArr.includes(hex)) {
         throw new Error(`HolidaySeason: player is not present on axial:${axial}`)
     }
@@ -177,9 +177,9 @@ export function HolidaySeason({ gameState, player, axial }: ICardOperationParams
         throw new Error(`HolidaySeason: no sanctuaries`)
     }
     if (player.clansLeft > 0) {
-        gameState.map.clansController.AddClans(player, 1, axial)
+        gameState.hexGridManager.clansController.AddClans(player, 1, axial)
     }
-    gameState.map.fieldsController.SetHolidayField(axial)
+    gameState.hexGridManager.fieldsController.SetHolidayField(axial)
 }
 export function ConquestSeason({ gameState, player, axial: singleAxial, axialToNum: axialToNum }: ICardOperationParams): void {
     //validate data
@@ -189,19 +189,19 @@ export function ConquestSeason({ gameState, player, axial: singleAxial, axialToN
     if (!axialToNum) {
         throw new Error(`ConquestSeason: targetAxial field error`)
     }
-    if (!gameState.map.HasHexagon(singleAxial)) {
+    if (!gameState.hexGridManager.HasHexagon(singleAxial)) {
         throw new Error(`ConquestSeason: no hexagon with axial:${singleAxial}`)
     }
     //validate hexagons
-    const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
-    const hexNeighbours: Hexagon[] = gameState.map.GetNeighbors({ q: singleAxial.q, r: singleAxial.r })
-    const targetHexagon: Hexagon = gameState.map.GetHex(singleAxial)!
+    const playerHex: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
+    const hexNeighbours: Hexagon[] = gameState.hexGridManager.GetNeighbors({ q: singleAxial.q, r: singleAxial.r })
+    const targetHexagon: Hexagon = gameState.hexGridManager.GetHex(singleAxial)!
     if (Array.isArray(axialToNum)) {
         for (const ax of axialToNum) {
-            if (!gameState.map.HasHexagon(ax.axial)) {
+            if (!gameState.hexGridManager.HasHexagon(ax.axial)) {
                 throw new Error(`ConquestSeason: no hexagon with axial:${ax.axial}`)
             }
-            let hex: Hexagon = gameState.map.GetHex(ax.axial)!
+            let hex: Hexagon = gameState.hexGridManager.GetHex(ax.axial)!
             if (!playerHex.includes(hex)) {
                 throw new Error(`ConquestSeason: player is not present on axial:${ax.axial}`)
             }
@@ -217,14 +217,14 @@ export function ConquestSeason({ gameState, player, axial: singleAxial, axialToN
             }
         }
         for (const ax of axialToNum) {
-            gameState.map.clansController.MoveClans(player, ax.axial, singleAxial, ax.num)
+            gameState.hexGridManager.clansController.MoveClans(player, ax.axial, singleAxial, ax.num)
         }
     }
     else if (typeof axialToNum === 'object' && !Array.isArray(axialToNum)) {
-        if (!gameState.map.HasHexagon(axialToNum.axial)) {
+        if (!gameState.hexGridManager.HasHexagon(axialToNum.axial)) {
             throw new Error(`ConquestSeason: no hexagon with axial:${axialToNum.axial}`)
         }
-        let hex: Hexagon = gameState.map.GetHex(axialToNum.axial)!
+        let hex: Hexagon = gameState.hexGridManager.GetHex(axialToNum.axial)!
         if (!playerHex.includes(hex)) {
             throw new Error(`ConquestSeason: player is not present on axial:${axialToNum.axial}`)
         }
@@ -238,7 +238,7 @@ export function ConquestSeason({ gameState, player, axial: singleAxial, axialToN
         if (hex.field.playersClans.get(player.id)! < axialToNum.num) {
             throw new Error(`ConquestSeason:player dosen't have enough clans on the axial:${axialToNum.axial}`)
         }
-        gameState.map.clansController.MoveClans(player, axialToNum.axial, singleAxial, axialToNum.num)
+        gameState.hexGridManager.clansController.MoveClans(player, axialToNum.axial, singleAxial, axialToNum.num)
     }
     if (targetHexagon.field.playersClans.size > 1) {
         gameState.fightManager.InitFight(player, targetHexagon)
@@ -252,15 +252,15 @@ export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPl
         if (!singleAxial || typeof singleAxial !== 'object' || Array.isArray(singleAxial)) {
             throw new Error("NewUnionSeason(1): axial parameter error")
         }
-        if (!gameState.map.HasHexagon(singleAxial)) {
+        if (!gameState.hexGridManager.HasHexagon(singleAxial)) {
             throw new Error(`NewUnionSeason(1): no hexagon with axial:${singleAxial}`)
         }
-        const hex: Hexagon = gameState.map.GetHex(singleAxial)!
-        const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+        const hex: Hexagon = gameState.hexGridManager.GetHex(singleAxial)!
+        const playerHex: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
         if (!playerHex.includes(hex)) {
             throw new Error(`NewUnionSeason(1): player is not present on axial:${singleAxial}`)
         }
-        gameState.map.clansController.AddClans(player, 1, singleAxial)
+        gameState.hexGridManager.clansController.AddClans(player, 1, singleAxial)
     }
     else if (cardVariation === 2) {
         if (!targetPlayerId) {
@@ -273,11 +273,11 @@ export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPl
         if (!singleAxial || typeof singleAxial !== 'object' || Array.isArray(singleAxial)) {
             throw new Error("NewUnionSeason(2): axial parameter error")
         }
-        if (!gameState.map.HasHexagon(singleAxial)) {
+        if (!gameState.hexGridManager.HasHexagon(singleAxial)) {
             throw new Error(`NewUnionSeason(2): no hexagon with axial:${singleAxial}`)
         }
-        const hex: Hexagon = gameState.map.GetHex(singleAxial)!
-        const playerHex: Hexagon[] = gameState.map.fieldsController.GetPlayerHex(player)!
+        const hex: Hexagon = gameState.hexGridManager.GetHex(singleAxial)!
+        const playerHex: Hexagon[] = gameState.hexGridManager.fieldsController.GetPlayerHex(player)!
         if (!playerHex.includes(hex)) {
             throw new Error(`NewUnionSeason(2): player is not present on axial:${singleAxial}`)
         }
@@ -287,8 +287,8 @@ export function NewUnionSeason({ gameState, player, axial: singleAxial, targetPl
         if (hex.field.playersClans.get(targetPlayerId)! < 2) {
             throw new Error(`NewUnionSeason(2): targetPlayer has not enough clans`)
         }
-        gameState.map.clansController.AddClans(player, 1, singleAxial)
-        gameState.map.clansController.RemoveClans(targetPlayer, 1, singleAxial)
+        gameState.hexGridManager.clansController.AddClans(player, 1, singleAxial)
+        gameState.hexGridManager.clansController.RemoveClans(targetPlayer, 1, singleAxial)
 
     } else {
         throw new Error("NewUnionSeason: CardVariation parameter error")

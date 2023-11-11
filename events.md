@@ -51,7 +51,9 @@ socket.emit("player-card-info", ICardOperationResponse)
 ICardOperationResponse {
     axial?: axialCoordinates[],
     cardIds?: string[],
-    num?: number,
+    maxTerClicks?: number,
+    maxCardClicks?: number,
+    maxTargetPlayerClicks?: number
     axialToNum?: { axial: axialCoordinates, num: number }[],
     axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[]
 }

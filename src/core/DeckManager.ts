@@ -9,9 +9,14 @@ import { territoryMap } from "./constans/constant_territories";
 import { cardAdvantageMap } from "./constans/constant_advantage_cards";
 import { cardAllMap } from "./constans/constant_all_cards";
 export class Deck {
-    ActionCards: string[] = [];
-    EposCards: string[] = [];
-    AdvantagesCards: string[] = [];
+    actionCards: string[];
+    eposCards: string[];
+    advantagesCards: string[];
+    constructor() {
+        this.actionCards = [];
+        this.eposCards = [];
+        this.advantagesCards = [];
+    }
     AddCard(cardId: string) {
         if (!cardActionMap.has(cardId)) {
             throw new Error("Deck.addCard: cardId not found")
@@ -19,47 +24,53 @@ export class Deck {
         const card = cardActionMap.get(cardId)!
         switch (card.card_type) {
             case Card_type.Action:
-                this.ActionCards.push(card.id)
+                this.actionCards.push(card.id)
                 break
             case Card_type.Advantage:
-                this.EposCards.push(card.id)
+                this.eposCards.push(card.id)
                 break
             case Card_type.Epos:
-                this.AdvantagesCards.push(card.id)
+                this.advantagesCards.push(card.id)
                 break
         }
     }
-
     ClearActionCards() {
-        this.ActionCards = [];
+        this.actionCards = [];
     }
     ClearEposCards() {
-        this.EposCards = [];
+        this.eposCards = [];
     }
     ClearAdvantagesCards() {
-        this.AdvantagesCards = [];
+        this.advantagesCards = [];
     }
 }
 export class DeckManager {
-    readonly deckSize: number = 4;
-    playersDeck: Map<string, Deck> = new Map();
-    eposCards: string[] = [];
-    eposDiscard: string[] = [];
-    actionDiscard: string[] = [];
-    defferedCardId: string = "";
+    readonly actionCardsDeckSize: number;
+    playersDeck: Map<string, Deck>;
+    eposCards: string[];
+    eposDiscard: string[];
+    actionDiscard: string[];
+    defferedCardId: string;
     //Dealing cards logic
-    dealCards: DealCards | null = null
+    dealCards: DealCards | null;
     //DI
     _gameState: GameState;
     constructor(gameState: GameState) {
-        this._gameState = gameState
+        this._gameState = gameState;
+        this.playersDeck = new Map<string, Deck>();
+        this.eposCards = [];
+        this.eposDiscard = [];
+        this.actionDiscard = [];
+        this.defferedCardId = "";
+        this.actionCardsDeckSize = 4;
+        this.dealCards = null;
     }
     getPlayerDeck(player: Player): Deck | undefined {
         return this.playersDeck.get(player.id);
     }
     PlayerHasCard(player: Player, cardId: string): boolean {
         const deck: Deck = this.playersDeck.get(player.id)!
-        const allCards: string[] = [...deck.ActionCards, ...deck.AdvantagesCards, ...deck.EposCards]
+        const allCards: string[] = [...deck.actionCards, ...deck.advantagesCards, ...deck.eposCards]
         return allCards.includes(cardId)
     }
     Init() {
@@ -84,14 +95,14 @@ export class DeckManager {
         const playedCard: Card = cardActionMap.get(cardId)!
         switch (playedCard.card_type) {
             case Card_type.Action:
-                deck.ActionCards = deck.ActionCards.filter(cardId => cardId !== playedCard.id)
+                deck.actionCards = deck.actionCards.filter(cardId => cardId !== playedCard.id)
                 this.actionDiscard.push(playedCard.id)
                 break
             case Card_type.Advantage:
-                deck.AdvantagesCards = deck.AdvantagesCards.filter(cardId => cardId !== playedCard.id)
+                deck.advantagesCards = deck.advantagesCards.filter(cardId => cardId !== playedCard.id)
                 break
             case Card_type.Epos:
-                deck.EposCards = deck.EposCards.filter(cardId => cardId !== playedCard.id)
+                deck.eposCards = deck.eposCards.filter(cardId => cardId !== playedCard.id)
                 this.eposDiscard.push(playedCard.id)
                 break
         }
@@ -104,13 +115,13 @@ export class DeckManager {
         }
         switch (card.card_type) {
             case Card_type.Action:
-                deck.ActionCards.push(card.id)
+                deck.actionCards.push(card.id)
                 break
             case Card_type.Advantage:
-                deck.AdvantagesCards.push(card.id)
+                deck.advantagesCards.push(card.id)
                 break
             case Card_type.Epos:
-                deck.EposCards.push(card.id)
+                deck.eposCards.push(card.id)
                 break
         }
     }
@@ -147,7 +158,7 @@ export class DeckManager {
                 cardsToDiscard: [],
                 readyToDeal: false,
             };
-            for (let i = 0; i < this.deckSize; i++) {
+            for (let i = 0; i < this.actionCardsDeckSize; i++) {
                 this.dealCards!.players[playerId].cards.push(Cards.pop()!)
             }
         })
@@ -191,13 +202,13 @@ export class DeckManager {
             if (this.dealCards.players.hasOwnProperty(playerId)) {
                 playerDealCards = this.dealCards.players[playerId].cards;
                 deck = this.playersDeck.get(playerId)!;
-                deck.ActionCards = playerDealCards;
+                deck.actionCards = playerDealCards;
             }
         }
         this.dealCards = null;
     }
     DealAdvantageCards() {
-        const grid = this._gameState.map.grid;
+        const grid = this._gameState.hexGridManager.hexGrid;
         grid.forEach(hex => {
             if (hex.field.leaderPlayerId) {
                 const leaderPlayer = this._gameState.playerManager.GetPlayerById(hex.field.leaderPlayerId)!

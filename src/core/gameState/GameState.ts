@@ -1,16 +1,13 @@
 import EventEmitter from "events";
 import { v4 } from "uuid";
-import { InitHexGrid } from "../../utils/HexGridUtils";
 import { PretenderClans, PretenderSanctuaries, PretenderTerritories, tryGetWinnerPlayer, getBrenPlayer } from "../../utils/gameStateUtils";
-import { checkSockets, getRandomDirection, shuffle } from "../../utils/helperFunctions";
 import { GameStage, PretenderTokenType, playerAction, TurnOrder } from "../../types/Enums";
-import { PlayerTurnOrder } from "../../types/Types";
 import { DeckManager } from "../DeckManager";
 import { Player } from "../Player";
 import { TrixelManager } from "../TrixelManager";
 import { MAX_DEED_TOKENS, MAX_PRETENDER_TOKENS, MAX_SANCTUARIES, MAX_CITADELS, MIN_WINNING_AMOUNT } from "../constans/constant_3_players";
 import { FightManager } from "../fight/FightManager";
-import { HexGrid } from "../map/HexGrid";
+import { HexGridManager } from "../map/HexGridManager";
 import { TurnOrderManager } from "./TurnOrderManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameUiUpdater } from "./GameUIUpdater";
@@ -29,8 +26,8 @@ export class GameState {
   trixelManager: TrixelManager;
   playerManager: PlayerManager;
   turnOrderManager: TurnOrderManager;
+  hexGridManager: HexGridManager;
   uiUpdater: GameUiUpdater;
-  map: HexGrid;
   //Statistic
   roundCounter: number;
   //Other
@@ -50,7 +47,7 @@ export class GameState {
     this.trixelManager = new TrixelManager(this);
     this.playerManager = new PlayerManager(this);
     this.turnOrderManager = new TurnOrderManager(this);
-    this.map = new HexGrid(this);
+    this.hexGridManager = new HexGridManager(this);
     this.uiUpdater = new GameUiUpdater(this);
     //Statistic
     this.roundCounter = 0;
@@ -80,7 +77,7 @@ export class GameState {
     this.gameStage = GameStage.CapitalSetup;
 
     //Initializing map
-    this.map.Init();
+    this.hexGridManager.Init();
 
     //Initializing players decks
     this.deckManager.Init();
@@ -138,7 +135,7 @@ export class GameState {
     const players = this.playerManager.GetPlayers();
     this.trixelManager.ClearTrixel();
     players.forEach(player => player.lastAction = playerAction.None);
-    this.map.fieldsController.ResetHolidayField();
+    this.hexGridManager.fieldsController.ResetHolidayField();
   }
   public StartGatheringStage(): void {
     this.gameStage = GameStage.Gathering;

@@ -1,21 +1,22 @@
 import { GameState } from "../gameState/GameState";
+import { HexGridManager } from "./HexGridManager";
 
 export class SetupController {
-    private gameState: GameState;
     private setupClansCounter;
-    constructor(gameState: GameState) {
-        this.gameState = gameState
+    private _hexGrid: HexGridManager;
+    constructor(hexGrid: HexGridManager) {
+        this._hexGrid = hexGrid;
         this.setupClansCounter = 0;
     }
     public SetupClans(): boolean {
-        const numPlayers = this.gameState.playerManager.numPlayers;
+        const numPlayers = this._hexGrid._gameState.playerManager.numPlayers;
         this.setupClansCounter++;
         if (this.setupClansCounter === numPlayers * 2) {
-            return true
+            return true;
         }
-        return false
+        return false;
     }
     public SkipSetupClans(): void {
-        this.setupClansCounter = this.gameState.playerManager.numPlayers * 2
+        this.setupClansCounter = this._hexGrid._gameState.playerManager.numPlayers * 2;
     }
 }

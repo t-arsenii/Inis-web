@@ -15,8 +15,8 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             if (gameState.gameStage !== GameStage.ClansSetup) {
                 throw new Error("GameSetupClans: game stage is not valid");
             }
-            gameState.map.clansController.AddClans(player, 1, axial);
-            if (gameState.map.setupController.SetupClans()) {
+            gameState.hexGridManager.clansController.AddClans(player, 1, axial);
+            if (gameState.hexGridManager.setupController.SetupClans()) {
                 gameState.turnOrderManager.NextTurn();
                 gameState.StartGatheringStage();
                 return;
@@ -38,11 +38,11 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             if (gameState.gameStage !== GameStage.CapitalSetup) {
                 throw new Error("GameSetupCapital: game stage is not valid");
             }
-            if (gameState.map.fieldsController.capitalHex) {
+            if (gameState.hexGridManager.fieldsController.capitalHex) {
                 throw new Error("GameSetupCapital: capital already exists");
             }
-            gameState.map.fieldsController.SetCapital(axial);
-            gameState.map.fieldsController.AddSanctuary(axial);
+            gameState.hexGridManager.fieldsController.SetCapital(axial);
+            gameState.hexGridManager.fieldsController.AddSanctuary(axial);
             gameState.gameStage = GameStage.ClansSetup;
         }
         catch (err) {

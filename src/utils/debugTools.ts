@@ -47,13 +47,13 @@ export const initGameToSeason = () => {
     gameState.deckManager.AddCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
     gameState.deckManager.AddCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015")
     //Skippping setup
-    gameState.map.fieldsController.SetCapital({ q: 0, r: 0 })
-    gameState.map.fieldsController.AddSanctuary({ q: 0, r: 0 })
-    gameState.map.setupController.SkipSetupClans() //skipping setup clans
+    gameState.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 })
+    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+    gameState.hexGridManager.setupController.SkipSetupClans() //skipping setup clans
     //Adding two clans for each player
-    gameState.map.clansController.AddClans(player1, 2, { q: 0, r: 0 })
-    gameState.map.clansController.AddClans(player2, 2, { q: 0, r: 0 })
-    gameState.map.clansController.AddClans(player3, 2, { q: 0, r: 1 })
+    gameState.hexGridManager.clansController.AddClans(player1, 2, { q: 0, r: 0 })
+    gameState.hexGridManager.clansController.AddClans(player2, 2, { q: 0, r: 0 })
+    gameState.hexGridManager.clansController.AddClans(player3, 2, { q: 0, r: 1 })
     //Skipping beginning stage
     gameState.StartSeasonStage(); //Changing game stage
 }
@@ -80,13 +80,13 @@ export const initGameToGathering = () => {
     const player2: Player = gameState.playerManager.GetPlayerById(player2Id)!
     const player3: Player = gameState.playerManager.GetPlayerById(player3Id)!
     //Adding two clans for each player
-    gameState.map.clansController.AddClans(player1, 2, { q: 0, r: 0 })
-    gameState.map.clansController.AddClans(player2, 2, { q: 0, r: 0 })
-    gameState.map.clansController.AddClans(player3, 2, { q: 0, r: 1 })
+    gameState.hexGridManager.clansController.AddClans(player1, 2, { q: 0, r: 0 })
+    gameState.hexGridManager.clansController.AddClans(player2, 2, { q: 0, r: 0 })
+    gameState.hexGridManager.clansController.AddClans(player3, 2, { q: 0, r: 1 })
     //Skippping setup
-    gameState.map.fieldsController.SetCapital({ q: 0, r: 0 })
-    gameState.map.fieldsController.AddSanctuary({ q: 0, r: 0 })
-    gameState.map.setupController.SkipSetupClans() //skipping setup clans
+    gameState.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 })
+    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+    gameState.hexGridManager.setupController.SkipSetupClans() //skipping setup clans
 
     gameState.StartGatheringStage();
 }
