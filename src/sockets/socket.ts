@@ -17,19 +17,18 @@ export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
+        //middleware 
         socket.use((packet, next) => {
             if (packet[0] === 'game-join') {
                 return next();
             }
-            //const pInf: playerInfo | undefined = gamesManager.getSocketInfo(socket.id)
             if (!socket.auth) {
                 console.log("Socket not found");
                 return next(new Error("Socket not found"));
             }
-            // socket.gameState = pInf.gameState;
-            // socket.player = pInf.player;
             return next();
         });
+        
         DebugTools(io, socket)
         gameLobbyHandler(io, socket)
         gameSetupHandler(io, socket)
