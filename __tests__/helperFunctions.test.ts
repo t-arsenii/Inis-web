@@ -1,6 +1,6 @@
 import { Player } from "../src/core/Player";
 import { DruidSeason } from "../src/core/cardOperations/cardAction";
-import { Hexagon } from "../src/core/map/HexagonField";
+import { Hexagon } from "../src/core/map/Field";
 import { AxialToString, getRandomDirection, hexToAxialCoordinates, shuffle } from "../src/utils/helperFunctions";
 import { TurnOrder } from "../src/types/Enums";
 import { axialCoordinates } from "../src/types/Types";

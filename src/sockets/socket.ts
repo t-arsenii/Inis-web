@@ -13,11 +13,13 @@ import { DebugTools } from "./events/debugEvents";
 import { GameState } from "../core/gameState/GameState";
 import { gamesManager } from "../core/gameState/GameStateManager";
 import { uiUpdateHandler } from "./events/uiUpdateEvents";
+import { RedisClientType } from "redis";
+import { RedisConverter } from "../core/RedisConverter";
 export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
-        //middleware 
+        //middlewares 
         socket.use((packet, next) => {
             if (packet[0] === 'game-join') {
                 return next();
@@ -26,15 +28,17 @@ export default function handleSocketConnections(io: Server) {
                 console.log("Socket not found");
                 return next(new Error("Socket not found"));
             }
+            
             return next();
         });
         
-        DebugTools(io, socket)
-        gameLobbyHandler(io, socket)
-        gameSetupHandler(io, socket)
-        playerGameHandler(io, socket)
-        playerFightHandler(io, socket)
-        uiUpdateHandler(io, socket)
+        DebugTools(io, socket);
+        gameLobbyHandler(io, socket);
+        gameSetupHandler(io, socket);
+        playerGameHandler(io, socket);
+        playerFightHandler(io, socket);
+        uiUpdateHandler(io, socket);
+
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId);
             const player = gameState?.playerManager.GetPlayerById(userId);
@@ -42,7 +46,7 @@ export default function handleSocketConnections(io: Server) {
                 q: +q,
                 r: +r
             }
-            const isTerritory = gameState?.map.fieldsController.AddRandomField(axial)
+            const isTerritory = gameState?.hexGridManager.fieldsController.AddRandomField(axial)
             socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
         })
         socket.on("player-nextTurn", () => {

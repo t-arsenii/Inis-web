@@ -3,13 +3,14 @@ import { GameState } from "./gameState/GameState";
 import { Player } from "./Player";
 
 export class TrixelManager {
-    trixelArray: Map<string, Set<string>> = new Map()
-    private gameState: GameState
+    trixelArray: Map<string, Set<string>>;
+    private _gameState: GameState;
     constructor(gameState: GameState) {
-        this.gameState = gameState
+        this._gameState = gameState;
+        this.trixelArray = new Map();
     }
     Init(): void {
-        const players = this.gameState.playerManager.GetPlayers();
+        const players = this._gameState.playerManager.GetPlayers();
         players.forEach((player) => {
             this.trixelArray.set(player.id, new Set<string>())
         })

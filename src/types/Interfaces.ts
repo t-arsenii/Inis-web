@@ -1,7 +1,7 @@
 
 import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
-import { Field } from "../core/map/HexagonField"
+import { Field } from "../core/map/Field"
 import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction, GameStage } from "./Enums"
 import { axialCoordinates } from "./Types"
 
@@ -23,7 +23,9 @@ export interface ICardOperationParams extends ICardParams {
 export interface ICardOperationResponse {
     axial?: axialCoordinates[],
     cardIds?: string[],
-    num?: number,
+    maxTerClicks?: number,
+    maxCardClicks?: number,
+    maxTargetPlayerClicks?: number
     axialToNum?: { axial: axialCoordinates, num: number }[],
     axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[]
 }

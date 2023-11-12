@@ -3,19 +3,22 @@ import { axialCoordinates } from "../../types/Types";
 import { GameState } from "../gameState/GameState";
 import { ClansController } from "./ClansController";
 import { FieldsController } from "./FieldsController";
-import { Field, Hexagon } from "./HexagonField";
+import { Field, Hexagon } from "./Field";
 import { SetupController } from "./SetupController";
 import { MAX_SANCTUARIES, MAX_CITADELS } from "../constans/constant_3_players";
 
-export class HexGrid {
-    public grid: Map<string, Hexagon> = new Map<string, Hexagon>();
-    public fieldsController: FieldsController = new FieldsController(this)
-    public clansController: ClansController = new ClansController(this, this.fieldsController.playerFieldPresense)
-    public setupController: SetupController
-    public gameState: GameState
+export class HexGridManager {
+    public hexGrid: Map<string, Hexagon>;
+    public fieldsController: FieldsController;
+    public clansController: ClansController;
+    public setupController: SetupController;
+    public _gameState: GameState;
     constructor(gameState: GameState) {
-        this.gameState = gameState
-        this.setupController = new SetupController(gameState)
+        this._gameState = gameState;
+        this.hexGrid = new Map<string, Hexagon>();
+        this.fieldsController = new FieldsController(this);
+        this.setupController = new SetupController(this);
+        this.clansController = new ClansController(this);
     }
     public GetAllValidPlacements(): axialCoordinates[] {
         const validPlacements: axialCoordinates[] = [];
@@ -26,7 +29,7 @@ export class HexGrid {
         let minR = Infinity;
         let maxR = -Infinity;
 
-        for (const hexagon of this.grid.values()) {
+        for (const hexagon of this.hexGrid.values()) {
             minQ = Math.min(minQ, hexagon.q);
             maxQ = Math.max(maxQ, hexagon.q);
             minR = Math.min(minR, hexagon.r);
@@ -70,7 +73,7 @@ export class HexGrid {
             axialNeighbor.q = axial.q + dir.q;
             axialNeighbor.r = axial.r + dir.r;
             if (this.HasHexagon(axialNeighbor)) {
-                neighbors.push(this.grid.get(AxialToString(axialNeighbor))!);
+                neighbors.push(this.hexGrid.get(AxialToString(axialNeighbor))!);
             }
         }
         return neighbors;
@@ -86,34 +89,34 @@ export class HexGrid {
     }
     public HasHexagon(axial: axialCoordinates): boolean {
         const key = AxialToString(axial);
-        return this.grid.has(key);
+        return this.hexGrid.has(key);
     }
     public GetHex(axial: axialCoordinates): Hexagon | undefined {
-        return this.grid.get(AxialToString(axial))
+        return this.hexGrid.get(AxialToString(axial))
     }
     public GetAllHex(): Hexagon[] {
-        return Array.from(this.grid.values())
+        return Array.from(this.hexGrid.values())
     }
     public Init(): void {
-        if (this.grid.size > 0) {
+        if (this.hexGrid.size > 0) {
             return;
         }
         const t1Id = this.fieldsController.avalibleTerritories.pop()!;
         const t2Id = this.fieldsController.avalibleTerritories.pop()!;
         const t3Id = this.fieldsController.avalibleTerritories.pop()!;
 
-        const players = this.gameState.playerManager.GetPlayers();
+        const players = this._gameState.playerManager.GetPlayers();
         players.forEach((player) => {
             this.fieldsController.playerFieldPresense.set(player.id, []);
         })
 
-        const hex1 = new Hexagon({ q: 0, r: 0 }, new Field(t1Id, this.gameState));
-        const hex2 = new Hexagon({ q: 1, r: 0 }, new Field(t2Id, this.gameState));
-        const hex3 = new Hexagon({ q: 0, r: 1 }, new Field(t3Id, this.gameState));
+        const hex1 = new Hexagon({ q: 0, r: 0 }, new Field(t1Id, this._gameState));
+        const hex2 = new Hexagon({ q: 1, r: 0 }, new Field(t2Id, this._gameState));
+        const hex3 = new Hexagon({ q: 0, r: 1 }, new Field(t3Id, this._gameState));
 
-        this.grid.set(AxialToString({ q: hex1.q, r: hex1.r }), hex1);
-        this.grid.set(AxialToString({ q: hex2.q, r: hex2.r }), hex2);
-        this.grid.set(AxialToString({ q: hex3.q, r: hex3.r }), hex3);
+        this.hexGrid.set(AxialToString({ q: hex1.q, r: hex1.r }), hex1);
+        this.hexGrid.set(AxialToString({ q: hex2.q, r: hex2.r }), hex2);
+        this.hexGrid.set(AxialToString({ q: hex3.q, r: hex3.r }), hex3);
 
         this.fieldsController.sanctuariesLeft = MAX_SANCTUARIES;
         this.fieldsController.citadelsLeft = MAX_CITADELS;

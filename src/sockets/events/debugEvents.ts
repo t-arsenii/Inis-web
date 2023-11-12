@@ -16,25 +16,26 @@ export function DebugTools(io: Server, socket: Socket) {
     socket.on("init-fight", () => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
-        gameState.fightManager.InitFight(player, gameState.map.GetHex({ q: 0, r: 0 })!)
+        gameState.fightManager.InitFight(player, gameState.hexGridManager.GetHex({ q: 0, r: 0 })!)
     })
     socket.on("move", ({ axialFrom, axialTo, clansNum }: { axialFrom: axialCoordinates, axialTo: axialCoordinates, clansNum: number }) => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
         try {
-            gameState.map.clansController.MoveClans(player, axialFrom, axialTo, clansNum)
+            gameState.hexGridManager.clansController.MoveClans(player, axialFrom, axialTo, clansNum)
         } catch (err) {
             console.log(err)
         }
     })
     socket.on("territory-all", () => {
-        const gameState: GameState = socket.gameState!
-        socket.emit("territory-info", HexGridToJson(gameState.map))
+        const gameState: GameState = socket.gameState!;
+        socket.emit("territory-info", HexGridToJson(gameState.hexGridManager));
+        console.log("Territory all event!");
     })
     socket.on("territory-avaliable", () => {
         const gameState: GameState = socket.gameState!
         const player: Player = socket.player!
-        socket.emit("territory-info", gameState?.map.GetAllValidPlacements())
+        socket.emit("territory-info", gameState?.hexGridManager.GetAllValidPlacements())
     })
     socket.on("next-turn", () => {
         const gameState: GameState = socket.gameState!;
@@ -59,9 +60,19 @@ export function DebugTools(io: Server, socket: Socket) {
             gameState.Init()
         }
         catch (err) {
-            console.log(err)
-            return
+            console.log(err);
+            return;
         }
-        socket.emit("gameLobby-info", `game with id ${gameState.id} was initialized`)
+        socket.emit("gameLobby-info", `game with id ${gameState.id} was initialized`);
     })
+    // socket.on("save-gameState", () => {
+    //     const gameState: GameState = socket.gameState!;
+    //     const player: Player = socket.player!;
+    //     gamesManager.redisConverter.saveGameStateToRedis(gameState);
+    // })
+    // socket.on("read-gameState", () => {
+    //     const gameState: GameState = socket.gameState!;
+    //     const player: Player = socket.player!;
+    //     socket.emit("read-gameState", gamesManager.redisConverter.getGameStateFromRedis(gameState.id));
+    // })
 }

@@ -4,7 +4,7 @@ import { AttackerAction, DeffenderAction, FightStage, GameStage, TurnOrder } fro
 import { IAttackerParams } from "../../types/Interfaces";
 import { AttackerCycle, PlayerTurnOrder, axialCoordinates } from "../../types/Types";
 import { GameState } from "../gameState/GameState";
-import { Hexagon } from "../map/HexagonField";
+import { Hexagon } from "../map/Field";
 import { Player } from "../Player";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 export class Fight {
@@ -65,7 +65,7 @@ export class Fight {
         }
         if (defenderAction === DeffenderAction.Clan) {
             this.players[this.attackCycle.defenderPlayerId].clansNum -= 1;
-            this._gameState.map.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r });
+            this._gameState.hexGridManager.clansController.RemoveClans(deffenderPlayer, 1, { q: this.fightHex.q, r: this.fightHex.r });
 
             const playerAttacker: Player = this._gameState.playerManager.GetPlayerById(this.attackCycle.attackerPlayerId)!;
             this._gameState.trixelManager.AddTrixel(playerAttacker, trixelCondition_bxaty);
@@ -88,11 +88,11 @@ export class Fight {
         if (clansNum < 0 || clansNum > clansFighLeft) {
             throw new Error("Figth.PerformMove: insufficient number of clans");
         }
-        if (!this._gameState.map.fieldsController.IsLeader(player, axialTo)) {
+        if (!this._gameState.hexGridManager.fieldsController.IsLeader(player, axialTo)) {
             throw new Error("Figth.PerformMove: player is not a leader on axialTo");
         }
         try {
-            this._gameState.map.clansController.MoveClans(player, hexToAxialCoordinates(this.fightHex), axialTo, clansNum);
+            this._gameState.hexGridManager.clansController.MoveClans(player, hexToAxialCoordinates(this.fightHex), axialTo, clansNum);
             this.players[player.id].clansNum = clansFighLeft - clansNum;
         } catch (err) {
             throw err;

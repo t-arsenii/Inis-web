@@ -2,7 +2,7 @@ import { Player } from "../core/Player";
 import { axialCoordinates } from "../types/Types";
 import { Socket } from "socket.io";
 import { TurnOrder } from "../types/Enums";
-import { Hexagon } from "../core/map/HexagonField";
+import { Hexagon } from "../core/map/Field";
 import { GameState } from "../core/gameState/GameState";
 import { gamesManager } from "../core/gameState/GameStateManager";
 

@@ -4,15 +4,22 @@ import { Player } from "../Player"
 import { GameState } from "../gameState/GameState"
 
 export class Field {
-    territoryId: string = ""
-    sanctuaryCount: number = 0
-    citadelsCount: number = 0
-    playersClans: Map<string, number> = new Map()
-    leaderPlayerId: string | null = null
-    gameState: GameState
+    territoryId: string;
+    sanctuaryCount: number;
+    citadelsCount: number;
+    playersClans: Map<string, number>;
+    leaderPlayerId: string | null;
+    _gameState: GameState;
     constructor(terId: string, gameState: GameState) {
-        this.territoryId = terId
-        this.gameState = gameState
+        this.territoryId = terId;
+        this._gameState = gameState;
+
+        this.sanctuaryCount = 0;
+        this.citadelsCount = 0;
+
+        this.playersClans = new Map();
+
+        this.leaderPlayerId = null;
     }
     toJSON() {
         const { territoryId, sanctuaryCount, citadelsCount, leaderPlayerId } = this
@@ -31,7 +38,7 @@ export class Field {
             return
         }
         //maybe unnecessary check
-        if (!this.gameState.brenPlayer) {
+        if (!this._gameState.brenPlayer) {
             throw new Error("")
         }
 
@@ -45,8 +52,8 @@ export class Field {
             this.leaderPlayerId = maxClansPlayersKeys[0]
             return
         }
-        if (maxClansPlayersKeys.includes(this.gameState.brenPlayer.id)) {
-            this.leaderPlayerId = this.gameState.brenPlayer.id
+        if (maxClansPlayersKeys.includes(this._gameState.brenPlayer.id)) {
+            this.leaderPlayerId = this._gameState.brenPlayer.id
             return
         }
         this.leaderPlayerId = null;

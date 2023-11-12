@@ -1,15 +1,15 @@
 import { hexToAxialCoordinates } from "../../utils/helperFunctions"
 import { axialCoordinates } from "../../types/Types"
 import { Player } from "../Player"
-import { HexGrid } from "./HexGrid"
-import { Hexagon, Field } from "./HexagonField"
+import { HexGridManager } from "./HexGridManager"
+import { Hexagon, Field } from "./Field"
 
 export class ClansController {
-    private playerFieldPresense: Map<string, Hexagon[]>
-    private hexGrid: HexGrid
-    constructor(hexGrid: HexGrid, playerFieldPresense: Map<string, Hexagon[]>) {
-        this.hexGrid = hexGrid
-        this.playerFieldPresense = playerFieldPresense
+    private playerFieldPresense: Map<string, Hexagon[]>;
+    private hexGrid: HexGridManager;
+    constructor(hexGrid: HexGridManager) {
+        this.hexGrid = hexGrid;
+        this.playerFieldPresense = hexGrid.fieldsController.playerFieldPresense;
     }
     public AddClans(player: Player, clansNum: number, axial: axialCoordinates): void {
         if (clansNum <= 0) {

@@ -6,26 +6,38 @@ import { IPlayer } from "../types/Interfaces";
 export class Player implements IPlayer {
     //User info
     id: string;
-    username: string = undefined!;
-    socket: Socket | null = null;
-    mmr: number = undefined!;
-    color: string = undefined!;
+    username: string;
+    socket: Socket | null;
+    mmr: number;
+    color: string;
     //Game logic
-    isBren: boolean = false;
-    isActive = false;
-    lastAction: playerAction = playerAction.None;
+    isBren: boolean;
+    isActive: boolean;
+    lastAction: playerAction;
     //Tokens
-    deedTokens: number = 0;
-    pretenderTokens: PretenderTokens = {
-        sanctuaries: false,
-        clans: false,
-        territories: false
-    };
-    clansLeft: number = CLANS_PER_PLAYER;
+    deedTokens: number;
+    pretenderTokens: PretenderTokens;
+    clansLeft: number;
     constructor(
         id: string
     ) {
+        //User info
         this.id = id;
+        this.username = undefined!;
+        this.socket = null;
+        this.mmr = undefined!;
+        this.color = undefined!;
+        //Game logic
+        this.isBren = false;
+        this.isActive = false;
+        this.lastAction = playerAction.None;
+        this.deedTokens = 0;
+        this.pretenderTokens = {
+            sanctuaries: false,
+            clans: false,
+            territories: false
+        }
+        this.clansLeft = CLANS_PER_PLAYER;
     }
 
 }

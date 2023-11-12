@@ -2,28 +2,31 @@ import { GameStage, AttackerAction, DeffenderAction, FightStage } from "../../ty
 import { IAttackerParams } from "../../types/Interfaces"
 import { GameState } from "../gameState/GameState"
 import { Player } from "../Player"
-import { Hexagon } from "../map/HexagonField"
+import { Hexagon } from "../map/Field"
 import { Fight } from "./Fight"
 
 export class FightManager {
-    private fights: Fight[] = []
-    public currentFight: Fight | null = null
-    private status: boolean = false
-    private gameState: GameState
+    private fights: Fight[];
+    public currentFight: Fight | null;
+    private status: boolean;
+    private _gameState: GameState;
     constructor(gameState: GameState) {
-        this.gameState = gameState
+        this._gameState = gameState;
+        this.fights = [];
+        this.currentFight = null;
+        this.status = false;
     }
     InitFight(playerAttacker: Player, hex: Hexagon) {
         if (hex.field.playersClans.size < 2) {
-            throw new Error("FightManager.InitFight: Can't start a fight, not enough players")
+            throw new Error("FightManager.InitFight: Can't start a fight, not enough players");
         }
-        const fight: Fight = new Fight(hex, playerAttacker, this.gameState)
+        const fight: Fight = new Fight(hex, playerAttacker, this._gameState);
         if (!this.currentFight) {
-            this.currentFight = fight
+            this.currentFight = fight;
         }
-        this.fights.push(fight)
-        this.status = true
-        this.gameState.gameStage = GameStage.Fight
+        this.fights.push(fight);
+        this.status = true;
+        this._gameState.gameStage = GameStage.Fight;
     }
     AttackerAction({ player, attackerAction, targetPlayerId, axial, clansNum }: IAttackerParams): void {
         if (!this.currentFight) {
@@ -50,7 +53,7 @@ export class FightManager {
             }
         } else if (attackerAction === AttackerAction.Move) {
             if (!axial) {
-                throw new Error("FightManager.AttackerAction: no axial is provided")
+                throw new Error("FightManager.AttackerAction: no axial is provided");
             }
             if (!clansNum) {
                 throw new Error("FightManager.AttackerAction: no clansNum provided");
@@ -65,51 +68,51 @@ export class FightManager {
             this.TryCurrentFightTermination();
         } else if (attackerAction === AttackerAction.Epos) {
             //In development
-            this.currentFight.UpdateFight()
-            this.TryCurrentFightTermination()
+            this.currentFight.UpdateFight();
+            this.TryCurrentFightTermination();
         }
     }
     DeffenderAction(deffenderPlayer: Player, deffenderAction: DeffenderAction, cardId?: string) {
         if (!this.currentFight) {
-            throw new Error("FightManager.DeffenderAction: no current fight")
+            throw new Error("FightManager.DeffenderAction: no current fight");
         }
         if (deffenderAction === DeffenderAction.Card && !cardId) {
-            throw new Error("FightManager.DeffenderAction: no cardId for card action")
+            throw new Error("FightManager.DeffenderAction: no cardId for card action");
         }
         try {
             this.currentFight.PerformAttack(deffenderPlayer, deffenderAction, cardId)
         } catch (err) {
-            console.error(err)
-            throw err
+            console.error(err);
+            throw err;
         }
         this.currentFight.startTimerAndListenForTrixel(10000);
         this.currentFight.UpdateFight();
         this.TryCurrentFightTermination();
     }
     ProtectClanAction(player: Player, ifProtectClan: boolean): void {
-
+        throw new Error("Not implemented exception");
     }
-    SkipDeffenderAction(deffenderPlayer: Player):void {
+    SkipDeffenderAction(deffenderPlayer: Player): void {
         if (!this.currentFight) {
-            return
+            return;
         }
         if (!this.currentFight.attackCycle) {
-            return
+            return;
         }
         if (this.currentFight.attackCycle.defenderPlayerId !== deffenderPlayer.id) {
-            return
+            return;
         }
-        this.currentFight.RestoreAttackCycle()
+        this.currentFight.RestoreAttackCycle();
     }
     PlayerPeaceVote(player: Player) {
         if (!this.currentFight) {
-            throw new Error("FightManager.PlayerPeaceVote: no current fight")
+            throw new Error("FightManager.PlayerPeaceVote: no current fight");
         }
         if (!this.currentFight.FightTurnOrder.playersId.includes(player.id)) {
-            throw new Error("FightManager.PlayerPeaceVote: wrong player id")
+            throw new Error("FightManager.PlayerPeaceVote: wrong player id");
         }
-        this.currentFight.players[player.id].peace = true
-        this.TryCurrentFightTermination()
+        this.currentFight.players[player.id].peace = true;
+        this.TryCurrentFightTermination();
     }
     private TryCurrentFightTermination() {
         if (!this.currentFight) {
@@ -119,11 +122,12 @@ export class FightManager {
         if (this.currentFight.FightTurnOrder.playersId.length <= 1 || isPeace) {
             if (this.fights.length > 1) {
                 this.fights = this.fights.filter((f) => f !== this.currentFight);
-                this.currentFight = this.fights[0]
+                this.currentFight = this.fights[0];
             } else {
                 this.fights.pop();
                 this.currentFight = null;
-                this.gameState.StartSeasonStage();
+                this.status = false;
+                this._gameState.StartSeasonStage();
             }
         }
     }
