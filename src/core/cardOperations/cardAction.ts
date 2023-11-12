@@ -155,11 +155,12 @@ export function ExplorationSeason({ gameState, player, axial }: ICardOperationPa
     if (!axial || typeof axial !== 'object' || Array.isArray(axial)) {
         throw new Error(`ExplorationSeason: axial field error`)
     }
-    if (!gameState.hexGridManager.HasHexagon(axial)) {
-        throw new Error(`ExplorationSeason: no hexagon with axial:${axial}`)
+    try {
+        gameState.hexGridManager.fieldsController.AddRandomField(axial)
+        gameState.hexGridManager.clansController.AddClans(player, 1, axial)
+    } catch (e) {
+        throw e;
     }
-    gameState.hexGridManager.fieldsController.AddRandomField(axial)
-    gameState.hexGridManager.clansController.AddClans(player, 1, axial)
 }
 export function HolidaySeason({ gameState, player, axial }: ICardOperationParams): void {
     if (!axial || typeof axial !== `object` || Array.isArray(axial)) {
