@@ -90,7 +90,7 @@ export function SanctuarySeason({ gameState, player, axial }: ICardOperationPara
     }
     map.fieldsController.AddSanctuary(hexToAxialCoordinates(hex));
     //Add Epos card to player
-    // gameState.deckManager.AddRandomEposCard(player)
+    gameState.deckManager.AddRandomEposCard(player)
 }
 export function CitadelSeason({ gameState, player, axial }: ICardOperationParams): void {
     if (Array.isArray(axial) || axial === undefined || typeof axial !== 'object') {
