@@ -37,7 +37,7 @@ export class FieldsController {
         if (this.avalibleTerritories.length < 0) {
             throw Error("FieldsController.AddRandomField: no territories left")
         }
-        const territoryId = this.avalibleTerritories.pop()!
+        const territoryId = this.avalibleTerritories.pop()!;
         const hexagon = new Hexagon(axial, new Field(territoryId, this.hexGrid._gameState));
         this.avalibleTerritories.filter(t => t !== territoryId)
         this.hexGrid.hexGrid.set(key, hexagon);
