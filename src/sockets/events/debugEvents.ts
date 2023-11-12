@@ -60,9 +60,19 @@ export function DebugTools(io: Server, socket: Socket) {
             gameState.Init()
         }
         catch (err) {
-            console.log(err)
-            return
+            console.log(err);
+            return;
         }
-        socket.emit("gameLobby-info", `game with id ${gameState.id} was initialized`)
+        socket.emit("gameLobby-info", `game with id ${gameState.id} was initialized`);
     })
+    // socket.on("save-gameState", () => {
+    //     const gameState: GameState = socket.gameState!;
+    //     const player: Player = socket.player!;
+    //     gamesManager.redisConverter.saveGameStateToRedis(gameState);
+    // })
+    // socket.on("read-gameState", () => {
+    //     const gameState: GameState = socket.gameState!;
+    //     const player: Player = socket.player!;
+    //     socket.emit("read-gameState", gamesManager.redisConverter.getGameStateFromRedis(gameState.id));
+    // })
 }

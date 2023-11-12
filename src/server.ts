@@ -5,7 +5,6 @@ import cors from 'cors';
 import gamesRoutes from "./routes/gamesRoutes"
 import handleSocketConnections from "./sockets/socket"
 import { initGameToGathering, initGameToSeason } from "./utils/debugTools";
-const redis = require('redis');
 require('dotenv').config();
 const PORT = process.env.PORT || 8000;
 
@@ -18,15 +17,10 @@ const io = new Server(server, {
 });
 app.use(express.json());
 
-const redisClient = redis.createClient({
-    host: 'localhost',
-    port: process.env.REDIS_PORT || 6379, 
-});
-
-handleSocketConnections(io, redisClient);
+handleSocketConnections(io);
 
 app.use(cors({
-    origin: ['http://localhost:3000']
+    origin: ['http://localhost:3000', "http://localhost:4444"]
 }));
 
 app.use("/", gamesRoutes);
@@ -36,5 +30,5 @@ server.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
 });
 
-initGameToSeason();
+// initGameToSeason();
 // initGameToGathering();

@@ -1,8 +1,9 @@
 import { GameState } from "./gameState/GameState";
 import redis, { RedisClientType } from "redis";
+import { Redis } from "ioredis"
 export class RedisConverter {
-    _redisClient: RedisClientType;
-    constructor(redisClient: RedisClientType) {
+    _redisClient;
+    constructor(redisClient: Redis) {
         this._redisClient = redisClient;
     }
     private serializeGame(gameState: GameState): string {
@@ -14,7 +15,7 @@ export class RedisConverter {
                 gameStage: gameState.gameStage,
                 deedTokensLeft: gameState.deedTokensLeft,
                 pretenderTokensLeft: gameState.pretenderTokensLeft,
-                brenPlayer: gameState.brenPlayer,
+                // brenPlayer: gameState.brenPlayer,//!!!!!!!!!!!!!!!!!!!!!
                 roundCounter: gameState.roundCounter
             },
             deckManager: {
@@ -34,7 +35,7 @@ export class RedisConverter {
     saveGameStateToRedis(gameState: GameState) {
         this._redisClient.set(`game:${gameState.id}`, this.serializeGame(gameState));
     }
-    getGameStateFromRedis(gameId: string) {
-        console.log(this._redisClient.get(`game:${gameId}`));
+    async getGameStateFromRedis(gameId: string) {
+        return await this._redisClient.get(`game:${gameId}`);
     }
 }

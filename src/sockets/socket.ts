@@ -15,7 +15,7 @@ import { gamesManager } from "../core/gameState/GameStateManager";
 import { uiUpdateHandler } from "./events/uiUpdateEvents";
 import { RedisClientType } from "redis";
 import { RedisConverter } from "../core/RedisConverter";
-export default function handleSocketConnections(io: Server, redisClinet: RedisClientType) {
+export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
@@ -28,21 +28,17 @@ export default function handleSocketConnections(io: Server, redisClinet: RedisCl
                 console.log("Socket not found");
                 return next(new Error("Socket not found"));
             }
-            const redisConverter = new RedisConverter(redisClinet);
+            
             return next();
         });
         
-        socket.use((packet, next) => {
-            next();
-            console.log("Middleware after evetns");
-        });
-        
-        DebugTools(io, socket)
-        gameLobbyHandler(io, socket)
-        gameSetupHandler(io, socket)
-        playerGameHandler(io, socket)
-        playerFightHandler(io, socket)
-        uiUpdateHandler(io, socket)
+        DebugTools(io, socket);
+        gameLobbyHandler(io, socket);
+        gameSetupHandler(io, socket);
+        playerGameHandler(io, socket);
+        playerFightHandler(io, socket);
+        uiUpdateHandler(io, socket);
+
         socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
             const gameState = gamesManager.getGame(gameId);
             const player = gameState?.playerManager.GetPlayerById(userId);
