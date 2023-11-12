@@ -84,7 +84,7 @@ export function NewUnionActionInfo({ gameState, player, cardVariation }: ICardOp
     }
 }
 export function ExplorationActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
-    const axialArr: axialCoordinates[] = gameState.hexGridManager.GetAllValidPlacements()
+    const axialArr: axialCoordinates[] = gameState.hexGridManager.GetAllValidPlacements();
     if (!axialArr) {
         return {}
     }

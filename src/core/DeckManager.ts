@@ -82,10 +82,10 @@ export class DeckManager {
     }
     AddRandomEposCard(player: Player) {
         if (this.eposCards.length <= 0) {
-            throw new Error("DeckManager.AddRandomEpos: no epos cards left")
+            throw new Error("DeckManager.AddRandomEpos: no epos cards left");
         }
-        const eposCardId = this.eposCards.pop()!
-        this.playersDeck.get(player.id)?.AddCard(eposCardId)
+        const eposCardId = this.eposCards.pop()!;
+        this.playersDeck.get(player.id)?.AddCard(eposCardId);
     }
     DiscardCard(player: Player, cardId: string): void {
         const deck: Deck = this.playersDeck.get(player.id)!

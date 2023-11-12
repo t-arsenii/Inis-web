@@ -1,5 +1,5 @@
 // Players
-export const PLAYERS = 3;
+// export const PLAYERS = 3;
 
 // Cards
 export const ACTION_CARDS = 13;
