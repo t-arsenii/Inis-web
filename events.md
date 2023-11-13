@@ -36,11 +36,12 @@ IPlayerCardInput {
     params?: ICardParams
 }
 ICardParams {
-    axial?: axialCoordinates | axialCoordinates[]
+    axial?: axialCoordinates[],
+    singleAxial?: axialCoordinates,
     targetPlayerId?: string,
-    axialToNum?: { axial: axialCoordinates, num: number }[] | { axial: axialCoordinates, num: number }
+    axialToNum?: { axial: axialCoordinates, num: number }[],
     targetCardId?: string,
-    CardVariation?: number
+    cardVariation?: number,
 }
 ```
 Ивент для разыгровки карты.

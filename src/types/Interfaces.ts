@@ -6,11 +6,12 @@ import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, player
 import { axialCoordinates } from "./Types"
 
 export interface ICardParams {
-    axial?: axialCoordinates | axialCoordinates[]
+    axial?: axialCoordinates[],
+    singleAxial?: axialCoordinates,
     targetPlayerId?: string,
-    axialToNum?: { axial: axialCoordinates, num: number }[] | { axial: axialCoordinates, num: number }
+    axialToNum?: { axial: axialCoordinates, num: number }[],
     targetCardId?: string,
-    cardVariation?: number
+    cardVariation?: number,
 }
 export interface IPlayerCardInput {
     cardId: string,
