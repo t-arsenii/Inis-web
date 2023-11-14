@@ -152,8 +152,6 @@ export function NewClansSeason({ gameState, player, axial }: ICardOperationParam
     //     }
     //     gameState.hexGridManager.clansController.AddClans(player, 2, axial)
     // }
-
-}
 export function ExplorationSeason({ gameState, player, singleAxial }: ICardOperationParams): void {
     if (!singleAxial || typeof singleAxial !== 'object' || Array.isArray(singleAxial)) {
         throw new Error(`ExplorationSeason: axial field error`)
