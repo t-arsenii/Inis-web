@@ -8,8 +8,15 @@ import { GameStage, playerAction } from "../../types/Enums";
 import { GameState } from "../../core/gameState/GameState";
 import { cardAllMap } from "../../core/constans/constant_all_cards";
 import { checkAllPlayersPass } from "../../utils/gameStateUtils";
+import { cardInputSchema } from "../../core/schemas/CardInputSchema";
 export function playerGameHandler(io: Server, socket: Socket) {
-    socket.on("player-card-season", ({ cardId, params }: IPlayerCardInput) => {
+    socket.on("player-card-season", (playerCardInput: IPlayerCardInput) => {
+        const { value, error } = cardInputSchema.validate(playerCardInput);
+        if (error) {
+            socket.emit("player-card-season-error", `PlayerCardSeason: Internal server error on card operation:\n${error.message}`);
+            return;
+        }
+        const { cardId, params } = value;
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
         try {
@@ -26,8 +33,8 @@ export function playerGameHandler(io: Server, socket: Socket) {
             if (!gameState.deckManager.PlayerHasCard(player, cardId)) {
                 throw new Error(`PlayerCardSeason: player dosen't have a card with id: ${cardId}`);
             }
-            const res = cardSeasonMap[cardId]
-            const { Action } = res
+            const res = cardSeasonMap[cardId];
+            const { Action } = res;
             const actionParams: ICardOperationParams = {
                 player: player,
                 gameState: gameState,
@@ -38,7 +45,7 @@ export function playerGameHandler(io: Server, socket: Socket) {
             gameState.trixelManager.AddTrixel(player, trixelCondition_oOWJ5);
             player.lastAction = playerAction.Card;
         } catch (err) {
-            socket.emit("player-card-season-error", `PlayerCardSeasob: Internal server error on card operation:\n${err}`);
+            socket.emit("player-card-season-error", `PlayerCardSeason: Internal server error on card operation:\n${err}`);
             console.log(err);
             return;
         }
@@ -47,22 +54,32 @@ export function playerGameHandler(io: Server, socket: Socket) {
         io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
         io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
     })
-    socket.on("player-card-info", ({ cardId, params }: IPlayerCardInput) => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
-        if (!cardActionMap.has(cardId)) {
-            socket.emit("player-card-info-error", `playerCardVariants: card id is not found, cardId: ${cardId}`)
-            return
+    socket.on("player-card-info", (playerCardInput: IPlayerCardInput) => {
+        const { value, error } = cardInputSchema.validate(playerCardInput);
+        if (error) {
+            socket.emit("player-card-info-error", `PlayerCardSeason: Internal server error on card operation:\n${error.message}`);
+            return;
         }
-        const infoParams: ICardOperationParams = {
-            player: player,
-            gameState: gameState,
-            ...params
+        const { cardId, params } = value;
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            if (!cardActionMap.has(cardId)) {
+                throw new Error(`playerCardVariants: card id is not found, cardId: ${cardId}`);
+            };
+            const infoParams: ICardOperationParams = {
+                player: player,
+                gameState: gameState,
+                ...params
+            };
+            const res = cardSeasonMap[(cardId)];
+            const { Info } = res;
+            const info: ICardOperationResponse = Info(infoParams);
+            socket.emit("player-card-info", info);
         }
-        const res = cardSeasonMap[(cardId)]
-        const { Info } = res
-        const info: ICardOperationResponse = Info(infoParams)
-        socket.emit("player-card-info", info)
+        catch (err) {
+            socket.emit("player-card-info-error", `PlayerCardInfo: Internal server error on card info:\n${err}`);
+        }
 
     })
     socket.on("player-card-trixel", ({ cardId, params }: IPlayerCardInput) => {
