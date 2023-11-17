@@ -6,7 +6,7 @@ import { Hexagon } from "../map/Field";
 import { HexGridManager } from "../map/HexGridManager";
 
 //пустошь, лес, каменный круг, долина, холмы, горы
-export function WastelandTrixel({ gameState, player, targetPlayerId }: ICardOperationParams) {
+function WastelandTrixel({ gameState, player, targetPlayerId }: ICardOperationParams) {
     //Can be played in any time
     if (!targetPlayerId) {
         throw new Error("WastelandTrixel: targetPlayerId undefiend")
@@ -17,7 +17,7 @@ export function WastelandTrixel({ gameState, player, targetPlayerId }: ICardOper
     const eposCards = gameState.deckManager.playersDeck.get(targetPlayerId)?.eposCards
     return eposCards
 }
-export function ValleyTrixel({ gameState, player, axial }: ICardOperationParams) {
+function ValleyTrixel({ gameState, player, axial }: ICardOperationParams) {
     if (!gameState.trixelManager.HasTrixel(player, trixelCondition_oOWJ5)) {
         throw new Error("ValleyTrixel: player dosen't have condition to play trixel")
     }
@@ -35,13 +35,13 @@ export function ValleyTrixel({ gameState, player, axial }: ICardOperationParams)
     }
     gameState.hexGridManager.clansController.AddClans(player, 1, axial)
 }
-export function ForestTrixel({ gameState, player }: ICardOperationParams) {
+function ForestTrixel({ gameState, player }: ICardOperationParams) {
     if (!gameState.trixelManager.HasTrixel(player, trixelCondition_1WIFg)) {
         throw new Error("ForestTrixel: player dosen't have condition to play trixel")
     }
     gameState.deckManager.AddRandomEposCard(player)
 }
-export function StoneCircleTrixel({ gameState, player }: ICardOperationParams) {
+function StoneCircleTrixel({ gameState, player }: ICardOperationParams) {
     if (!gameState.trixelManager.HasTrixel(player, trixelCondition_1WIFg)) {
         throw new Error("StoneCircleTrixel: player dosen't have condition to play trixel")
     }
@@ -57,7 +57,7 @@ export function StoneCircleTrixel({ gameState, player }: ICardOperationParams) {
     const lastEposCardId = gameState.deckManager.eposDiscard.pop()!
     gameState.deckManager.AddCard(player, lastEposCardId)
 }
-export function HillsTrixel({ gameState, player }: ICardOperationParams) {
+function HillsTrixel({ gameState, player }: ICardOperationParams) {
     if (!gameState.trixelManager.HasTrixel(player, trixelCondition_NzLys)) {
         throw new Error("HillsTrixel: player dosen't have condition to play trixel")
     }
@@ -66,6 +66,15 @@ export function HillsTrixel({ gameState, player }: ICardOperationParams) {
     }
     gameState.fightManager.SkipDeffenderAction(player)
 }
-export function SwampSeason({ gameState, player }: ICardOperationParams) {
+function SwampSeason({ gameState, player }: ICardOperationParams) {
     gameState.turnOrderManager.NextTurn();
+}
+
+export {
+    WastelandTrixel,
+    ValleyTrixel,
+    ForestTrixel,
+    StoneCircleTrixel,
+    HillsTrixel,
+    SwampSeason
 }

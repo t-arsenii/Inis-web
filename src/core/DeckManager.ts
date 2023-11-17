@@ -50,7 +50,7 @@ export class DeckManager {
     eposCards: string[];
     eposDiscard: string[];
     actionDiscard: string[];
-    defferedCardId: string;
+    defferedCardId: string | null;
     //Dealing cards logic
     dealCards: DealCards | null;
     //DI
@@ -61,12 +61,12 @@ export class DeckManager {
         this.eposCards = [];
         this.eposDiscard = [];
         this.actionDiscard = [];
-        this.defferedCardId = "";
+        this.defferedCardId = null;
         this.actionCardsDeckSize = 4;
         this.dealCards = null;
     }
-    getPlayerDeck(player: Player): Deck | undefined {
-        return this.playersDeck.get(player.id);
+    getPlayerDeck(player: Player): Deck {
+        return this.playersDeck.get(player.id)!;
     }
     PlayerHasCard(player: Player, cardId: string): boolean {
         const deck: Deck = this.playersDeck.get(player.id)!
@@ -216,5 +216,11 @@ export class DeckManager {
                 this.AddCard(leaderPlayer, advantageCardId)
             }
         })
+    }
+    GiveDefferedCard(player: Player) {
+        if (!this.defferedCardId) {
+            throw new Error("Deffered card is null");
+        }
+        this.AddCard(player, this.defferedCardId)
     }
 }

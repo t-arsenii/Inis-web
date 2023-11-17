@@ -10,7 +10,6 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
     socket.on("game-join", (gameId: string, tokenInput: string) => {
         const token = (tokenInput || "").replace(/Bearer\s?/, "");
         let userId: string = "";
-        console.log(tokenInput)
         if (!token) {
             return;
         }
@@ -21,6 +20,7 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
             console.log(e);
             return;
         }
+        console.log(userId)
         const res = GetGameStateAndPlayer(socket, gameId, userId)
         if (res === undefined) {
             return

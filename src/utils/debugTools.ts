@@ -35,18 +35,12 @@ export const initGameToSeason = () => {
     //Adding cards to players
     // const Cards = shuffle(Array.from(cardActionsMap.keys()))
     gameState.deckManager.AddCard(player1, "f145474a-453b-4f53-8fff-12448a0ab90f");
-    gameState.deckManager.AddCard(player1, "c1f5ddba-7325-4188-9a36-ff9ef14af22a");
-    gameState.deckManager.AddCard(player1, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5");
-    gameState.deckManager.AddCard(player1, "3d138112-6a36-467a-8255-bcfb42fe7398");
     gameState.deckManager.AddCard(player1, "67f39e72-1838-460d-8cac-17ca18aec015");
-    gameState.deckManager.AddCard(player1, "ddc241a2-2fd1-4926-8860-4eae221b93d4");
-    gameState.deckManager.AddCard(player1, "9422292c-bd05-40b5-95bc-140dbd6bb3c2");
-    gameState.deckManager.AddCard(player1, "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a");
-    gameState.deckManager.AddCard(player1, "5d8db5fa-f323-4d84-b78f-85ccad76fd6d");
+    gameState.deckManager.AddCard(player1, "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a")
 
-    gameState.deckManager.AddCard(player2, "6b9ed192-ea8f-4fb9-b55f-985a32b344b5")
-    gameState.deckManager.AddCard(player2, "3d138112-6a36-467a-8255-bcfb42fe7398")
-    gameState.deckManager.AddCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015")
+    gameState.deckManager.AddCard(player2, "c1f5ddba-7325-4188-9a36-ff9ef14af22a")
+    gameState.deckManager.AddCard(player2, "5d8db5fa-f323-4d84-b78f-85ccad76fd6d")
+
     //Skippping setup
     gameState.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 })
     gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })

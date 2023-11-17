@@ -6,17 +6,17 @@ import { trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { Player } from "../Player";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Hexagon } from "../map/Field";
-export function BardSeason({ gameState, player }: ICardOperationParams): void {
+function BardSeason({ gameState, player }: ICardOperationParams): void {
     gameState.deckManager.AddRandomEposCard(player);
 }
-export function BardTrixel({ gameState, player }: ICardOperationParams): void {
+function BardTrixel({ gameState, player }: ICardOperationParams): void {
     if (!gameState.trixelManager.HasTrixel(player, trixelCondition_bxaty)) {
         throw new Error("BardTrixel: player dosen't have condition to play trixel");
     }
     gameState.AddDeedToken(player);
     gameState.eventEmitter.emit('TrixelEvent');
 }
-export function DruidSeason({ gameState, player, targetCardId }: ICardOperationParams) {
+function DruidSeason({ gameState, player, targetCardId }: ICardOperationParams) {
     if (!targetCardId) {
         throw new Error("DruidSeason: Target id is undefiend");
     }
@@ -31,7 +31,7 @@ export function DruidSeason({ gameState, player, targetCardId }: ICardOperationP
     deckManager.actionDiscard = deckManager.actionDiscard.filter(cId => cId !== targetCardId)
     deckManager.AddCard(player, targetCardId)
 }
-export function PeasantsWorkersSeason({ gameState, player, axialToNum }: ICardOperationParams): void {
+function PeasantsWorkersSeason({ gameState, player, axialToNum }: ICardOperationParams): void {
     if (!axialToNum) {
         throw new Error("PeasantsWorkersSeason: axialToNum field is undefiend")
     }
@@ -73,7 +73,7 @@ export function PeasantsWorkersSeason({ gameState, player, axialToNum }: ICardOp
     //     gameState.hexGridManager.clansController.AddClans(player, axialToNum.num, axialToNum.axial)
     // }
 }
-export function SanctuarySeason({ gameState, player, singleAxial }: ICardOperationParams): void {
+function SanctuarySeason({ gameState, player, singleAxial }: ICardOperationParams): void {
     if (Array.isArray(singleAxial) || singleAxial === undefined || typeof singleAxial !== 'object') {
         throw new Error(`SanctuarySeason: axial field error`);
     }
@@ -93,7 +93,7 @@ export function SanctuarySeason({ gameState, player, singleAxial }: ICardOperati
     //Add Epos card to player
     // gameState.deckManager.AddRandomEposCard(player)
 }
-export function CitadelSeason({ gameState, player, singleAxial }: ICardOperationParams): void {
+function CitadelSeason({ gameState, player, singleAxial }: ICardOperationParams): void {
     if (Array.isArray(singleAxial) || singleAxial === undefined || typeof singleAxial !== 'object') {
         throw new Error(`CitadelSeason: axial field error`);
     }
@@ -112,7 +112,7 @@ export function CitadelSeason({ gameState, player, singleAxial }: ICardOperation
     hex.field.citadelsCount++;
     //Add Advantage card to player if possible
 }
-export function NewClansSeason({ gameState, player, axial }: ICardOperationParams): void {
+function NewClansSeason({ gameState, player, axial }: ICardOperationParams): void {
     if (!axial) {
         throw new Error(`NewClansSeason: axial field error`);
     }
@@ -153,7 +153,7 @@ export function NewClansSeason({ gameState, player, axial }: ICardOperationParam
         gameState.hexGridManager.clansController.AddClans(player, 2, axial[0]);
     }
 }
-export function ExplorationSeason({ gameState, player, singleAxial }: ICardOperationParams): void {
+function ExplorationSeason({ gameState, player, singleAxial }: ICardOperationParams): void {
     if (!singleAxial || typeof singleAxial !== 'object' || Array.isArray(singleAxial)) {
         throw new Error(`ExplorationSeason: axial field error`)
     }
@@ -164,7 +164,7 @@ export function ExplorationSeason({ gameState, player, singleAxial }: ICardOpera
         throw e;
     }
 }
-export function HolidaySeason({ gameState, player, singleAxial }: ICardOperationParams): void {
+function HolidaySeason({ gameState, player, singleAxial }: ICardOperationParams): void {
     if (!singleAxial || typeof singleAxial !== `object` || Array.isArray(singleAxial)) {
         throw new Error(`HolidaySeason: axial field error`);
     }
@@ -184,7 +184,7 @@ export function HolidaySeason({ gameState, player, singleAxial }: ICardOperation
     }
     gameState.hexGridManager.fieldsController.SetHolidayField(singleAxial)
 }
-export function ConquestSeason({ gameState, player, singleAxial, axialToNum }: ICardOperationParams): void {
+function ConquestSeason({ gameState, player, singleAxial, axialToNum }: ICardOperationParams): void {
     //validate data
     if (!singleAxial || typeof singleAxial !== `object` || Array.isArray(singleAxial)) {
         throw new Error(`ConquestSeason: targetAxial field error`)
@@ -248,7 +248,7 @@ export function ConquestSeason({ gameState, player, singleAxial, axialToNum }: I
         gameState.fightManager.InitFight(player, targetHexagon)
     }
 }
-export function NewUnionSeason({ gameState, player, singleAxial, targetPlayerId, cardVariation }: ICardOperationParams) {
+function NewUnionSeason({ gameState, player, singleAxial, targetPlayerId, cardVariation }: ICardOperationParams) {
     if (!cardVariation) {
         throw new Error("NewUnionSeason: card variation parameter error")
     }
@@ -297,4 +297,17 @@ export function NewUnionSeason({ gameState, player, singleAxial, targetPlayerId,
     } else {
         throw new Error("NewUnionSeason: CardVariation parameter error")
     }
+}
+export {
+    BardSeason,
+    BardTrixel,
+    DruidSeason,
+    PeasantsWorkersSeason,
+    SanctuarySeason,
+    CitadelSeason,
+    NewClansSeason,
+    ExplorationSeason,
+    HolidaySeason,
+    ConquestSeason,
+    NewUnionSeason
 }

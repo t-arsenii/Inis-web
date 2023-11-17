@@ -17,6 +17,8 @@ export enum Badge {
     Move,
     Attack,
     MoveAndAttack,
+    MoveAndClans,
+    BuildAndClans,
     None
 }
 export enum StartStructure {
