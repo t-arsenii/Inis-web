@@ -2,10 +2,13 @@ import { Bard, Citadel, Conquest, Druid, Exploration, Holiday, NewClans, Peasant
 import { ICardOperationParams, ICardOperationResponse } from "../../types/Interfaces";
 import { CitadelActionInfo, ConquestActionInfo, DruidActionInfo, ExplorationActionInfo, HolidayActionInfo, NewClansActionInfo, NewUnionActionInfo, PeasantsWorkersActionInfo, SanctuaryActionInfo } from "./cardActionInfo";
 import { BardTrixel, CitadelSeason, ConquestSeason, DruidSeason, NewClansSeason, PeasantsWorkersSeason, SanctuarySeason, ExplorationSeason, HolidaySeason, NewUnionSeason } from "./cardAction";
+import { DagdaHarpSeason, DanuChildrenSeason, EyeOfBalorSeason, FalStoneSeason, HeroShareSeason } from "./cardEpos";
+import { DagdaHarp, DanuChildren, EyeOfBalor, FalStone, HeroShare } from "../constans/constant_epos_cards";
 
 type CardActionFunction = (params: ICardOperationParams) => void;
 type CardInfoFunction = (params: ICardOperationParams) => ICardOperationResponse;
 export const cardSeasonMap: Record<string, { Info: CardInfoFunction, Action: CardActionFunction }> = {
+    //Action cards
     [Sanctuary.id]: {
         Info: SanctuaryActionInfo,
         Action: SanctuarySeason
@@ -41,6 +44,27 @@ export const cardSeasonMap: Record<string, { Info: CardInfoFunction, Action: Car
     [NewUnion.id]: {
         Info: NewUnionActionInfo,
         Action: NewUnionSeason
+    },
+    //Epos cards
+    [DagdaHarp.id]: {
+        Info: undefined!,
+        Action: DagdaHarpSeason
+    },
+    [HeroShare.id]: {
+        Info: undefined!,
+        Action: HeroShareSeason
+    },
+    [EyeOfBalor.id]: {
+        Info: undefined!,
+        Action: EyeOfBalorSeason
+    },
+    [DanuChildren.id]: {
+        Info: undefined!,
+        Action: DanuChildrenSeason
+    },
+    [FalStone.id]: {
+        Info: undefined!,
+        Action: FalStoneSeason
     }
 }
 export const cardTrixelMap: Record<string, { Info?: CardInfoFunction, Action: CardActionFunction }> = {

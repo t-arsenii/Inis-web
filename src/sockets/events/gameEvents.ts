@@ -4,8 +4,23 @@ import { GetGameStateAndPlayer } from "../../utils/helperFunctions";
 import { playerInfo } from "../../types/Types"
 import { GameState } from "../../core/gameState/GameState";
 import { gamesManager } from "../../core/gameState/GameStateManager";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
 export function gameLobbyHandler(io: Server, socket: Socket) {
-    socket.on("game-join", (gameId: string, userId: string) => {
+    socket.on("game-join", (gameId: string, tokenInput: string) => {
+        const token = (tokenInput || "").replace(/Bearer\s?/, "");
+        let userId: string = "";
+        if (!token) {
+            return;
+        }
+        try {
+            const decoded: JwtPayload = jwt.verify(token, "secret123") as JwtPayload;;
+            userId = decoded._id;
+        } catch (e) {
+            console.log(e);
+            return;
+        }
+        console.log(userId)
         const res = GetGameStateAndPlayer(socket, gameId, userId)
         if (res === undefined) {
             return

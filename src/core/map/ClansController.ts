@@ -106,4 +106,7 @@ export class ClansController {
         hexTo.field.UpdateLeader()
         hexFrom.field.UpdateLeader()
     }
+    public IsEnoughClans(player: Player, clansNum: number): boolean {
+        return player.clansLeft <= clansNum;
+    }
 }
