@@ -56,9 +56,9 @@ export const initGameToSeason = () => {
 export const initGameToGathering = () => {
     const DebugGameId = "54a94296-eb0b-45dc-a6f6-544559cf6b8b"
     const gameState: GameState = new GameState(DebugGameId)
-    const player1Id = "6dd6246a-f15b-43f8-bd67-5a38aa91184e"
-    const player2Id = "66182a83-8824-481a-8889-39b60ab361fd"
-    const player3Id = "363ed71a-056c-4fc6-9779-7dcc38d31e9c"
+    const player1Id = "6553995defc2b3f2962ef65d"
+    const player2Id = "65539987efc2b3f2962ef662"
+    const player3Id = "65539aa2efc2b3f2962ef66a"
     const users: IPlayer[] = [
         { id: player1Id, username: "username1", mmr: 1234 },
         { id: player2Id, username: "username2", mmr: 1582 },
