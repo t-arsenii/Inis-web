@@ -92,6 +92,11 @@ export const initGameToGathering = () => {
     //Skippping setup
     gameState.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 })
     gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+
     gameState.hexGridManager.setupController.SkipSetupClans() //skipping setup clans
 
     gameState.StartGatheringStage();
