@@ -42,13 +42,13 @@ export const initGameToSeason = () => {
     gameState.deckManager.AddCard(player2, "5d8db5fa-f323-4d84-b78f-85ccad76fd6d")
 
     //Skippping setup
-    gameState.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 })
-    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 })
+    gameState.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 });
+    gameState.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 });
     gameState.hexGridManager.setupController.SkipSetupClans() //skipping setup clans
     //Adding two clans for each player
-    gameState.hexGridManager.clansController.AddClans(player1, 2, { q: 0, r: 0 })
-    gameState.hexGridManager.clansController.AddClans(player2, 2, { q: 0, r: 0 })
-    gameState.hexGridManager.clansController.AddClans(player3, 2, { q: 0, r: 1 })
+    gameState.hexGridManager.clansController.AddClans(player1, 2, { q: 0, r: 0 });
+    gameState.hexGridManager.clansController.AddClans(player2, 2, { q: 0, r: 0 });
+    gameState.hexGridManager.clansController.AddClans(player3, 2, { q: 0, r: 1 });
     //Skipping beginning stage
     gameState.StartSeasonStage(); //Changing game stage
 }
