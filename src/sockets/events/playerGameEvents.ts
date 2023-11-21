@@ -139,15 +139,18 @@ export function playerGameHandler(io: Server, socket: Socket) {
             }
             gameState.turnOrderManager.NextTurn();
             player.lastAction = playerAction.Pass;
+
+            const nextPlayer = gameState.turnOrderManager.GetActivePlayer();
+            io.to(nextPlayer.socket!.id).emit("token-update", gameState.uiUpdater.getTokenInfo(nextPlayer));
             if (checkAllPlayersPass(gameState.playerManager.GetPlayers())) {
                 gameState.EndSeasonStage();
                 gameState.StartGatheringStage();
                 io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
             }
+            io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
         } catch (err) {
             console.log(err)
         }
-        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
     })
     socket.on('player-card-deal', ({ cardIds }: IPlayerCardDealInput) => {
         const gameState: GameState = socket.gameState!;

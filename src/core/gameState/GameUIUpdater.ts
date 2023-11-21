@@ -1,7 +1,9 @@
-import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayersUiInfo, ISidebarUiInfo } from "../../types/Interfaces";
+import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayersUiInfo, IPretenderToken, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
+import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../../utils/gameStateUtils";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 import { Player } from "../Player";
+import { MIN_WINNING_AMOUNT } from "../constans/constant_3_players";
 import { territoryMap } from "../constans/constant_territories";
 import { GameState } from "./GameState";
 
@@ -53,9 +55,9 @@ export class GameUiUpdater {
             playersById[player.id] = player;
         });
 
-        playerIdsInOrder.forEach(playerId  => {
+        playerIdsInOrder.forEach(playerId => {
             const player = playersById[playerId];
-            if(player){
+            if (player) {
                 const deck = this._gameState.deckManager.getPlayerDeck(player)!;
                 const pretenderTokens = Object.values(player.pretenderTokens).filter(value => value === true).length;
                 sidebarUiInfo.players.push({
@@ -155,5 +157,17 @@ export class GameUiUpdater {
             })
         })
         return playerUiInfo;
+    }
+    public getTokenInfo(player: Player): IPretenderToken {
+        const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens;
+
+        const isSanctuariesPretender = PretenderSanctuaries(this._gameState, player, winning_amount);
+        const isClansPretender = PretenderClans(this._gameState, player, winning_amount);
+        const isTerritoriesPretender = PretenderTerritories(this._gameState, player, winning_amount);
+        return {
+            sanctuaries: isSanctuariesPretender,
+            clans: isClansPretender,
+            territories: isTerritoriesPretender
+        }
     }
 }

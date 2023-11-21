@@ -147,3 +147,8 @@ export interface IMeUiInfo {
     mmr: number,
     color?: string
 }
+export interface IPretenderToken {
+    sanctuaries: boolean,
+    clans: boolean,
+    territories: boolean
+}
