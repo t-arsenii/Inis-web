@@ -162,6 +162,13 @@ export function playerGameHandler(io: Server, socket: Socket) {
                 if (gameState.deckManager.CanEndDealActionCards()) {
                     gameState.deckManager.EndDealActionCards();
                     gameState.StartSeasonStage();
+                    const players = gameState.playerManager.GetPlayers();
+                    //update ui
+                    for (const _player of players) {
+                        _player.socket!.emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(_player));
+                    }
+                    io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+                    io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
                     return;
                 }
                 const players = gameState.playerManager.GetPlayers();
