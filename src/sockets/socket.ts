@@ -21,7 +21,7 @@ export default function handleSocketConnections(io: Server) {
     io.on('connection', (socket: Socket) => {
         //middlewares 
         socket.use((packet, next) => {
-            if (packet[0] === 'game-join') {
+            if (packet[0] === 'game-join' || packet[0] === 'game-join-id') {
                 return next();
             }
             if (!socket.auth) {

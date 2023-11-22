@@ -6,8 +6,23 @@ import { axialCoordinates } from "../../types/Types";
 import { HexGridToJson } from "../../utils/HexGridUtils";
 import { GameState } from "../../core/gameState/GameState";
 import { gamesManager } from "../../core/gameState/GameStateManager";
+import { GetGameStateAndPlayer } from "../../utils/helperFunctions";
 
 export function DebugTools(io: Server, socket: Socket) {
+    socket.on("game-join-id", (gameId: string, userId: string) => {
+        const res = GetGameStateAndPlayer(socket, gameId, userId)
+        if (res === undefined) {
+            return
+        }
+        const { gameState, player } = res
+        socket.join(gameState.id);
+        player.socket = socket;
+        gamesManager.addSocketInfo(socket.id, player, gameState);
+        socket.gameState = gameState;
+        socket.player = player;
+        socket.auth = true;
+        socket.emit('gameLobby-info', { status: "success", info: { playerId: player.id, socket: socket.id, gameId: gameId } });
+    });
     socket.on("get-fight-info", () => {
         const gameState: GameState = socket.gameState!
         // console.log(gameState.fightManager.currentFight)
@@ -44,6 +59,10 @@ export function DebugTools(io: Server, socket: Socket) {
             return;
         }
         gameState.turnOrderManager.NextTurn();
+
+        const nextPlayer = gameState.turnOrderManager.GetActivePlayer();
+        io.to(nextPlayer.socket!.id).emit("token-update", gameState.uiUpdater.getTokenInfo(nextPlayer));
+
         socket.emit("next-turn", gameState.turnOrderManager.turnOrder);
     })
     socket.on("get-deal-cards", () => {

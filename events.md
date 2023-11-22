@@ -269,3 +269,14 @@ IPlayersUiInfo {
     }[]
 }
 ```
+
+```js
+on("allPlayers-info") ->
+
+emit("token-update", IPretenderToken)
+IPretenderToken {
+    sanctuaries: boolean,
+    clans: boolean,
+    territories: boolean
+}
+```
