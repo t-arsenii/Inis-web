@@ -51,4 +51,13 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
             console.log(err)
         }
     })
+    socket.on("token-update", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            io.to(player.socket!.id).emit("token-update", gameState.uiUpdater.getTokenInfo(player));
+        } catch (err) {
+            console.log(err)
+        }
+    })
 }

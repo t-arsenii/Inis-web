@@ -271,7 +271,7 @@ IPlayersUiInfo {
 ```
 
 ```js
-on("allPlayers-info") ->
+on("token-update") ->
 
 emit("token-update", IPretenderToken)
 IPretenderToken {
