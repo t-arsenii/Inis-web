@@ -6,20 +6,20 @@ import { GameStage } from "../../types/Enums";
 export function uiUpdateHandler(io: Server, socket: Socket) {
     socket.on("game-update", () => {
         const gameState: GameState = socket.gameState!;
-        io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+        gameState.uiUpdater.EmitGameUpdate();
     });
     socket.on("map-update", () => {
         const gameState: GameState = socket.gameState!;
-        io.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
+        gameState.uiUpdater.EmitMapUpdate();
     })
     socket.on("sidebar-update", () => {
         const gameState: GameState = socket.gameState!;
-        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+        gameState.uiUpdater.EmitSidebarUpdate();
     })
     socket.on("my-deck-update", () => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
-        socket.emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
+        gameState.uiUpdater.EmitMyDeckUpdate(player);
     })
     socket.on("dealCards-update", () => {
         const gameState: GameState = socket.gameState!;
@@ -28,7 +28,7 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
             if (gameState.gameStage !== GameStage.Gathering) {
                 throw new Error("Game stage is not gathering");
             }
-            player.socket!.emit("dealCards-update", gameState.uiUpdater.getDealCardUiInfo(player));
+            gameState.uiUpdater.EmitDealCardUpdate(player);
         } catch (err) {
             console.log(err)
         }
@@ -37,7 +37,7 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
         try {
-            player.socket!.emit("me-info", gameState.uiUpdater.getMeUiInfo(player));
+            gameState.uiUpdater.EmitMeInfoUpdate(player);
         } catch (err) {
             console.log(err)
         }
@@ -46,7 +46,7 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
         try {
-            player.socket!.emit("allPlayers-info", gameState.uiUpdater.getAllPlayerUiInfo());
+            gameState.uiUpdater.EmitAllPlayersInfoUpdate(player);
         } catch (err) {
             console.log(err)
         }
@@ -55,7 +55,7 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
         try {
-            io.to(player.socket!.id).emit("token-update", gameState.uiUpdater.getTokenInfo(player));
+            gameState.uiUpdater.EmitPretenderTokenUpdate(player);
         } catch (err) {
             console.log(err)
         }
