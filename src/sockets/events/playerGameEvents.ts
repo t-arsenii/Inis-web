@@ -49,10 +49,10 @@ export function playerGameHandler(io: Server, socket: Socket) {
             console.log(err);
             return;
         }
-        io.to(gameState.id).emit("map-update", gameState.uiUpdater.getMapUiInfo());
-        socket.emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(player));
-        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
-        io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+        gameState.uiUpdater.EmitMapUpdate();
+        gameState.uiUpdater.EmitMyDeckUpdate(player);
+        gameState.uiUpdater.EmitSidebarUpdate();
+        gameState.uiUpdater.EmitGameUpdate()
     })
     socket.on("player-card-info", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
@@ -124,7 +124,7 @@ export function playerGameHandler(io: Server, socket: Socket) {
             //socket.emit("player-token-error", `PlayerToken: Internal server error on card operation:\n${err}`);
             console.log(err);
         }
-        io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+        gameState.uiUpdater.EmitSidebarUpdate();
     })
     //potential bugs when player make moves and then pass, because he's in active whole time
     socket.on("player-pass", () => {
@@ -141,13 +141,13 @@ export function playerGameHandler(io: Server, socket: Socket) {
             player.lastAction = playerAction.Pass;
 
             const nextPlayer = gameState.turnOrderManager.GetActivePlayer();
-            io.to(nextPlayer.socket!.id).emit("token-update", gameState.uiUpdater.getTokenInfo(nextPlayer));
+            gameState.uiUpdater.EmitPretenderTokenUpdate(nextPlayer);
             if (checkAllPlayersPass(gameState.playerManager.GetPlayers())) {
                 gameState.EndSeasonStage();
                 gameState.StartGatheringStage();
-                io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+                gameState.uiUpdater.EmitGameUpdate()
             }
-            io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
+            gameState.uiUpdater.EmitSidebarUpdate();
         } catch (err) {
             console.log(err)
         }
@@ -165,19 +165,12 @@ export function playerGameHandler(io: Server, socket: Socket) {
                 if (gameState.deckManager.CanEndDealActionCards()) {
                     gameState.deckManager.EndDealActionCards();
                     gameState.StartSeasonStage();
-                    const players = gameState.playerManager.GetPlayers();
-                    //update ui
-                    for (const _player of players) {
-                        _player.socket!.emit("my-deck-update", gameState.uiUpdater.getMyDeckUiInfo(_player));
-                    }
-                    io.to(gameState.id).emit("sidebar-update", gameState.uiUpdater.getSidebarUiInfo());
-                    io.to(gameState.id).emit("game-update", gameState.uiUpdater.getGameUiInfo());
+                    gameState.uiUpdater.EmitMyDeckUpdateAll();
+                    gameState.uiUpdater.EmitSidebarUpdate();
+                    gameState.uiUpdater.EmitGameUpdate();
                     return;
                 }
-                const players = gameState.playerManager.GetPlayers();
-                for (const _player of players) {
-                    _player.socket!.emit("dealCards-update", gameState.uiUpdater.getDealCardUiInfo(_player));
-                }
+                gameState.uiUpdater.EmitDealCardUpdateAll();
             }
         }
         catch (err) {

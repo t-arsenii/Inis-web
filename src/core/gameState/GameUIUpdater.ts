@@ -6,13 +6,76 @@ import { Player } from "../Player";
 import { MIN_WINNING_AMOUNT } from "../constans/constant_3_players";
 import { territoryMap } from "../constans/constant_territories";
 import { GameState } from "./GameState";
-
+import { io } from "../../initServer";
 export class GameUiUpdater {
     _gameState: GameState;
     constructor(gameState: GameState) {
         this._gameState = gameState;
     }
-    public getMapUiInfo(): IMapUiInfo {
+    public EmitGameUpdate() {
+        io.to(this._gameState.id).emit("game-update", this.getGameUiInfo());
+    }
+    public EmitMyDeckUpdate(player: Player) {
+        if (!player.socket) {
+            throw new Error("GameUiUpdater error");
+        }
+        player.socket.emit("my-deck-update", this.getMyDeckUiInfo(player));
+    }
+    public EmitMapUpdate() {
+        io.to(this._gameState.id).emit("map-update", this.getMapUiInfo());
+    }
+    public EmitSidebarUpdate() {
+        io.to(this._gameState.id).emit("sidebar-update", this.getSidebarUiInfo());
+    }
+    public EmitDealCardUpdate(player: Player) {
+        if (!player.socket) {
+            throw new Error("GameUiUpdater error");
+        }
+        player.socket!.emit("dealCards-update", this.getDealCardUiInfo(player));
+    }
+    public EmitMeInfoUpdate(player: Player) {
+        if (!player.socket) {
+            throw new Error("GameUiUpdater error");
+        }
+        player.socket!.emit("me-info", this.getMeUiInfo(player));
+    }
+    public EmitAllPlayersInfoUpdate(player: Player) {
+        if (!player.socket) {
+            throw new Error("GameUiUpdater error");
+        }
+        player.socket!.emit("allPlayers-info", this.getAllPlayerUiInfo());
+    }
+    public EmitPretenderTokenUpdate(player: Player) {
+        if (!player.socket) {
+            throw new Error("GameUiUpdater error");
+        }
+        io.to(player.socket.id).emit("token-update", this.getPretenderTokenInfo(player));
+    }
+    public EmitFightUpdate() {
+        io.to(this._gameState.id).emit("fight-update", this.getFightUiInfo());
+    }
+    public EmitAttackCycleUpdate() {
+        io.to(this._gameState.id).emit("attackCycle-update", this.getAttackCycleUiInfo());
+    }
+    public EmitMyDeckUpdateAll() {
+        const players = this._gameState.playerManager.GetPlayers();
+        for (const _player of players) {
+            if (!_player.socket) {
+                throw new Error("GameUiUpdater error");
+            }
+            _player.socket!.emit("my-deck-update", this.getMyDeckUiInfo(_player));
+        }
+    }
+    public EmitDealCardUpdateAll() {
+        const players = this._gameState.playerManager.GetPlayers();
+        for (const _player of players) {
+            if (!_player.socket) {
+                throw new Error("GameUiUpdater error");
+            }
+            _player.socket!.emit("dealCards-update", this.getDealCardUiInfo(_player));
+        }
+    }
+    private getMapUiInfo(): IMapUiInfo {
         const hexGrid = this._gameState.hexGridManager;
         let capitalCoordinates: axialCoordinates | null = null
         if (hexGrid.fieldsController.capitalHex) {
@@ -30,7 +93,7 @@ export class GameUiUpdater {
             terLeft: terLeft
         };
     }
-    public getMyDeckUiInfo(player: Player): IMyDeckUiInfo {
+    private getMyDeckUiInfo(player: Player): IMyDeckUiInfo {
         const deck = this._gameState.deckManager.getPlayerDeck(player);
         if (!deck) {
             return {
@@ -45,7 +108,7 @@ export class GameUiUpdater {
             AdvantagesCards: deck.advantagesCards
         };
     }
-    public getSidebarUiInfo(): ISidebarUiInfo {
+    private getSidebarUiInfo(): ISidebarUiInfo {
         const players = this._gameState.playerManager.GetPlayers();
         const sidebarUiInfo: ISidebarUiInfo = { players: [], turnDirection: this._gameState.turnOrderManager.GetDirection() };
         const playerIdsInOrder = this._gameState.turnOrderManager.GetPlayerIdsInOrder();
@@ -82,7 +145,7 @@ export class GameUiUpdater {
         });
         return sidebarUiInfo;
     }
-    public getGameUiInfo(): IGameUiInfo {
+    private getGameUiInfo(): IGameUiInfo {
         return {
             gameStatus: this._gameState.gameStatus,
             maxPlayers: this._gameState.playerManager.numPlayers,
@@ -91,7 +154,7 @@ export class GameUiUpdater {
             gameStage: this._gameState.gameStage
         }
     }
-    public getDealCardUiInfo(player: Player): IDealCardsInfo {
+    private getDealCardUiInfo(player: Player): IDealCardsInfo {
         if (!this._gameState.deckManager.dealCards) {
             throw new Error("No cards to discard");
         }
@@ -105,7 +168,7 @@ export class GameUiUpdater {
             cardIds: cardIds
         }
     }
-    public getFightUiInfo(): IFightUiInfo {
+    private getFightUiInfo(): IFightUiInfo {
         if (!this._gameState.fightManager.currentFight) {
             throw new Error("No active fight");
         }
@@ -123,7 +186,7 @@ export class GameUiUpdater {
             players: _players
         }
     }
-    public getAttackCycleUiInfo(): IAttackCycleUiInfo {
+    private getAttackCycleUiInfo(): IAttackCycleUiInfo {
         if (!this._gameState.fightManager.currentFight) {
             throw new Error("No active fight");
         }
@@ -137,7 +200,7 @@ export class GameUiUpdater {
         }
         return currentFight.attackCycle;
     }
-    public getMeUiInfo(player: Player): IMeUiInfo {
+    private getMeUiInfo(player: Player): IMeUiInfo {
         return {
             id: player.id,
             username: player.username,
@@ -145,7 +208,7 @@ export class GameUiUpdater {
             color: player.color
         }
     }
-    public getAllPlayerUiInfo(): IPlayersUiInfo {
+    private getAllPlayerUiInfo(): IPlayersUiInfo {
         const players = this._gameState.playerManager.GetPlayers();
         let playerUiInfo: IPlayersUiInfo = { players: [] }
         players.forEach(player => {
@@ -158,7 +221,7 @@ export class GameUiUpdater {
         })
         return playerUiInfo;
     }
-    public getTokenInfo(player: Player): IPretenderToken {
+    private getPretenderTokenInfo(player: Player): IPretenderToken {
         const winning_amount = MIN_WINNING_AMOUNT - player.deedTokens;
 
         const isSanctuariesPretender = PretenderSanctuaries(this._gameState, player, winning_amount);
