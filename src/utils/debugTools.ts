@@ -64,7 +64,7 @@ export const initGameToSeason = () => {
     gameState.StartSeasonStage(); //Changing game stage
 }
 
-export const initGameToGathering = () => {
+export const initGameToGathering = async () => {
     const DebugGameId = "54a94296-eb0b-45dc-a6f6-544559cf6b8b"
     const gameState: GameState = new GameState(DebugGameId)
     const player1Id = "6553995defc2b3f2962ef65d"
@@ -99,5 +99,5 @@ export const initGameToGathering = () => {
 
     gameState.hexGridManager.setupController.SkipSetupClans() //skipping setup clans
 
-    gameState.StartGatheringStage();
+    await gameState.StartGatheringStage();
 }

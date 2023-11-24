@@ -4,7 +4,7 @@ import { Player } from "../core/Player";
 import { GameStage, playerAction } from "../types/Enums";
 import { checkAllPlayersPass } from "./gameStateUtils";
 
-function handlePlayerPass(socket: Socket) {
+async function handlePlayerPass(socket: Socket) {
     const gameState: GameState = socket.gameState!;
     const player: Player = socket.player!;
     try {
@@ -21,7 +21,7 @@ function handlePlayerPass(socket: Socket) {
         gameState.uiUpdater.EmitPretenderTokenUpdate(nextPlayer);
         if (checkAllPlayersPass(gameState.playerManager.GetPlayers())) {
             gameState.EndSeasonStage();
-            gameState.StartGatheringStage();
+            await gameState.StartGatheringStage();
             gameState.uiUpdater.EmitGameUpdate()
         }
         gameState.uiUpdater.EmitSidebarUpdate();

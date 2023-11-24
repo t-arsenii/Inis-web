@@ -5,7 +5,7 @@ import { GameStage } from "../../types/Enums";
 import { Player } from "../../core/Player";
 import { GameState } from "../../core/gameState/GameState";
 export function gameSetupHandler(io: Server, socket: Socket) {
-    socket.on("game-setup-clans", (axial: axialCoordinates) => {
+    socket.on("game-setup-clans", async (axial: axialCoordinates) => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
         try {
@@ -18,7 +18,7 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             gameState.hexGridManager.clansController.AddClans(player, 1, axial);
             if (gameState.hexGridManager.setupController.SetupClans()) {
                 gameState.turnOrderManager.NextTurn();
-                gameState.StartGatheringStage();
+                await gameState.StartGatheringStage();
                 return;
             }
             gameState.turnOrderManager.NextTurn()

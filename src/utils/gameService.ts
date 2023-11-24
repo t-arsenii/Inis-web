@@ -13,4 +13,6 @@ async function sendDatatToGameService(gameState: GameState) {
         winner: gameState.gameStats.winner!
     };
     const res = await axios.post("http://localhost:4444", body);
+    console.log(res);
 }
+export { sendDatatToGameService }

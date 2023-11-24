@@ -12,6 +12,7 @@ import { TurnOrderManager } from "./TurnOrderManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameUiUpdater } from "./GameUIUpdater";
 import { IGameStats, IGameStatsInput } from "../../types/Interfaces";
+import { sendDatatToGameService } from "../../utils/gameService";
 export class GameState {
   //Game info
   id: string;
@@ -148,16 +149,17 @@ export class GameState {
     players.forEach(player => player.lastAction = playerAction.None);
     this.hexGridManager.fieldsController.ResetHolidayField();
   }
-  public StartGatheringStage(): void {
+  public async StartGatheringStage() {
     this.gameStage = GameStage.Gathering;
 
     const newBrenplayer = getBrenPlayer(this);
     this.SetBrenPlayer(newBrenplayer);
 
     this.UpdatePretenderTokens();
-    const isWinnter = this.UpdateWinner();
-    if (isWinnter) {
-
+    const winnderId = this.UpdateWinner();
+    if (winnderId) {
+      this.gameStats.winner = winnderId;
+      await sendDatatToGameService(this);
       return;
     }
 

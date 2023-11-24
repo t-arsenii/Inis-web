@@ -131,9 +131,9 @@ export function playerGameHandler(io: Server, socket: Socket) {
         gameState.uiUpdater.EmitSidebarUpdate();
     })
     //potential bugs when player make moves and then pass, because he's in active whole time
-    socket.on("player-pass", () => {
+    socket.on("player-pass", async () => {
         try {
-            handlePlayerPass(socket);
+            await handlePlayerPass(socket);
         }
         catch (err) {
             console.log(err);
@@ -152,12 +152,12 @@ export function playerGameHandler(io: Server, socket: Socket) {
                 if (gameState.deckManager.CanEndDealActionCards()) {
                     gameState.deckManager.EndDealActionCards();
                     gameState.StartSeasonStage();
-                    startTimerAndListen(gameState, 10000, "seasonCardEvent", () => {
+                    startTimerAndListen(gameState, 10000, "seasonCardEvent", async () => {
                         const activePlayerSocket = gameState.turnOrderManager.GetActivePlayer().socket;
                         if (!activePlayerSocket) {
                             throw new Error("Timer deal cards error");
                         }
-                        handlePlayerPass(activePlayerSocket);
+                        await handlePlayerPass(activePlayerSocket);
                     })
 
                     gameState.uiUpdater.EmitMyDeckUpdateAll();
