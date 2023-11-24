@@ -19,6 +19,7 @@ const CreateGameWithId = (req: Request, res: Response) => {
     }
     const gameState: GameState = new GameState(gameId);
     const players: IPlayer[] = data.players;
+    gameState.setGameStats(data.settings);
     gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
@@ -35,6 +36,7 @@ const CreateGame = (req: Request, res: Response) => {
     }
     const gameState: GameState = new GameState();
     const players: IPlayer[] = data.players;
+    gameState.setGameStats(data.settings);
     gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
