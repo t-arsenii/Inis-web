@@ -11,6 +11,7 @@ import { HexGridManager } from "../map/HexGridManager";
 import { TurnOrderManager } from "./TurnOrderManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameUiUpdater } from "./GameUIUpdater";
+import { IGameStats, IGameStatsInput } from "../../types/Interfaces";
 export class GameState {
   //Game info
   id: string;
@@ -29,7 +30,8 @@ export class GameState {
   hexGridManager: HexGridManager;
   uiUpdater: GameUiUpdater;
   //Statistic
-  roundCounter: number;
+  gameStats: IGameStats
+  // roundCounter: number;
   //Other
   eventEmitter: EventEmitter;
   constructor(lobbyId?: string) {
@@ -50,9 +52,18 @@ export class GameState {
     this.hexGridManager = new HexGridManager(this);
     this.uiUpdater = new GameUiUpdater(this);
     //Statistic
-    this.roundCounter = 0;
+    this.gameStats = undefined!;
     //Other
     this.eventEmitter = new EventEmitter();
+  }
+  setGameStats(gameStats: IGameStatsInput) {
+    this.gameStats = {
+      numberOfPlayers: gameStats.numberOfPlayers,
+      gameSpeed: gameStats.gameSpeed,
+      ranked: gameStats.ranked,
+      winner: null,
+      roundCounter: 0
+    }
   }
   public Init(): void {
     //Checking if game is already initialized
@@ -139,13 +150,18 @@ export class GameState {
   }
   public StartGatheringStage(): void {
     this.gameStage = GameStage.Gathering;
-    this.roundCounter++;
 
     const newBrenplayer = getBrenPlayer(this);
     this.SetBrenPlayer(newBrenplayer);
 
     this.UpdatePretenderTokens();
-    this.UpdateWinner();
+    const isWinnter = this.UpdateWinner();
+    if (isWinnter) {
+
+      return;
+    }
+
+    this.gameStats.roundCounter++;
     this.turnOrderManager.SetRandomDirection();
     this.turnOrderManager.SetActivePlayer(this.brenPlayer);
     //Card deeling
@@ -160,9 +176,9 @@ export class GameState {
     if (winnerPlayer) {
       this.gameStage = GameStage.END;
       this.gameStatus = false;
-      console.log("Winner player with id: " + winnerPlayer.id);
-      return;
+      return winnerPlayer.id;
     }
+    return null;
   }
   private UpdatePretenderTokens(): void {
     const players: Player[] = this.playerManager.GetPlayers();

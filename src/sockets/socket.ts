@@ -15,6 +15,7 @@ import { gamesManager } from "../core/gameState/GameStateManager";
 import { uiUpdateHandler } from "./events/uiUpdateEvents";
 import { RedisClientType } from "redis";
 import { RedisConverter } from "../core/RedisConverter";
+import { GameStage } from "../types/Enums";
 export default function handleSocketConnections(io: Server) {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
@@ -28,10 +29,20 @@ export default function handleSocketConnections(io: Server) {
                 console.log("Socket not found");
                 return next(new Error("Socket not found"));
             }
-            
+            if (!socket.gameState) {
+                return next(new Error("Internal server error"));
+            }
+            if (!socket.player) {
+                return next(new Error("Internal server error"));
+            }
+            const gameState: GameState = socket.gameState;
+            const player: Player = socket.player;
+            if (!gameState.gameStatus) {
+                return next(new Error("Game status is false"));
+            }
             return next();
         });
-        
+
         DebugTools(io, socket);
         gameLobbyHandler(io, socket);
         gameSetupHandler(io, socket);
