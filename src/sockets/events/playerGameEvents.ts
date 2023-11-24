@@ -9,6 +9,8 @@ import { GameState } from "../../core/gameState/GameState";
 import { cardAllMap } from "../../core/constans/constant_all_cards";
 import { checkAllPlayersPass } from "../../utils/gameStateUtils";
 import { cardInputSchema } from "../../core/schemas/CardInputSchema";
+import { startTimerAndListen } from "../../utils/timers";
+import { handlePlayerPass } from "../../utils/socketHandlers";
 export function playerGameHandler(io: Server, socket: Socket) {
     socket.on("player-card-season", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
@@ -130,28 +132,11 @@ export function playerGameHandler(io: Server, socket: Socket) {
     })
     //potential bugs when player make moves and then pass, because he's in active whole time
     socket.on("player-pass", () => {
-        const gameState: GameState = socket.gameState!;
-        const player: Player = socket.player!;
         try {
-            if (!player.isActive) {
-                throw new Error("PlayerPass: player is not active")
-            }
-            if (gameState.gameStage !== GameStage.Season) {
-                throw new Error("PlayerPass: Game stage is not Season");
-            }
-            gameState.turnOrderManager.NextTurn();
-            player.lastAction = playerAction.Pass;
-
-            const nextPlayer = gameState.turnOrderManager.GetActivePlayer();
-            gameState.uiUpdater.EmitPretenderTokenUpdate(nextPlayer);
-            if (checkAllPlayersPass(gameState.playerManager.GetPlayers())) {
-                gameState.EndSeasonStage();
-                gameState.StartGatheringStage();
-                gameState.uiUpdater.EmitGameUpdate()
-            }
-            gameState.uiUpdater.EmitSidebarUpdate();
-        } catch (err) {
-            console.log(err)
+            handlePlayerPass(socket);
+        }
+        catch (err) {
+            console.log(err);
         }
     })
     socket.on('player-card-deal', ({ cardIds }: IPlayerCardDealInput) => {
@@ -167,6 +152,14 @@ export function playerGameHandler(io: Server, socket: Socket) {
                 if (gameState.deckManager.CanEndDealActionCards()) {
                     gameState.deckManager.EndDealActionCards();
                     gameState.StartSeasonStage();
+                    startTimerAndListen(gameState, 10000, "seasonCardEvent", () => {
+                        const activePlayerSocket = gameState.turnOrderManager.GetActivePlayer().socket;
+                        if (!activePlayerSocket) {
+                            throw new Error("Timer deal cards error");
+                        }
+                        handlePlayerPass(activePlayerSocket);
+                    })
+
                     gameState.uiUpdater.EmitMyDeckUpdateAll();
                     gameState.uiUpdater.EmitSidebarUpdate();
                     gameState.uiUpdater.EmitGameUpdate();

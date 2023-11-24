@@ -1,7 +1,7 @@
 import { cardActionMap } from "./constans/constant_action_cards";
 import { areAllDistinct, shuffle } from "../utils/helperFunctions";
 import { Card, DealCards } from "../types/Types"
-import { Card_type } from "../types/Enums"
+import { Card_type, TurnOrder } from "../types/Enums"
 import { GameState } from "./gameState/GameState";
 import { Player } from "./Player";
 import { cardEposMap } from "./constans/constant_epos_cards";
@@ -182,7 +182,11 @@ export class DeckManager {
         let nextIndex;
         for (let i = 0; i < playersDealCardsArray.length; i++) {
             const playerFrom = playersDealCardsArray[i];
-            nextIndex = (i + 1) % playersDealCardsArray.length;
+            if (this._gameState.turnOrderManager.GetDirection() === TurnOrder.clockwise) {
+                nextIndex = (i + 1) % playersDealCardsArray.length;
+            } else {
+                nextIndex = (i - 1 + playersDealCardsArray.length) % playersDealCardsArray.length;
+            }
             const playerTo = playersDealCardsArray[nextIndex];
             playerTo.cards.push(...playerFrom.cardsToDiscard);
             playerFrom.cardsToDiscard = [];
