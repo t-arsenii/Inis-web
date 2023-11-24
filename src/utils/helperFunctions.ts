@@ -86,3 +86,7 @@ export function getKeysWithMaxValue(map: Map<string, number>) {
     })
     return maxKeys;
 }
+export function areAllDistinct(cardIds: string[]): boolean {
+    const uniqueIds = new Set(cardIds);
+    return uniqueIds.size === cardIds.length;
+}

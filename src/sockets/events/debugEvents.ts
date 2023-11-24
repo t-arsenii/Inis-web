@@ -59,11 +59,8 @@ export function DebugTools(io: Server, socket: Socket) {
             return;
         }
         gameState.turnOrderManager.NextTurn();
-
         const nextPlayer = gameState.turnOrderManager.GetActivePlayer();
-        gameState.uiUpdater.EmitPretenderTokenUpdate(nextPlayer)
-        
-        socket.emit("next-turn", gameState.turnOrderManager.turnOrder);
+        gameState.uiUpdater.EmitPretenderTokenUpdate(nextPlayer);
     })
     socket.on("get-deal-cards", () => {
         const gameState: GameState = socket.gameState!;

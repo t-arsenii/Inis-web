@@ -1,5 +1,5 @@
 import { cardActionMap } from "./constans/constant_action_cards";
-import { shuffle } from "../utils/helperFunctions";
+import { areAllDistinct, shuffle } from "../utils/helperFunctions";
 import { Card, DealCards } from "../types/Types"
 import { Card_type } from "../types/Enums"
 import { GameState } from "./gameState/GameState";
@@ -137,7 +137,11 @@ export class DeckManager {
         if (cardIds.length !== this.dealCards.cardsToDiscardNum) {
             throw new Error("DeckManager.PlayerDealActionCardDiscard: cardIds length not equal to cardsToDiscardNum");
         }
+        if (!areAllDistinct(cardIds)) {
+            throw new Error("DeckManager.PlayerDealActionCardDiscard: cards must be all distinct");
+        }
         const playerCards: string[] = this.dealCards.players[player.id].cards;
+
         for (const cardId of cardIds) {
             if (!cardActionMap.has(cardId) || !playerCards.includes(cardId)) {
                 throw new Error("DeckManager.PlayerDealActionCardDiscard: cardId not found")

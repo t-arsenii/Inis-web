@@ -52,7 +52,9 @@ export function playerGameHandler(io: Server, socket: Socket) {
         gameState.uiUpdater.EmitMapUpdate();
         gameState.uiUpdater.EmitMyDeckUpdate(player);
         gameState.uiUpdater.EmitSidebarUpdate();
-        gameState.uiUpdater.EmitGameUpdate()
+        gameState.uiUpdater.EmitGameUpdate();
+
+        gameState.eventEmitter.emit("seasonCardEvent", player)
     })
     socket.on("player-card-info", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
