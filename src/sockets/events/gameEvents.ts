@@ -14,7 +14,7 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
             return;
         }
         try {
-            const decoded: JwtPayload = jwt.verify(token, "secret123") as JwtPayload;;
+            const decoded: JwtPayload = jwt.verify(token, "secret123") as JwtPayload;
             userId = decoded._id;
         } catch (e) {
             console.log(e);

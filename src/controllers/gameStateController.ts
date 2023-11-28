@@ -23,7 +23,9 @@ const CreateGameWithId = (req: Request, res: Response) => {
     gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
-    res.status(200).send(`Game created with id: ${gameState.id}`)
+    //pizdec
+    gameState.Init()
+    res.status(200).send({ gameId: gameState.id })
 }
 const CreateGame = (req: Request, res: Response) => {
     const data: ICreateGameDto = req.body;
@@ -40,7 +42,9 @@ const CreateGame = (req: Request, res: Response) => {
     gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
-    res.status(200).send(`Game created with id: ${gameState.id}`)
+    //pizdec
+    gameState.Init()
+    res.status(200).send({ gameId: gameState.id })
 }
 const GetGames = (req: Request, res: Response) => {
     // res.status(200).send(gamesManager.getGameStates())

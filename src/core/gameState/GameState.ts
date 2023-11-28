@@ -97,6 +97,13 @@ export class GameState {
     //Initializing trixelManager
     this.trixelManager.Init();
 
+    this.gameStats = {
+      numberOfPlayers: 3,
+      gameSpeed: "medium",
+      ranked: false,
+      winner: null,
+      roundCounter: 0
+    }
     //Initializing round
   }
   public AddDeedToken(player: Player) {
