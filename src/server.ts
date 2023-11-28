@@ -18,4 +18,4 @@ server.listen(PORT, () => {
 });
 
 // initGameToSeason();
-initGameToGathering();
+// initGameToGathering();

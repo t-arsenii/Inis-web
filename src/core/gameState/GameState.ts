@@ -104,7 +104,20 @@ export class GameState {
       winner: null,
       roundCounter: 0
     }
-    //Initializing round
+    const players = this.playerManager.GetPlayers();
+
+    //Skippping setup
+    this.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 });
+    this.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 });
+    this.hexGridManager.setupController.SkipSetupClans() //skipping setup clans
+    //Adding two clans for each player
+    this.hexGridManager.clansController.AddClans(players[0], 2, { q: 0, r: 0 });
+    this.hexGridManager.clansController.AddClans(players[1], 2, { q: 0, r: 0 });
+    this.hexGridManager.clansController.AddClans(players[2], 2, { q: 0, r: 1 });
+    //Skipping beginning stage
+    this.StartSeasonStage(); //Changing game stage
+
+
   }
   public AddDeedToken(player: Player) {
     if (this.deedTokensLeft < 0) {
