@@ -7,7 +7,7 @@ import { ICreateGameDto, IPlayer } from "../types/Interfaces";
 import { playerSchema } from "../schemas/playerSchema";
 import { gameSchema } from "../schemas/gameSchema";
 
-const CreateGameWithId = (req: Request, res: Response) => {
+const CreateGameWithId = async (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const data: ICreateGameDto = req.body;
     const { error } = gameSchema.validate(data);
@@ -24,10 +24,10 @@ const CreateGameWithId = (req: Request, res: Response) => {
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
     //pizdec
-    gameState.Init()
+    await gameState.Init()
     res.status(200).send({ gameId: gameState.id })
 }
-const CreateGame = (req: Request, res: Response) => {
+const CreateGame = async (req: Request, res: Response) => {
     const data: ICreateGameDto = req.body;
     const { error } = gameSchema.validate(data);
     if (error) {
@@ -43,14 +43,14 @@ const CreateGame = (req: Request, res: Response) => {
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
     //pizdec
-    gameState.Init()
+    await gameState.Init()
     res.status(200).send({ gameId: gameState.id })
 }
-const GetGames = (req: Request, res: Response) => {
+const GetGames = async (req: Request, res: Response) => {
     // res.status(200).send(gamesManager.getGameStates())
     res.status(200).send("Not implemented")
 }
-const GetGame = (req: Request, res: Response) => {
+const GetGame = async (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const gameState = gamesManager.getGame(gameId);
     if (!gameState) {
@@ -58,7 +58,7 @@ const GetGame = (req: Request, res: Response) => {
     }
     res.status(200).send(GameStateToJSON(gameState));
 }
-const GetGameFormated = (req: Request, res: Response) => {
+const GetGameFormated = async (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const gameState = gamesManager.getGame(gameId)
     if (!gameState) {
@@ -66,7 +66,7 @@ const GetGameFormated = (req: Request, res: Response) => {
     }
     res.status(200).send(GameStateToJSONFormated(gameState))
 }
-const GetOnlinePlayers = (req: Request, res: Response) => {
+const GetOnlinePlayers = async (req: Request, res: Response) => {
     if (gamesManager.socketsConnInfo.size <= 0) {
         return res.status(404).send('No players are online')
     }
