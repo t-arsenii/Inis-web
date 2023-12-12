@@ -5,48 +5,52 @@ import { GameStateToJSON, GameStateToJSONFormated } from "../utils/gameStateUtil
 import { gamesManager } from "../core/gameState/GameStateManager";
 import { ICreateGameDto, IPlayer } from "../types/Interfaces";
 import { playerSchema } from "../schemas/playerSchema";
+import { gameSchema } from "../schemas/gameSchema";
 
-const CreateGameWithId = (req: Request, res: Response) => {
+const CreateGameWithId = async (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const data: ICreateGameDto = req.body;
-
-    const { error } = playerSchema.validate(data);
+    const { error } = gameSchema.validate(data);
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
     }
-    if (data.players.length != data.numPlayers) {
+    if (data.players.length != data.settings.numberOfPlayers) {
         return res.status(500).send("Number of player error");
     }
     const gameState: GameState = new GameState(gameId);
     const players: IPlayer[] = data.players;
-    gameState.playerManager.SetNumberOfPlayers(data.numPlayers);
+    gameState.setGameStats(data.settings);
+    gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
-    res.status(200).send(`Game created with id: ${gameState.id}`)
+    //pizdec
+    await gameState.Init()
+    res.status(200).send({ gameId: gameState.id })
 }
-const CreateGame = (req: Request, res: Response) => {
+const CreateGame = async (req: Request, res: Response) => {
     const data: ICreateGameDto = req.body;
-    const { error } = playerSchema.validate(data);
+    const { error } = gameSchema.validate(data);
     if (error) {
         return res.status(400).json({ error: error.details[0].message });
     }
-
-    if (data.players.length != data.numPlayers) {
+    if (data.players.length != data.settings.numberOfPlayers) {
         return res.status(500).send("Number of player error");
     }
-
     const gameState: GameState = new GameState();
     const players: IPlayer[] = data.players;
-    gameState.playerManager.SetNumberOfPlayers(data.numPlayers);
+    gameState.setGameStats(data.settings);
+    gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
     players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
     gamesManager.createGame(gameState)
-    res.status(200).send(`Game created with id: ${gameState.id}`)
+    //pizdec
+    await gameState.Init()
+    res.status(200).send({ gameId: gameState.id })
 }
-const GetGames = (req: Request, res: Response) => {
+const GetGames = async (req: Request, res: Response) => {
     // res.status(200).send(gamesManager.getGameStates())
     res.status(200).send("Not implemented")
 }
-const GetGame = (req: Request, res: Response) => {
+const GetGame = async (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const gameState = gamesManager.getGame(gameId);
     if (!gameState) {
@@ -54,7 +58,7 @@ const GetGame = (req: Request, res: Response) => {
     }
     res.status(200).send(GameStateToJSON(gameState));
 }
-const GetGameFormated = (req: Request, res: Response) => {
+const GetGameFormated = async (req: Request, res: Response) => {
     const gameId: string = req.params.id;
     const gameState = gamesManager.getGame(gameId)
     if (!gameState) {
@@ -62,7 +66,7 @@ const GetGameFormated = (req: Request, res: Response) => {
     }
     res.status(200).send(GameStateToJSONFormated(gameState))
 }
-const GetOnlinePlayers = (req: Request, res: Response) => {
+const GetOnlinePlayers = async (req: Request, res: Response) => {
     if (gamesManager.socketsConnInfo.size <= 0) {
         return res.status(404).send('No players are online')
     }

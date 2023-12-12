@@ -64,15 +64,3 @@ export class TurnOrderManager {
     return this.turnOrder.playersId.slice();
   }
 }
-function startTimerAndListenForSeasonCard(gameState: GameState, timeoutMs: number) {
-  const timer = setTimeout(() => {
-    console.log("Action is not occurred")
-    gameState.turnOrderManager.NextTurn();
-    gameState.uiUpdater.EmitSidebarUpdate();
-  }, timeoutMs);
-
-  gameState.eventEmitter.on('seasonCardEvent', (player: Player) => {
-    clearTimeout(timer);
-    console.log("Action occurred.");
-  });
-}

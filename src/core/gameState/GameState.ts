@@ -11,6 +11,8 @@ import { HexGridManager } from "../map/HexGridManager";
 import { TurnOrderManager } from "./TurnOrderManager";
 import { PlayerManager } from "./PlayerManager";
 import { GameUiUpdater } from "./GameUIUpdater";
+import { IGameStats, IGameStatsInput } from "../../types/Interfaces";
+import { sendDatatToGameService } from "../../utils/gameService";
 export class GameState {
   //Game info
   id: string;
@@ -29,7 +31,8 @@ export class GameState {
   hexGridManager: HexGridManager;
   uiUpdater: GameUiUpdater;
   //Statistic
-  roundCounter: number;
+  gameStats: IGameStats
+  // roundCounter: number;
   //Other
   eventEmitter: EventEmitter;
   constructor(lobbyId?: string) {
@@ -50,11 +53,20 @@ export class GameState {
     this.hexGridManager = new HexGridManager(this);
     this.uiUpdater = new GameUiUpdater(this);
     //Statistic
-    this.roundCounter = 0;
+    this.gameStats = undefined!;
     //Other
     this.eventEmitter = new EventEmitter();
   }
-  public Init(): void {
+  setGameStats(gameStats: IGameStatsInput) {
+    this.gameStats = {
+      numberOfPlayers: gameStats.numberOfPlayers,
+      gameSpeed: gameStats.gameSpeed,
+      ranked: gameStats.ranked,
+      winner: null,
+      roundCounter: 0
+    }
+  }
+  public async Init() {
     //Checking if game is already initialized
     if (this.gameStatus) {
       throw new Error("Game is already initialized");
@@ -85,7 +97,31 @@ export class GameState {
     //Initializing trixelManager
     this.trixelManager.Init();
 
-    //Initializing round
+    this.gameStats = {
+      numberOfPlayers: 3,
+      gameSpeed: "medium",
+      ranked: false,
+      winner: null,
+      roundCounter: 0
+    }
+    const players = this.playerManager.GetPlayers();
+
+    //Skippping setup
+    this.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 });
+    this.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 });
+    this.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 });
+    this.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 });
+    this.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 });
+    this.hexGridManager.fieldsController.AddSanctuary({ q: 0, r: 0 });
+    this.hexGridManager.setupController.SkipSetupClans() //skipping setup clans
+    //Adding two clans for each player
+    this.hexGridManager.clansController.AddClans(players[0], 2, { q: 0, r: 0 });
+    this.hexGridManager.clansController.AddClans(players[1], 2, { q: 0, r: 0 });
+    this.hexGridManager.clansController.AddClans(players[2], 2, { q: 0, r: 1 });
+    //Skipping beginning stage
+    await this.StartGatheringStage(); //Changing game stage
+
+
   }
   public AddDeedToken(player: Player) {
     if (this.deedTokensLeft < 0) {
@@ -137,15 +173,21 @@ export class GameState {
     players.forEach(player => player.lastAction = playerAction.None);
     this.hexGridManager.fieldsController.ResetHolidayField();
   }
-  public StartGatheringStage(): void {
+  public async StartGatheringStage() {
     this.gameStage = GameStage.Gathering;
-    this.roundCounter++;
 
     const newBrenplayer = getBrenPlayer(this);
     this.SetBrenPlayer(newBrenplayer);
 
     this.UpdatePretenderTokens();
-    this.UpdateWinner();
+    const winnderId = this.UpdateWinner();
+    if (winnderId) {
+      this.gameStats.winner = winnderId;
+      await sendDatatToGameService(this);
+      return;
+    }
+
+    this.gameStats.roundCounter++;
     this.turnOrderManager.SetRandomDirection();
     this.turnOrderManager.SetActivePlayer(this.brenPlayer);
     //Card deeling
@@ -160,9 +202,9 @@ export class GameState {
     if (winnerPlayer) {
       this.gameStage = GameStage.END;
       this.gameStatus = false;
-      console.log("Winner player with id: " + winnerPlayer.id);
-      return;
+      return winnerPlayer.id;
     }
+    return null;
   }
   private UpdatePretenderTokens(): void {
     const players: Player[] = this.playerManager.GetPlayers();

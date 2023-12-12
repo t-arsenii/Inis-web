@@ -130,8 +130,7 @@ export interface IPlayerDto {
 }
 export interface ICreateGameDto {
     players: IPlayerDto[],
-    numPlayers: number,
-    settings?: string
+    settings: IGameStatsInput
 }
 export interface IPlayersUiInfo {
     players: {
@@ -151,4 +150,25 @@ export interface IPretenderToken {
     sanctuaries: boolean,
     clans: boolean,
     territories: boolean
+}
+export interface IGameStats {
+    numberOfPlayers: number,
+    gameSpeed: string,
+    ranked: boolean,
+    winner: string | null,
+    roundCounter: number
+}
+export interface IGameStatsInput {
+    numberOfPlayers: number,
+    gameSpeed: string,
+    ranked: boolean
+}
+export interface IGameDataOutput {
+    duration: number,
+    rounds: number,
+    numberOfPlayers: number,
+    players: string[],
+    gameSpeed: string,
+    ranked: boolean,
+    winner: string
 }
