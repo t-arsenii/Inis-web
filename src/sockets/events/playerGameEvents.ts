@@ -11,7 +11,8 @@ import { checkAllPlayersPass } from "../../utils/gameStateUtils";
 import { cardInputSchema } from "../../core/schemas/CardInputSchema";
 import { startTimerAndListen } from "../../utils/timers";
 import { handlePlayerPass } from "../../utils/socketHandlers";
-export function playerGameHandler(io: Server, socket: Socket) {
+import { io } from "../../initServer"
+export function playerGameHandler(socket: Socket) {
     socket.on("player-card-season", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
         if (error) {

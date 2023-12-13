@@ -13,6 +13,7 @@ import { PlayerManager } from "./PlayerManager";
 import { GameUiUpdater } from "./GameUIUpdater";
 import { IGameStats, IGameStatsInput } from "../../types/Interfaces";
 import { sendDatatToGameService } from "../../utils/gameService";
+import { ChatManager } from "../ChatManager";
 export class GameState {
   //Game info
   id: string;
@@ -30,6 +31,7 @@ export class GameState {
   turnOrderManager: TurnOrderManager;
   hexGridManager: HexGridManager;
   uiUpdater: GameUiUpdater;
+  chatManager: ChatManager;
   //Statistic
   gameStats: IGameStats
   // roundCounter: number;
@@ -52,6 +54,7 @@ export class GameState {
     this.turnOrderManager = new TurnOrderManager(this);
     this.hexGridManager = new HexGridManager(this);
     this.uiUpdater = new GameUiUpdater(this);
+    this.chatManager = new ChatManager(this);
     //Statistic
     this.gameStats = undefined!;
     //Other
@@ -88,14 +91,10 @@ export class GameState {
     this.gameStatus = true;
     this.gameStage = GameStage.CapitalSetup;
 
-    //Initializing map
     this.hexGridManager.Init();
-
-    //Initializing players decks
     this.deckManager.Init();
-
-    //Initializing trixelManager
     this.trixelManager.Init();
+    this.chatManager.Init();
 
     this.gameStats = {
       numberOfPlayers: 3,

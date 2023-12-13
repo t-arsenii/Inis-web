@@ -4,7 +4,8 @@ import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../utils/he
 import { GameStage } from "../../types/Enums";
 import { Player } from "../../core/Player";
 import { GameState } from "../../core/gameState/GameState";
-export function gameSetupHandler(io: Server, socket: Socket) {
+import { io } from "../../initServer"
+export function gameSetupHandler(socket: Socket) {
     socket.on("game-setup-clans", async (axial: axialCoordinates) => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;

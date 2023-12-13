@@ -16,7 +16,10 @@ import { uiUpdateHandler } from "./events/uiUpdateEvents";
 import { RedisClientType } from "redis";
 import { RedisConverter } from "../core/RedisConverter";
 import { GameStage } from "../types/Enums";
-export default function handleSocketConnections(io: Server) {
+import { io } from "../initServer"
+import { chatEvents } from "./events/chatEvents";
+
+export default function handleSocketConnections() {
     //Maybe make middleware to retrive token data from user and also gameId from querry string,
     //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
@@ -43,30 +46,13 @@ export default function handleSocketConnections(io: Server) {
             return next();
         });
 
-        DebugTools(io, socket);
-        gameLobbyHandler(io, socket);
-        gameSetupHandler(io, socket);
-        playerGameHandler(io, socket);
-        playerFightHandler(io, socket);
-        uiUpdateHandler(io, socket);
-
-        socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
-            const gameState = gamesManager.getGame(gameId);
-            const player = gameState?.playerManager.GetPlayerById(userId);
-            const axial: axialCoordinates = {
-                q: +q,
-                r: +r
-            }
-            const isTerritory = gameState?.hexGridManager.fieldsController.AddRandomField(axial)
-            socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
-        })
-        socket.on("player-nextTurn", () => {
-            const gameState: GameState = socket.gameState!
-            const player: Player = socket.player!
-            if (player.id !== gameState.turnOrderManager.GetActivePlayer()!.id) {
-                return
-            }
-            gameState.turnOrderManager.NextTurn();
-        });
+        DebugTools(socket);
+        gameLobbyHandler(socket);
+        gameSetupHandler(socket);
+        playerGameHandler(socket);
+        playerFightHandler(socket);
+        uiUpdateHandler(socket);
+        chatEvents(socket);
+        
     });
 }

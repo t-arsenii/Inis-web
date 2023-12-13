@@ -2,8 +2,8 @@ import { Server, Socket } from "socket.io";
 import { GameState } from "../../core/gameState/GameState";
 import { Player } from "../../core/Player";
 import { GameStage } from "../../types/Enums";
-
-export function uiUpdateHandler(io: Server, socket: Socket) {
+import { io } from "../../initServer"
+export function uiUpdateHandler(socket: Socket) {
     socket.on("game-update", () => {
         const gameState: GameState = socket.gameState!;
         gameState.uiUpdater.EmitGameUpdate();
@@ -56,6 +56,15 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
         const player: Player = socket.player!;
         try {
             gameState.uiUpdater.EmitPretenderTokenUpdate(player);
+        } catch (err) {
+            console.log(err)
+        }
+    })
+    socket.on("all-messages", ()=>{
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            gameState.uiUpdater.EmitAllMessagesUpdate(player);
         } catch (err) {
             console.log(err)
         }
