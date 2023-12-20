@@ -9,7 +9,7 @@ export const initGameToSeason = () => {
     const gameState: GameState = new GameState(DebugGameId)
     const player1Id = "6553995defc2b3f2962ef65d"
     const player2Id = "65539987efc2b3f2962ef662"
-    const player3Id = "65539aa2efc2b3f2962ef66a"
+    const player3Id = "6582ef75efc13ed9d397e762"
     const users: IPlayer[] = [
         { id: player1Id, username: "username1", mmr: 1234 },
         { id: player2Id, username: "username2", mmr: 1582 },
@@ -69,7 +69,7 @@ export const initGameToGathering = async () => {
     const gameState: GameState = new GameState(DebugGameId)
     const player1Id = "6553995defc2b3f2962ef65d"
     const player2Id = "65539987efc2b3f2962ef662"
-    const player3Id = "65539aa2efc2b3f2962ef66a"
+    const player3Id = "6582ef75efc13ed9d397e762"
     const users: IPlayer[] = [
         { id: player1Id, username: "username1", mmr: 1234 },
         { id: player2Id, username: "username2", mmr: 1582 },
@@ -106,7 +106,7 @@ export function initGameToSetup(){
     const gameState: GameState = new GameState(DebugGameId)
     const player1Id = "6553995defc2b3f2962ef65d"
     const player2Id = "65539987efc2b3f2962ef662"
-    const player3Id = "65539aa2efc2b3f2962ef66a"
+    const player3Id = "6582ef75efc13ed9d397e762"
     const users: IPlayer[] = [
         { id: player1Id, username: "username1", mmr: 1234 },
         { id: player2Id, username: "username2", mmr: 1582 },
