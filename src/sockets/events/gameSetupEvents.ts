@@ -21,7 +21,11 @@ export function gameSetupHandler(io: Server, socket: Socket) {
                 await gameState.StartGatheringStage();
                 return;
             }
-            gameState.turnOrderManager.NextTurn()
+            gameState.turnOrderManager.NextTurn();
+
+            gameState.uiUpdater.EmitGameUpdate();
+            gameState.uiUpdater.EmitSidebarUpdate();
+            gameState.uiUpdater.EmitMapUpdate();
         }
         catch (err) {
             socket.emit("game-setup-clans-error", `GameSetupClans: Internal server error:\n${err}`)
@@ -44,6 +48,10 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             gameState.hexGridManager.fieldsController.SetCapital(axial);
             gameState.hexGridManager.fieldsController.AddSanctuary(axial);
             gameState.gameStage = GameStage.ClansSetup;
+
+            gameState.uiUpdater.EmitGameUpdate();
+            gameState.uiUpdater.EmitSidebarUpdate();
+            gameState.uiUpdater.EmitMapUpdate();
         }
         catch (err) {
             socket.emit("game-setup-capital-error", `GameSetupClans: Internal server error:\n${err}`);
