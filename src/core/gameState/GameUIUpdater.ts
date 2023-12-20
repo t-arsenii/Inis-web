@@ -79,7 +79,7 @@ export class GameUiUpdater {
         const players = this._gameState.playerManager.GetPlayers();
         for (const _player of players) {
             if (!_player.socket) {
-                throw new Error("GameUiUpdater error");
+                continue;
             }
             const activePlayerId = this._gameState.turnOrderManager.GetActivePlayer().id;
             _player.socket!.emit("is-active", { isActive: activePlayerId === _player.id });
