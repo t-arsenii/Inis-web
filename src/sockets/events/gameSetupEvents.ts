@@ -44,6 +44,10 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             gameState.hexGridManager.fieldsController.SetCapital(axial);
             gameState.hexGridManager.fieldsController.AddSanctuary(axial);
             gameState.gameStage = GameStage.ClansSetup;
+
+            gameState.uiUpdater.EmitGameUpdate();
+            gameState.uiUpdater.EmitSidebarUpdate();
+            gameState.uiUpdater.EmitMapUpdate();
         }
         catch (err) {
             socket.emit("game-setup-capital-error", `GameSetupClans: Internal server error:\n${err}`);
