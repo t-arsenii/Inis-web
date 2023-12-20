@@ -75,6 +75,16 @@ export class GameUiUpdater {
             _player.socket!.emit("dealCards-update", this.getDealCardUiInfo(_player));
         }
     }
+    public EmitIsActiveUpdate() {
+        const players = this._gameState.playerManager.GetPlayers();
+        for (const _player of players) {
+            if (!_player.socket) {
+                throw new Error("GameUiUpdater error");
+            }
+            const activePlayerId = this._gameState.turnOrderManager.GetActivePlayer().id;
+            _player.socket!.emit("is-active", { isActive: activePlayerId === _player.id });
+        }
+    }
     private getMapUiInfo(): IMapUiInfo {
         const hexGrid = this._gameState.hexGridManager;
         let capitalCoordinates: axialCoordinates | null = null

@@ -60,4 +60,13 @@ export function uiUpdateHandler(io: Server, socket: Socket) {
             console.log(err)
         }
     })
+    socket.on("is-active", () =>{
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            gameState.uiUpdater.EmitIsActiveUpdate();
+        } catch (err) {
+            console.log(err)
+        }
+    })
 }
