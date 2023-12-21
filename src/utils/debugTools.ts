@@ -39,18 +39,22 @@ export const initGameToSeason = () => {
     gameState.deckManager.AddCard(player1, "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a");
     gameState.deckManager.AddCard(player1, "c1f5ddba-7325-4188-9a36-ff9ef14af22a");
     gameState.deckManager.AddCard(player1, "5d8db5fa-f323-4d84-b78f-85ccad76fd6d");
+    gameState.deckManager.AddCard(player1, "ddc241a2-2fd1-4926-8860-4eae221b93d4");
 
     gameState.deckManager.AddCard(player2, "f145474a-453b-4f53-8fff-12448a0ab90f");
     gameState.deckManager.AddCard(player2, "67f39e72-1838-460d-8cac-17ca18aec015");
     gameState.deckManager.AddCard(player2, "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a");
     gameState.deckManager.AddCard(player2, "c1f5ddba-7325-4188-9a36-ff9ef14af22a");
     gameState.deckManager.AddCard(player2, "5d8db5fa-f323-4d84-b78f-85ccad76fd6d");
+    gameState.deckManager.AddCard(player2, "ddc241a2-2fd1-4926-8860-4eae221b93d4");
+
 
     gameState.deckManager.AddCard(player3, "f145474a-453b-4f53-8fff-12448a0ab90f");
     gameState.deckManager.AddCard(player3, "67f39e72-1838-460d-8cac-17ca18aec015");
     gameState.deckManager.AddCard(player3, "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a");
     gameState.deckManager.AddCard(player3, "c1f5ddba-7325-4188-9a36-ff9ef14af22a");
     gameState.deckManager.AddCard(player3, "5d8db5fa-f323-4d84-b78f-85ccad76fd6d");
+    gameState.deckManager.AddCard(player3, "ddc241a2-2fd1-4926-8860-4eae221b93d4");
 
     //Skippping setup
     gameState.hexGridManager.fieldsController.SetCapital({ q: 0, r: 0 });
