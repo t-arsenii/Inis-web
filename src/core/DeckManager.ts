@@ -1,6 +1,6 @@
 import { cardActionMap } from "./constans/constant_action_cards";
 import { areAllDistinct, shuffle } from "../utils/helperFunctions";
-import { Card, DealCards } from "../types/Types"
+import { CardType, DealCardsType } from "../types/Types"
 import { Card_type, TurnOrder } from "../types/Enums"
 import { GameState } from "./gameState/GameState";
 import { Player } from "./Player";
@@ -52,7 +52,7 @@ export class DeckManager {
     actionDiscard: string[];
     defferedCardId: string | null;
     //Dealing cards logic
-    dealCards: DealCards | null;
+    dealCards: DealCardsType | null;
     //DI
     _gameState: GameState;
     constructor(gameState: GameState) {
@@ -92,7 +92,7 @@ export class DeckManager {
         if (!cardActionMap.has(cardId)) {
             throw new Error("DeckManager.PlayCard: cardId not found")
         }
-        const playedCard: Card = cardActionMap.get(cardId)!
+        const playedCard: CardType = cardActionMap.get(cardId)!
         switch (playedCard.card_type) {
             case Card_type.Action:
                 deck.actionCards = deck.actionCards.filter(cardId => cardId !== playedCard.id)
@@ -109,7 +109,7 @@ export class DeckManager {
     }
     AddCard(player: Player, cardId: string) {
         const deck: Deck = this.playersDeck.get(player.id)!
-        const card: Card | undefined = cardAllMap.get(cardId)
+        const card: CardType | undefined = cardAllMap.get(cardId)
         if (!card) {
             throw new Error("DeckManager.addCard: cardId not found")
         }

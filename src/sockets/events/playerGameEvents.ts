@@ -61,6 +61,7 @@ export function playerGameHandler(io: Server, socket: Socket) {
     socket.on("player-card-info", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
         if (error) {
+            console.error(error)
             socket.emit("player-card-info-error", `PlayerCardSeason: Internal server error on card operation:\n${error.message}`);
             return;
         }
@@ -82,6 +83,7 @@ export function playerGameHandler(io: Server, socket: Socket) {
             socket.emit("player-card-info", info);
         }
         catch (err) {
+            console.error(err);
             socket.emit("player-card-info-error", `PlayerCardInfo: Internal server error on card info:\n${err}`);
         }
 

@@ -1,5 +1,5 @@
 import { TurnOrder } from "../../types/Enums";
-import { PlayerTurnOrder } from "../../types/Types";
+import { PlayerTurnOrderType } from "../../types/Types";
 import { getRandomDirection, shuffle } from "../../utils/helperFunctions";
 import { Player } from "../Player";
 import { GameState } from "./GameState";
@@ -7,7 +7,7 @@ import { GameState } from "./GameState";
 export class TurnOrderManager {
 
   _gameState: GameState;
-  turnOrder: PlayerTurnOrder;
+  turnOrder: PlayerTurnOrderType;
 
   constructor(gameState: GameState) {
     this._gameState = gameState;

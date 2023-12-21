@@ -1,5 +1,5 @@
 import { ICardOperationParams, ICardOperationResponse, ICardParams } from "../../types/Interfaces"
-import { axialCoordinates } from "../../types/Types"
+import { MoveDataType, axialCoordinates, axialToNum } from "../../types/Types"
 import { hexToAxialCoordinates } from "../../utils/helperFunctions"
 import { Deck, DeckManager } from "../DeckManager"
 import { Hexagon } from "../map/Field"
@@ -17,24 +17,26 @@ export function NewClansActionInfo({ gameState, player }: ICardOperationParams):
     }
     return { axial: hexArr.map(hex => ({ q: hex.q, r: hex.r })), maxTerClicks: 2 };
 }
-export function ConquestActionInfo({ gameState, player, axial }: ICardOperationParams): ICardOperationResponse {
-    if (!axial || Array.isArray(axial)) {
-        throw new Error("ConquestActionInfo: axial coordinate error")
-    }
-    if (!gameState.hexGridManager.HasHexagon(axial)) {
-        throw new Error(`ConquestActionInfo: no hexagon with axial:${axial}`)
-    }
-    const hexArr: Hexagon[] = gameState.hexGridManager.GetNeighbors(axial)
-    const axialToNumRes: { axial: axialCoordinates, num: number }[] = [];
-    let totalClans: number = 0;
-    hexArr.forEach(hex => {
-        if (hex.field.playersClans.has(player.id)) {
-            axialToNumRes.push({ axial: { q: hex.q, r: hex.r }, num: hex.field.playersClans.get(player.id)! });
-            totalClans += hex.field.playersClans.get(player.id)!;
+export function ConquestActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
+    const allHex = gameState.hexGridManager.GetAllHex();
+    const returnData: MoveDataType[] = [];
+    for (const hex of allHex) {
+        const neighbourHexArr: Hexagon[] = gameState.hexGridManager.GetNeighbors(hex)
+        const axialToNumRes: axialToNum[] = [];
+        let isValid: boolean = false;
+        for (const neighbourHex of neighbourHexArr) {
+            let totalClans: number = 0;
+            if (neighbourHex.field.playersClans.has(player.id)) {
+                axialToNumRes.push({ axial: { q: hex.q, r: hex.r }, num: neighbourHex.field.playersClans.get(player.id)! });
+                totalClans += hex.field.playersClans.get(player.id)!;
+                isValid = true;
+            }
         }
-    });
-
-    return { axialToNum: axialToNumRes, maxTerClicks: totalClans };
+        if (isValid) {
+            returnData.push({ singleAxial: hexToAxialCoordinates(hex), axialToNum: axialToNumRes })
+        }
+    }
+    return { moveData: returnData };
 }
 export function BardActionInfo({ gameState, player }: ICardOperationParams): ICardOperationResponse {
     throw new Error("Not implemented exception");

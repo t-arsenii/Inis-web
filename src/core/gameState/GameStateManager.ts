@@ -1,4 +1,4 @@
-import { playerInfo } from "../../types/Types";
+import { PlayerInfoType } from "../../types/Types";
 import { Player } from "../Player";
 import { RedisConverter } from "../RedisConverter";
 import { GameState } from "./GameState";
@@ -6,7 +6,7 @@ import { GameState } from "./GameState";
 class GameStateManager {
     // redisConverter: RedisConverter;
     private gameStates: Map<string, GameState> = new Map();
-    socketsConnInfo: Map<string, playerInfo> = new Map();
+    socketsConnInfo: Map<string, PlayerInfoType> = new Map();
     constructor() {
         // this.redisConverter = new RedisConverter(redisClient);
     }
@@ -22,7 +22,7 @@ class GameStateManager {
     getGameStates(): Array<GameState> {
         return Array.from(this.gameStates.values());
     }
-    getSocketInfo(socketId: string): playerInfo | undefined {
+    getSocketInfo(socketId: string): PlayerInfoType | undefined {
         return this.socketsConnInfo.get(socketId)
     }
     addSocketInfo(socketId: string, player: Player, gameState: GameState): void {

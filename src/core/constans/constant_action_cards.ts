@@ -1,8 +1,8 @@
 import { Card_type, Timing_to_play, Badge } from "../../types/Enums";
-import { Card } from "../../types/Types";
+import { CardType } from "../../types/Types";
 
 //Action cards
-export const Sanctuary: Card = {
+export const Sanctuary: CardType = {
     id: "f145474a-453b-4f53-8fff-12448a0ab90f",
     title: "Sanctuary",
     card_type: Card_type.Action,
@@ -11,7 +11,7 @@ export const Sanctuary: Card = {
     description: "Build 1 sanctuary on territory with your clans. Take 1 Epos card",
 } as const;
 
-export const NewClans: Card = {
+export const NewClans: CardType = {
     id: "c1f5ddba-7325-4188-9a36-ff9ef14af22a",
     title: "New clans",
     card_type: Card_type.Action,
@@ -20,7 +20,7 @@ export const NewClans: Card = {
     description: "Add 2 clans on any territory with your clans. Both clans can be added on 1 territory or 2 separate ones"
 } as const;
 
-export const Conquest: Card = {
+export const Conquest: CardType = {
     id: "ddc241a2-2fd1-4926-8860-4eae221b93d4",
     title: "Conquest",
     card_type: Card_type.Action,
@@ -29,7 +29,7 @@ export const Conquest: Card = {
     description: "Choose 1 territory. You can move any number of clans from neighbours territories to it."
 } as const;
 
-export const Bard: Card = {
+export const Bard: CardType = {
     id: "9422292c-bd05-40b5-95bc-140dbd6bb3c2",
     title: "Bard",
     card_type: Card_type.Action,
@@ -38,7 +38,7 @@ export const Bard: Card = {
     description: ""
 } as const;
 
-export const Druid: Card = {
+export const Druid: CardType = {
     id: "6b9ed192-ea8f-4fb9-b55f-985a32b344b5",
     title: "Druid",
     card_type: Card_type.Action,
@@ -47,7 +47,7 @@ export const Druid: Card = {
     description: ""
 } as const;
 
-export const PeasantsWorkers: Card = {
+export const PeasantsWorkers: CardType = {
     id: "3d138112-6a36-467a-8255-bcfb42fe7398",
     title: "Peasants and workers",
     card_type: Card_type.Action,
@@ -56,7 +56,7 @@ export const PeasantsWorkers: Card = {
     description: ""
 } as const;
 
-export const NewUnion: Card = {
+export const NewUnion: CardType = {
     id: "df9b3113-f639-4d74-9e6c-a88c98cdcafa",
     title: "New union",
     card_type: Card_type.Action,
@@ -65,7 +65,7 @@ export const NewUnion: Card = {
     description: ""
 } as const;
 
-export const Exploration: Card = {
+export const Exploration: CardType = {
     id: "5d8db5fa-f323-4d84-b78f-85ccad76fd6d",
     title: "Exploration",
     card_type: Card_type.Action,
@@ -74,7 +74,7 @@ export const Exploration: Card = {
     description: ""
 } as const;
 
-export const Commander: Card = {
+export const Commander: CardType = {
     id: "2233b6e1-be5f-4a3d-af68-1aa3c7cfe1b4",
     title: "Commander",
     card_type: Card_type.Action,
@@ -85,7 +85,7 @@ export const Commander: Card = {
     secondDescription: ""
 } as const;
 
-export const Holiday: Card = {
+export const Holiday: CardType = {
     id: "e5dd65a7-4f71-42b0-8f2d-6b0ef25c6e0a",
     title: "Holiday",
     card_type: Card_type.Action,
@@ -94,7 +94,7 @@ export const Holiday: Card = {
     description: ""
 } as const;
 
-export const Relocation: Card = {
+export const Relocation: CardType = {
     id: "bea2a567-9011-493d-9965-7d12b2d4aaf6",
     title: "Relocation",
     card_type: Card_type.Action,
@@ -103,7 +103,7 @@ export const Relocation: Card = {
     description: ""
 } as const;
 
-export const Citadel: Card = {
+export const Citadel: CardType = {
     id: "67f39e72-1838-460d-8cac-17ca18aec015",
     title: "Сitadel",
     card_type: Card_type.Action,
@@ -112,7 +112,7 @@ export const Citadel: Card = {
     description: ""
 } as const;
 
-export const Geist: Card = {
+export const Geist: CardType = {
     id: "d18d8527-d0aa-47da-b291-7aa222ef3132",
     title: "Geist",
     card_type: Card_type.Action,
@@ -121,7 +121,7 @@ export const Geist: Card = {
     description: ""
 } as const;
 
-export const cardActionMap: Map<string, Card> = new Map([
+export const cardActionMap: Map<string, CardType> = new Map([
     [Sanctuary.id, Sanctuary],
     [NewClans.id, NewClans],
     [Conquest.id, Conquest],

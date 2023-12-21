@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { Player } from "../core/Player";
 import { cardActionMap } from "../core/constans/constant_action_cards";
-import { playerInfo } from "../types/Types";
+import { PlayerInfoType } from "../types/Types";
 import { axialCoordinates } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameEvents";
 import { CheckSocketGameConnection } from "../utils/helperFunctions";

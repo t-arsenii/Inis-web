@@ -1,4 +1,4 @@
-import { TrixelCondition } from "../types/Types";
+import { TrixelConditionType } from "../types/Types";
 import { GameState } from "./gameState/GameState";
 import { Player } from "./Player";
 
@@ -15,13 +15,13 @@ export class TrixelManager {
             this.trixelArray.set(player.id, new Set<string>())
         })
     }
-    AddTrixel(player: Player, trixel: TrixelCondition): void {
+    AddTrixel(player: Player, trixel: TrixelConditionType): void {
         if (!this.trixelArray.has(player.id)) {
             throw new Error("TrixelManager.AddTrixel: player no found")
         }
         this.trixelArray.get(player.id)?.add(trixel.id)
     }
-    HasTrixel(player: Player, trixel: TrixelCondition): boolean {
+    HasTrixel(player: Player, trixel: TrixelConditionType): boolean {
         const playerTrixel: Set<string> = this.trixelArray.get(player.id)!
         return playerTrixel.has(trixel.id)
     }

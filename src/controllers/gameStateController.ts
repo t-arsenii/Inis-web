@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"
 import { GameState } from "../core/gameState/GameState";
-import { playerInfo } from "../types/Types";
+import { PlayerInfoType } from "../types/Types";
 import { GameStateToJSON, GameStateToJSONFormated } from "../utils/gameStateUtils";
 import { gamesManager } from "../core/gameState/GameStateManager";
 import { ICreateGameDto, IPlayer } from "../types/Interfaces";
@@ -76,7 +76,7 @@ const GetOnlinePlayers = async (req: Request, res: Response) => {
     res.status(200).send(arrayOfMaps)
 }
 
-function convertPlayerInfoToFormat(socketId: string, playerInfo: playerInfo): Record<string, any> {
+function convertPlayerInfoToFormat(socketId: string, playerInfo: PlayerInfoType): Record<string, any> {
     return {
         socket: socketId,
         playerInfo: {

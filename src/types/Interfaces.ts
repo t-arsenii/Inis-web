@@ -3,7 +3,7 @@ import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
 import { Field } from "../core/map/Field"
 import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction, GameStage } from "./Enums"
-import { axialCoordinates } from "./Types"
+import { MoveDataType, axialCoordinates, axialToNum } from "./Types"
 
 export interface ICardParams {
     axial?: axialCoordinates[],
@@ -27,8 +27,9 @@ export interface ICardOperationResponse {
     maxTerClicks?: number,
     maxCardClicks?: number,
     maxTargetPlayerClicks?: number
-    axialToNum?: { axial: axialCoordinates, num: number }[],
-    axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[]
+    axialToNum?: axialToNum[],
+    axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[],
+    moveData?: MoveDataType[]
 }
 export interface IAttackerInputParams {
     attackerAction: AttackerAction,

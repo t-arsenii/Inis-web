@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { Player } from "../../core/Player";
 import { GetGameStateAndPlayer } from "../../utils/helperFunctions";
-import { playerInfo } from "../../types/Types"
+import { PlayerInfoType } from "../../types/Types"
 import { GameState } from "../../core/gameState/GameState";
 import { gamesManager } from "../../core/gameState/GameStateManager";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -11,6 +11,7 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
         const token = (tokenInput || "").replace(/Bearer\s?/, "");
         let userId: string = "";
         if (!token) {
+            console.log("Token error\n");
             return;
         }
         try {
@@ -38,7 +39,7 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
         if (!gamesManager.socketsConnInfo.has(socket.id)) {
             return;
         }
-        const playerInfo: playerInfo | undefined = gamesManager.socketsConnInfo.get(socket.id);
+        const playerInfo: PlayerInfoType | undefined = gamesManager.socketsConnInfo.get(socket.id);
         if (!playerInfo) {
             return;
         }
