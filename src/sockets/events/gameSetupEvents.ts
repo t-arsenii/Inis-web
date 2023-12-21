@@ -19,6 +19,9 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             if (gameState.hexGridManager.setupController.SetupClans()) {
                 gameState.turnOrderManager.NextTurn();
                 await gameState.StartGatheringStage();
+                gameState.uiUpdater.EmitSidebarUpdate();
+                gameState.uiUpdater.EmitDealCardUpdateAll();
+                gameState.uiUpdater.EmitGameUpdate();
                 return;
             }
             gameState.turnOrderManager.NextTurn();
@@ -26,6 +29,7 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             gameState.uiUpdater.EmitGameUpdate();
             gameState.uiUpdater.EmitSidebarUpdate();
             gameState.uiUpdater.EmitMapUpdate();
+            gameState.uiUpdater.EmitIsActiveUpdate();
         }
         catch (err) {
             socket.emit("game-setup-clans-error", `GameSetupClans: Internal server error:\n${err}`)
@@ -52,6 +56,7 @@ export function gameSetupHandler(io: Server, socket: Socket) {
             gameState.uiUpdater.EmitGameUpdate();
             gameState.uiUpdater.EmitSidebarUpdate();
             gameState.uiUpdater.EmitMapUpdate();
+            gameState.uiUpdater.EmitIsActiveUpdate();
         }
         catch (err) {
             socket.emit("game-setup-capital-error", `GameSetupClans: Internal server error:\n${err}`);
