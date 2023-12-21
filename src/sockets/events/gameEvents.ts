@@ -17,10 +17,9 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
             const decoded: JwtPayload = jwt.verify(token, "secret123") as JwtPayload;
             userId = decoded._id;
         } catch (e) {
-            console.log(e);
+            console.log("Token error\n", e);
             return;
         }
-        console.log(userId)
         const res = GetGameStateAndPlayer(socket, gameId, userId)
         if (res === undefined) {
             return
@@ -32,6 +31,7 @@ export function gameLobbyHandler(io: Server, socket: Socket) {
         socket.gameState = gameState;
         socket.player = player;
         socket.auth = true;
+        console.log("User: ", userId, ", joined to game: ", gameId);
         socket.emit('gameLobby-info', { status: "success", info: { playerId: player.id, socket: socket.id, gameId: gameId } });
     });
     socket.on('disconnect', () => {
