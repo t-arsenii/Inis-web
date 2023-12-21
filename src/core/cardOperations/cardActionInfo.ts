@@ -27,7 +27,7 @@ export function ConquestActionInfo({ gameState, player }: ICardOperationParams):
         for (const neighbourHex of neighbourHexArr) {
             let totalClans: number = 0;
             if (neighbourHex.field.playersClans.has(player.id)) {
-                axialToNumRes.push({ axial: { q: hex.q, r: hex.r }, num: neighbourHex.field.playersClans.get(player.id)! });
+                axialToNumRes.push({ axial: { q: neighbourHex.q, r: neighbourHex.r }, num: neighbourHex.field.playersClans.get(player.id)! });
                 totalClans += hex.field.playersClans.get(player.id)!;
                 isValid = true;
             }
