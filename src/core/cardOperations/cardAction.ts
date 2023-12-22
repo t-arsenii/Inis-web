@@ -220,30 +220,10 @@ function ConquestSeason({ gameState, player, singleAxial, axialToNum }: ICardOpe
         if (hex.field.playersClans.get(player.id)! < ax.num) {
             throw new Error(`ConquestSeason:player dosen't have enough clans on the axial:${ax.axial}`)
         }
-        for (const ax of axialToNum) {
-            gameState.hexGridManager.clansController.MoveClans(player, ax.axial, singleAxial, ax.num)
-        }
     }
-    // else if (typeof axialToNum === 'object' && !Array.isArray(axialToNum)) {
-    //     if (!gameState.hexGridManager.HasHexagon(axialToNum.axial)) {
-    //         throw new Error(`ConquestSeason: no hexagon with axial:${axialToNum.axial}`)
-    //     }
-    //     let hex: Hexagon = gameState.hexGridManager.GetHex(axialToNum.axial)!
-    //     if (!playerHex.includes(hex)) {
-    //         throw new Error(`ConquestSeason: player is not present on axial:${axialToNum.axial}`)
-    //     }
-    //     if (!hexNeighbours.includes(hex)) {
-    //         throw new Error(`ConquestSeason: the axial:${axialToNum.axial}, is not a neighbour`)
-    //     }
-    //     //Check clans
-    //     if (!hex.field.playersClans.has(player.id)) {
-    //         throw new Error(`ConquestSeason: player dosen't have clans on axial:${axialToNum.axial}`)
-    //     }
-    //     if (hex.field.playersClans.get(player.id)! < axialToNum.num) {
-    //         throw new Error(`ConquestSeason:player dosen't have enough clans on the axial:${axialToNum.axial}`)
-    //     }
-    //     gameState.hexGridManager.clansController.MoveClans(player, axialToNum.axial, singleAxial, axialToNum.num)
-    // }
+    for (const ax of axialToNum) {
+        gameState.hexGridManager.clansController.MoveClans(player, ax.axial, singleAxial, ax.num)
+    }
     if (targetHexagon.field.playersClans.size > 1) {
         gameState.fightManager.InitFight(player, targetHexagon)
     }
