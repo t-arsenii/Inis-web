@@ -22,6 +22,7 @@ export function gameSetupHandler(io: Server, socket: Socket) {
                 gameState.uiUpdater.EmitSidebarUpdate();
                 gameState.uiUpdater.EmitDealCardUpdateAll();
                 gameState.uiUpdater.EmitGameUpdate();
+                gameState.uiUpdater.EmitMapUpdate();
                 return;
             }
             gameState.turnOrderManager.NextTurn();
