@@ -32,9 +32,9 @@ export class FightManager {
         if (!this.currentFight) {
             throw new Error("FightManager.AttackerAction: no current fight");
         }
-        if (this.currentFight.fightStage !== FightStage.fight) {
-            throw new Error("FightManager.AttackerAction: gameStage is not fight");
-        }
+        // if (this.currentFight.fightStage !== FightStage.fight) {
+        //     throw new Error("FightManager.AttackerAction: gameStage is not fight");
+        // }
         if (this.currentFight.FightTurnOrder.activePlayerId !== player.id) {
             throw new Error("FightManager.AttackerAction: wrong active player id");
         }
