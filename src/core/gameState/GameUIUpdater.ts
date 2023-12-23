@@ -185,7 +185,7 @@ export class GameUiUpdater {
         const players = this._gameState.fightManager.currentFight.players;
         const activePlayerId = this._gameState.fightManager.currentFight.FightTurnOrder.activePlayerId;
         const _players = Object.keys(players).map((playerId) => ({
-            username: this._gameState.playerManager.GetPlayerById(playerId)?.username,
+            username: this._gameState.playerManager.GetPlayerById(playerId)!.username,
             playerId,
             clansNum: players[playerId].clansNum,
             peace: players[playerId].peace,
