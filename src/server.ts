@@ -17,5 +17,5 @@ server.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
 });
 // initGameToSetup();
-// initGameToSeason();
+initGameToSeason();
 // initGameToGathering();
