@@ -11,6 +11,17 @@ import { checkAllPlayersPass } from "../../utils/gameStateUtils";
 import { cardInputSchema } from "../../core/schemas/CardInputSchema";
 import { startTimerAndListen } from "../../utils/timers";
 import { handlePlayerPass } from "../../utils/socketHandlers";
+
+const UpdateUI = (gameState: GameState, player: Player) => {
+    gameState.uiUpdater.EmitMapUpdate();
+    gameState.uiUpdater.EmitMyDeckUpdate(player);
+    gameState.uiUpdater.EmitSidebarUpdate();
+    gameState.uiUpdater.EmitGameUpdate();
+    if (gameState.gameStage === GameStage.Fight) {
+        gameState.uiUpdater.EmitFightUpdate();
+    }
+}
+
 export function playerGameHandler(io: Server, socket: Socket) {
     socket.on("player-card-season", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
@@ -46,17 +57,15 @@ export function playerGameHandler(io: Server, socket: Socket) {
             gameState.deckManager.DiscardCard(player, cardId);
             gameState.trixelManager.AddTrixel(player, trixelCondition_oOWJ5);
             player.lastAction = playerAction.Card;
+
+            UpdateUI(gameState, player);
+
+            gameState.eventEmitter.emit("seasonCardEvent", player);
         } catch (err) {
             socket.emit("player-card-season-error", `PlayerCardSeason: Internal server error on card operation:\n${err}`);
             console.log(err);
             return;
         }
-        gameState.uiUpdater.EmitMapUpdate();
-        gameState.uiUpdater.EmitMyDeckUpdate(player);
-        gameState.uiUpdater.EmitSidebarUpdate();
-        gameState.uiUpdater.EmitGameUpdate();
-
-        gameState.eventEmitter.emit("seasonCardEvent", player)
     })
     socket.on("player-card-info", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);

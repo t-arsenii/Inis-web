@@ -106,6 +106,7 @@ export interface IFightUiInfo {
     fightHex: axialCoordinates,
     players:
     {
+        username: string,
         playerId: string,
         clansNum: number,
         peace: boolean,

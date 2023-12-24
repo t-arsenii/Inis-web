@@ -63,7 +63,7 @@ export const initGameToSeason = () => {
     //Adding two clans for each player
     gameState.hexGridManager.clansController.AddClans(player1, 2, { q: 0, r: 0 });
     gameState.hexGridManager.clansController.AddClans(player2, 2, { q: 0, r: 0 });
-    gameState.hexGridManager.clansController.AddClans(player3, 2, { q: 0, r: 1 });
+    gameState.hexGridManager.clansController.AddClans(player3, 2, { q: 0, r: 0 });
     //Skipping beginning stage
     gameState.StartSeasonStage(); //Changing game stage
 }

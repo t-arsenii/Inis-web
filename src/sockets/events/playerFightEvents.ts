@@ -39,12 +39,14 @@ export function playerFightHandler(io: Server, socket: Socket) {
         const player: Player = socket.player!
         try {
             gameState.fightManager.DeffenderAction(player, params.deffenderAction, params.cardId);
-            gameState.uiUpdater.EmitFightUpdate();
-            gameState.uiUpdater.EmitAttackCycleUpdate();
+            gameState.uiUpdater.EmitMapUpdate();
             if (gameState.fightManager.currentFight === null) {
                 gameState.uiUpdater.EmitSidebarUpdate();
                 gameState.uiUpdater.EmitGameUpdate();
+                return;
             }
+            gameState.uiUpdater.EmitFightUpdate();
+            gameState.uiUpdater.EmitAttackCycleUpdate();
         } catch (err) {
             console.log(err)
         }

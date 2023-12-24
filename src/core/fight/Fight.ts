@@ -76,7 +76,8 @@ export class Fight {
             }
             this._gameState.deckManager.DiscardCard(deffenderPlayer, cardId)
         }
-        this.RestoreAttackCycle()
+        this.RestoreAttackCycle();
+        this.NextFightTurn();
     }
     RestoreAttackCycle() {
         this.attackCycle.status = false
@@ -113,18 +114,18 @@ export class Fight {
         const newActivePlayerId = this.FightTurnOrder.playersId[this.GetNextPlayerIndex()];
         this.FightTurnOrder.activePlayerId = newActivePlayerId;
     }
-    public startTimerAndListenForTrixel(timeoutMs: number) {
-        const timer = setTimeout(() => {
-            console.log("Action is not occurred")
-            this.NextFightTurn();
-        }, timeoutMs);
+    // public startTimerAndListenForTrixel(timeoutMs: number) {
+    //     const timer = setTimeout(() => {
+    //         console.log("Action is not occurred")
+    //         this.NextFightTurn();
+    //     }, timeoutMs);
 
-        this._gameState.eventEmitter.on('TrixelEvent', () => {
-            clearTimeout(timer);
-            console.log("Action occurred.");
-            this.NextFightTurn();
-        });
-    }
+    //     this._gameState.eventEmitter.on('TrixelEvent', () => {
+    //         clearTimeout(timer);
+    //         console.log("Action occurred.");
+    //         this.NextFightTurn();
+    //     });
+    // }
     toJSON() {
         const { players, FightTurnOrder, attackCycle, fightHex } = this
         return {
