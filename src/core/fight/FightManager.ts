@@ -85,7 +85,6 @@ export class FightManager {
             console.error(err);
             throw err;
         }
-        this.currentFight.startTimerAndListenForTrixel(10000);
         this.currentFight.UpdateFight();
         this.TryCurrentFightTermination();
     }
