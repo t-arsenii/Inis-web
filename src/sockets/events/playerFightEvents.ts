@@ -47,6 +47,7 @@ export function playerFightHandler(io: Server, socket: Socket) {
             }
             gameState.uiUpdater.EmitFightUpdate();
             gameState.uiUpdater.EmitAttackCycleUpdate();
+            gameState.uiUpdater.EmitMyDeckUpdate(player);
         } catch (err) {
             console.log(err)
         }
