@@ -16,6 +16,6 @@ app.use("/", gamesRoutes);
 server.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
 });
-initGameToSetup();
+// initGameToSetup();
 initGameToSeason();
 // initGameToGathering();
