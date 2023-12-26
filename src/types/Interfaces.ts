@@ -60,6 +60,7 @@ export interface ISidebarUiInfo {
         id: string,
         username: string,
         mmr: number,
+        color: Color,
         deck: {
             Epos: number,
             Action: number,

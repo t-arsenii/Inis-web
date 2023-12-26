@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { CLANS_PER_PLAYER } from "./constans/constant_3_players";
-import { playerAction } from "../types/Enums";
+import { Color, playerAction } from "../types/Enums";
 import { PretenderTokensType } from "../types/Types";
 import { IPlayer } from "../types/Interfaces";
 export class Player implements IPlayer {
@@ -9,7 +9,7 @@ export class Player implements IPlayer {
     username: string;
     socket: Socket | null;
     mmr: number;
-    color: string;
+    color: Color;
     //Game logic
     isBren: boolean;
     isActive: boolean;

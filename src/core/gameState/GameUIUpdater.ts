@@ -137,6 +137,7 @@ export class GameUiUpdater {
                     id: player.id,
                     username: player.username,
                     mmr: player.mmr,
+                    color: player.color,
                     deck: {
                         Epos: deck.eposCards.length,
                         Action: deck.actionCards.length,
