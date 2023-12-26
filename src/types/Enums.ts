@@ -64,3 +64,11 @@ export enum FightStage {
     setup = "SETUP",
     fight = "FIGHT"
 }
+export enum Color {
+    red = "RED",
+    green = "GREEN",
+    blue = "BLUE",
+    yellow = "YELLOW",
+    purple = "PURPLE",
+    orange = "ORANGE"
+}

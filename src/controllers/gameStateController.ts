@@ -21,7 +21,7 @@ const CreateGameWithId = async (req: Request, res: Response) => {
     const players: IPlayer[] = data.players;
     gameState.setGameStats(data.settings);
     gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
-    players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
+    players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr, color: player.color }));
     gamesManager.createGame(gameState)
     //pizdec
     await gameState.Init()
@@ -40,7 +40,7 @@ const CreateGame = async (req: Request, res: Response) => {
     const players: IPlayer[] = data.players;
     gameState.setGameStats(data.settings);
     gameState.playerManager.SetNumberOfPlayers(data.settings.numberOfPlayers);
-    players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr }));
+    players.forEach(player => gameState.playerManager.AddPlayer({ id: player.id, username: player.username, mmr: player.mmr, color: player.color }));
     gamesManager.createGame(gameState)
     //pizdec
     await gameState.Init()

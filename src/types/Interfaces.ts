@@ -2,7 +2,7 @@
 import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
 import { Field } from "../core/map/Field"
-import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction, GameStage } from "./Enums"
+import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction, GameStage, Color } from "./Enums"
 import { MoveDataType, axialCoordinates, axialToNum } from "./Types"
 
 export interface ICardParams {
@@ -122,13 +122,13 @@ export interface IPlayer {
     id: string
     username: string,
     mmr: number,
-    color?: string,
+    color?: Color,
 }
 export interface IPlayerDto {
     id: string
     username: string,
     mmr: number,
-    color?: string,
+    color?: Color,
 }
 export interface ICreateGameDto {
     players: IPlayerDto[],
@@ -139,14 +139,14 @@ export interface IPlayersUiInfo {
         id: string
         username: string,
         mmr: number,
-        color?: string
+        color?: Color
     }[]
 }
 export interface IMeUiInfo {
     id: string
     username: string,
     mmr: number,
-    color?: string
+    color?: Color
 }
 export interface IPretenderToken {
     sanctuaries: boolean,

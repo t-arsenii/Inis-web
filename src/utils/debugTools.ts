@@ -1,7 +1,7 @@
 import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
 import { gamesManager } from "../core/gameState/GameStateManager"
-import { TurnOrder, GameStage } from "../types/Enums"
+import { TurnOrder, GameStage, Color } from "../types/Enums"
 import { IPlayer } from "../types/Interfaces"
 
 export const initGameToSeason = () => {
@@ -15,7 +15,7 @@ export const initGameToSeason = () => {
         { id: player2Id, username: "username2", mmr: 1582 },
         { id: player3Id, username: "username3", mmr: 1345 },
     ]
-    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr }));
+    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr, color: user.color }));
     //Adding gameState to manager
     gamesManager.createGame(gameState)
 
@@ -75,11 +75,11 @@ export const initGameToGathering = async () => {
     const player2Id = "65539987efc2b3f2962ef662"
     const player3Id = "6582ef75efc13ed9d397e762"
     const users: IPlayer[] = [
-        { id: player1Id, username: "username1", mmr: 1234 },
-        { id: player2Id, username: "username2", mmr: 1582 },
-        { id: player3Id, username: "username3", mmr: 1345 },
+        { id: player1Id, username: "username1", mmr: 1234, color: Color.yellow },
+        { id: player2Id, username: "username2", mmr: 1582, color: Color.orange },
+        { id: player3Id, username: "username3", mmr: 1345, color: Color.purple },
     ]
-    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr }));
+    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr, color: user.color }));
     //Adding gameState to manager
     gamesManager.createGame(gameState)
 
@@ -105,18 +105,18 @@ export const initGameToGathering = async () => {
 
     await gameState.StartGatheringStage();
 }
-export function initGameToSetup(){
+export function initGameToSetup() {
     const DebugGameId = "54a94296-eb0b-45dc-a6f6-544559cf6b8b"
     const gameState: GameState = new GameState(DebugGameId)
     const player1Id = "6553995defc2b3f2962ef65d"
     const player2Id = "65539987efc2b3f2962ef662"
     const player3Id = "6582ef75efc13ed9d397e762"
     const users: IPlayer[] = [
-        { id: player1Id, username: "username1", mmr: 1234 },
-        { id: player2Id, username: "username2", mmr: 1582 },
-        { id: player3Id, username: "username3", mmr: 1345 },
+        { id: player1Id, username: "username1", mmr: 1234, color: Color.red },
+        { id: player2Id, username: "username2", mmr: 1582, color: Color.blue },
+        { id: player3Id, username: "username3", mmr: 1345, color: Color.green },
     ]
-    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr }));
+    users.forEach(user => gameState.playerManager.AddPlayer({ id: user.id, username: user.username, mmr: user.mmr, color: user.color }));
     //Adding gameState to manager
     gamesManager.createGame(gameState);
     //Initing game
