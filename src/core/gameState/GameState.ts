@@ -17,6 +17,7 @@ export class GameState {
   //Game info
   id: string;
   gameStatus: boolean;
+  isPaused: boolean;
   //In game data
   gameStage: GameStage;
   deedTokensLeft: number;
@@ -56,6 +57,8 @@ export class GameState {
     this.gameStats = undefined!;
     //Other
     this.eventEmitter = new EventEmitter();
+
+    this.isPaused = false;
   }
   setGameStats(gameStats: IGameStatsInput) {
     this.gameStats = {
@@ -209,5 +212,8 @@ export class GameState {
       newBrenPlayer.isBren = true;
       this.brenPlayer = newBrenPlayer;
     }
+  }
+  public SetPause() {
+    this.isPaused = !this.isPaused;
   }
 }

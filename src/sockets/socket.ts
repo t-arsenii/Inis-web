@@ -26,7 +26,7 @@ export default function handleSocketConnections(io: Server) {
                 return next();
             }
             if (!socket.auth) {
-                console.log("Socket not found");
+                console.error("Socket not found");
                 return next(new Error("Socket not found"));
             }
             if (!socket.gameState) {
@@ -40,7 +40,14 @@ export default function handleSocketConnections(io: Server) {
             if (!gameState.gameStatus) {
                 return next(new Error("Game status is false"));
             }
-            return next();
+            if (!gameState.isPaused) {
+                return next();
+            }
+            if (packet[0] === 'pause') {
+                return next();
+            }
+            console.error("Game is in paused state");
+            return next(new Error("Game is in paused state"));
         });
 
         DebugTools(io, socket);

@@ -183,4 +183,15 @@ export function playerGameHandler(io: Server, socket: Socket) {
             console.log(err);
         }
     })
+    socket.on("pause", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            gameState.SetPause();
+            gameState.uiUpdater.EmitGameUpdate();
+        }
+        catch (err: any) {
+
+        }
+    })
 }

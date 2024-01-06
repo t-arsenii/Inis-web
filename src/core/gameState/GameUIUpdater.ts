@@ -182,7 +182,7 @@ export class GameUiUpdater {
             maxPlayers: this._gameState.playerManager.numPlayers,
             citadelsLeft: this._gameState.hexGridManager.fieldsController.citadelsLeft,
             sanctuariesLeft: this._gameState.hexGridManager.fieldsController.sanctuariesLeft,
-            gameStage: this._gameState.gameStage
+            gameStage: this._gameState.isPaused ? GameStage.PAUSE : this._gameState.gameStage
         }
     }
     private getDealCardUiInfo(player: Player): IDealCardsInfo {
