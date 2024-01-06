@@ -1,4 +1,4 @@
-import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayersUiInfo, IPretenderToken, ISidebarUiInfo } from "../../types/Interfaces";
+import { IAttackCycleUiInfo, ICardOperationParams, ICardOperationResponse, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayersUiInfo, IPretenderToken, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../../utils/gameStateUtils";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
@@ -7,6 +7,7 @@ import { MIN_WINNING_AMOUNT } from "../constans/constant_3_players";
 import { territoryMap } from "../constans/constant_territories";
 import { GameState } from "./GameState";
 import { io } from "../../initServer";
+import { GameStage } from "../../types/Enums";
 export class GameUiUpdater {
     _gameState: GameState;
     constructor(gameState: GameState) {
@@ -84,6 +85,25 @@ export class GameUiUpdater {
             const activePlayerId = this._gameState.turnOrderManager.GetActivePlayer().id;
             _player.socket!.emit("is-active", { isActive: activePlayerId === _player.id });
         }
+    }
+    public EmitPlayerFightMoveUpdate(player: Player) {
+        if (this._gameState.gameStage !== GameStage.Fight) {
+            throw new Error("player-move-info: Game Stage is not fight");
+        }
+        const fightHex = this._gameState.fightManager.currentFight?.fightHex!;
+        const neighbourHexArr = this._gameState.hexGridManager.GetNeighbors(fightHex);
+        const resHexArr = [];
+        for (const _hex of neighbourHexArr) {
+            if (_hex.field.leaderPlayerId === player.id) {
+                resHexArr.push(_hex);
+            }
+        }
+        const clansCount = fightHex.field.playersClans.get(player.id)!;
+        const res: ICardOperationResponse = {
+            axial: resHexArr,
+            maxTerClicks: clansCount
+        };
+        player.socket?.emit("player-move-info", res);
     }
     private getMapUiInfo(): IMapUiInfo {
         const hexGrid = this._gameState.hexGridManager;
