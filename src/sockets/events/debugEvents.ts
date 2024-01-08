@@ -81,6 +81,24 @@ export function DebugTools(io: Server, socket: Socket) {
         }
         socket.emit("gameLobby-info", `game with id ${gameState.id} was initialized`);
     })
+    socket.on("territory-put", (gameId, userId, { q, r }, territoryId) => {
+        const gameState = gamesManager.getGame(gameId);
+        const player = gameState?.playerManager.GetPlayerById(userId);
+        const axial: axialCoordinates = {
+            q: +q,
+            r: +r
+        }
+        const isTerritory = gameState?.hexGridManager.fieldsController.AddRandomField(axial)
+        socket.emit("territory-info", `Is Territory(${q},${r}) placed: ${isTerritory}`)
+    })
+    socket.on("player-nextTurn", () => {
+        const gameState: GameState = socket.gameState!
+        const player: Player = socket.player!
+        if (player.id !== gameState.turnOrderManager.GetActivePlayer()!.id) {
+            return
+        }
+        gameState.turnOrderManager.NextTurn();
+    });
     // socket.on("save-gameState", () => {
     //     const gameState: GameState = socket.gameState!;
     //     const player: Player = socket.player!;
