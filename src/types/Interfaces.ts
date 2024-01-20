@@ -175,3 +175,8 @@ export interface IGameDataOutput {
     ranked: boolean,
     winner: string
 }
+export interface IMessage {
+    userId: string,
+    username: string,
+    message: string
+}

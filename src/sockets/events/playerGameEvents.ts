@@ -11,6 +11,7 @@ import { checkAllPlayersPass } from "../../utils/gameStateUtils";
 import { cardInputSchema } from "../../core/schemas/CardInputSchema";
 import { startTimerAndListen } from "../../utils/timers";
 import { handlePlayerPass } from "../../utils/socketHandlers";
+import { io } from "../../initServer"
 
 const UpdateUI = (gameState: GameState, player: Player) => {
     gameState.uiUpdater.EmitMapUpdate();

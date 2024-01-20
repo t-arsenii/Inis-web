@@ -16,7 +16,10 @@ import { uiUpdateHandler } from "./events/uiUpdateEvents";
 import { RedisClientType } from "redis";
 import { RedisConverter } from "../core/RedisConverter";
 import { GameStage } from "../types/Enums";
-export default function handleSocketConnections(io: Server) {
+import { io } from "../initServer"
+import { chatEvents } from "./events/chatEvents";
+
+export default function handleSocketConnections() {
     io.on('connection', (socket: Socket) => {
         socket.use((packet, next) => {
             if (packet[0] === 'game-join' || packet[0] === 'game-join-id') {

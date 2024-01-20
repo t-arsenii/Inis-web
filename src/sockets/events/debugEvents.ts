@@ -7,8 +7,8 @@ import { HexGridToJson } from "../../utils/HexGridUtils";
 import { GameState } from "../../core/gameState/GameState";
 import { gamesManager } from "../../core/gameState/GameStateManager";
 import { GetGameStateAndPlayer } from "../../utils/helperFunctions";
-
-export function DebugTools(io: Server, socket: Socket) {
+import { io } from "../../initServer"
+export function DebugTools(socket: Socket) {
     socket.on("game-join-id", (gameId: string, userId: string) => {
         const res = GetGameStateAndPlayer(socket, gameId, userId)
         if (res === undefined) {

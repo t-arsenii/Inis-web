@@ -9,13 +9,14 @@ import { app, server, io } from "./initServer"
 require('dotenv').config();
 const PORT = process.env.PORT || 8000;
 
-handleSocketConnections(io);
+handleSocketConnections();
 
 app.use("/", gamesRoutes);
 
 server.listen(PORT, () => {
     console.log(`listening on port: ${PORT}`)
 });
+
 // initGameToSetup();
 initGameToSeason();
 // initGameToGathering();

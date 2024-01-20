@@ -5,8 +5,9 @@ import { PlayerInfoType } from "../../types/Types"
 import { GameState } from "../../core/gameState/GameState";
 import { gamesManager } from "../../core/gameState/GameStateManager";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { io } from "../../initServer"
 
-export function gameLobbyHandler(io: Server, socket: Socket) {
+export function gameLobbyHandler(socket: Socket) {
     socket.on("game-join", (gameId: string, tokenInput: string) => {
         const token = (tokenInput || "").replace(/Bearer\s?/, "");
         let userId: string = "";
