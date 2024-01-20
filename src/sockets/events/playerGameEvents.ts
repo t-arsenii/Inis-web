@@ -23,7 +23,7 @@ const UpdateUI = (gameState: GameState, player: Player) => {
     }
 }
 
-export function playerGameHandler(io: Server, socket: Socket) {
+export function playerGameHandler(socket: Socket) {
     socket.on("player-card-season", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
         if (error) {

@@ -1,23 +1,13 @@
 import { Server, Socket } from "socket.io";
 import { Player } from "../core/Player";
-import { cardActionMap } from "../core/constans/constant_action_cards";
-import { PlayerInfoType } from "../types/Types";
-import { axialCoordinates } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameEvents";
-import { CheckSocketGameConnection } from "../utils/helperFunctions";
 import { gameSetupHandler } from "./events/gameSetupEvents";
 import { playerGameHandler } from "./events/playerGameEvents";
-import { HexGridToJson } from "../utils/HexGridUtils";
 import { playerFightHandler } from "./events/playerFightEvents";
 import { DebugTools } from "./events/debugEvents";
 import { GameState } from "../core/gameState/GameState";
-import { gamesManager } from "../core/gameState/GameStateManager";
 import { uiUpdateHandler } from "./events/uiUpdateEvents";
-import { RedisClientType } from "redis";
-import { RedisConverter } from "../core/RedisConverter";
-import { GameStage } from "../types/Enums";
 import { io } from "../initServer"
-import { chatEvents } from "./events/chatEvents";
 
 export default function handleSocketConnections() {
     io.on('connection', (socket: Socket) => {
@@ -49,12 +39,11 @@ export default function handleSocketConnections() {
             console.error("Game is in paused state");
             return next(new Error("Game is in paused state"));
         });
-        DebugTools(io, socket);
-        gameLobbyHandler(io, socket);
-        gameSetupHandler(io, socket);
-        playerGameHandler(io, socket);
-        playerFightHandler(io, socket);
-        uiUpdateHandler(io, socket);
+        DebugTools(socket);
+        gameLobbyHandler(socket);
+        gameSetupHandler(socket);
+        playerGameHandler(socket);
+        playerFightHandler(socket);
+        uiUpdateHandler(socket);
     });
 }
-``

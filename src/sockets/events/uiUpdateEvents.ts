@@ -60,13 +60,15 @@ export function uiUpdateHandler(socket: Socket) {
             console.log(err)
         }
     })
-    socket.on("all-messages", ()=>{
+    socket.on("all-messages", () => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
         try {
             gameState.uiUpdater.EmitAllMessagesUpdate(player);
         } catch (err) {
             console.log(err)
+        }
+    })
     socket.on("is-active", () => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
