@@ -2,14 +2,9 @@ import { PlayerInfoType } from "../../types/Types";
 import { Player } from "../Player";
 import { RedisConverter } from "../RedisConverter";
 import { GameState } from "./GameState";
-// import redisClient from "../redisClient"
 class GameStateManager {
-    // redisConverter: RedisConverter;
     private gameStates: Map<string, GameState> = new Map();
     socketsConnInfo: Map<string, PlayerInfoType> = new Map();
-    constructor() {
-        // this.redisConverter = new RedisConverter(redisClient);
-    }
     createGame(gameState: GameState): void {
         this.gameStates.set(gameState.id, gameState);
     }
@@ -32,5 +27,5 @@ class GameStateManager {
         this.socketsConnInfo.delete(socketId);
     }
 }
-
 export const gamesManager: GameStateManager = new GameStateManager();
+

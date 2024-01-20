@@ -17,8 +17,6 @@ import { RedisClientType } from "redis";
 import { RedisConverter } from "../core/RedisConverter";
 import { GameStage } from "../types/Enums";
 export default function handleSocketConnections(io: Server) {
-    //Maybe make middleware to retrive token data from user and also gameId from querry string,
-    //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
         socket.use((packet, next) => {
             if (packet[0] === 'game-join' || packet[0] === 'game-join-id') {
@@ -48,7 +46,6 @@ export default function handleSocketConnections(io: Server) {
             console.error("Game is in paused state");
             return next(new Error("Game is in paused state"));
         });
-
         DebugTools(io, socket);
         gameLobbyHandler(io, socket);
         gameSetupHandler(io, socket);
@@ -57,3 +54,4 @@ export default function handleSocketConnections(io: Server) {
         uiUpdateHandler(io, socket);
     });
 }
+``

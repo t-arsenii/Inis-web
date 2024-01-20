@@ -13,13 +13,13 @@ export interface ICardParams {
     targetCardId?: string,
     cardVariation?: number,
 }
-export interface IPlayerCardInput {
-    cardId: string,
-    params?: ICardParams
-}
 export interface ICardOperationParams extends ICardParams {
     gameState: GameState,
     player: Player
+}
+export interface IPlayerCardInput {
+    cardId: string,
+    params?: ICardParams
 }
 export interface ICardOperationResponse {
     axial?: axialCoordinates[],
