@@ -1,3 +1,4 @@
+import { Color } from "../../types/Enums";
 import { Player } from "../Player";
 import { GameState } from "./GameState"
 
@@ -18,11 +19,14 @@ export class PlayerManager {
         }
         this.numPlayers = numPlayers;
     }
-    AddPlayer({ id, username, mmr }: { id: string, username: string, mmr: number }): void {
+    AddPlayer({ id, username, mmr, color }: { id: string, username: string, mmr: number, color: Color | undefined }): void {
         if (this.players.size < this.numPlayers) {
             const player: Player = new Player(id);
             player.username = username;
             player.mmr = mmr;
+            if (color) {
+                player.color = color;
+            }
             this.players.set(player.id, player);
         }
     }

@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { CLANS_PER_PLAYER } from "./constans/constant_3_players";
-import { playerAction } from "../types/Enums";
-import { PretenderTokens } from "../types/Types";
+import { Color, playerAction } from "../types/Enums";
+import { PretenderTokensType } from "../types/Types";
 import { IPlayer } from "../types/Interfaces";
 export class Player implements IPlayer {
     //User info
@@ -9,14 +9,14 @@ export class Player implements IPlayer {
     username: string;
     socket: Socket | null;
     mmr: number;
-    color: string;
+    color: Color;
     //Game logic
     isBren: boolean;
     isActive: boolean;
     lastAction: playerAction;
     //Tokens
     deedTokens: number;
-    pretenderTokens: PretenderTokens;
+    pretenderTokens: PretenderTokensType;
     clansLeft: number;
     constructor(
         id: string

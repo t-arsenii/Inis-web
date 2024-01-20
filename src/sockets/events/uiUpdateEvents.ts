@@ -67,6 +67,39 @@ export function uiUpdateHandler(socket: Socket) {
             gameState.uiUpdater.EmitAllMessagesUpdate(player);
         } catch (err) {
             console.log(err)
+    socket.on("is-active", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            gameState.uiUpdater.EmitIsActiveUpdate();
+        } catch (err: any) {
+            console.log(err.message);
+        }
+    })
+    socket.on("fight-update", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            if (gameState.gameStage !== GameStage.Fight) {
+                throw new Error("Cannot update UI, gameStage is not Fight");
+            }
+            gameState.uiUpdater.EmitFightUpdate();
+        }
+        catch (err: any) {
+            console.log(err.message);
+        }
+    })
+    socket.on("attackCycle-update", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            if (gameState.gameStage !== GameStage.Fight) {
+                throw new Error("Cannot update UI, gameStage is not Fight");
+            }
+            gameState.uiUpdater.EmitAttackCycleUpdate();
+        }
+        catch (err: any) {
+            console.log(err.message);
         }
     })
 }

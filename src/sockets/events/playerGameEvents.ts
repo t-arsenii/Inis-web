@@ -12,7 +12,18 @@ import { cardInputSchema } from "../../core/schemas/CardInputSchema";
 import { startTimerAndListen } from "../../utils/timers";
 import { handlePlayerPass } from "../../utils/socketHandlers";
 import { io } from "../../initServer"
-export function playerGameHandler(socket: Socket) {
+
+const UpdateUI = (gameState: GameState, player: Player) => {
+    gameState.uiUpdater.EmitMapUpdate();
+    gameState.uiUpdater.EmitMyDeckUpdate(player);
+    gameState.uiUpdater.EmitSidebarUpdate();
+    gameState.uiUpdater.EmitGameUpdate();
+    if (gameState.gameStage === GameStage.Fight) {
+        gameState.uiUpdater.EmitFightUpdate();
+    }
+}
+
+export function playerGameHandler(io: Server, socket: Socket) {
     socket.on("player-card-season", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
         if (error) {
@@ -47,21 +58,20 @@ export function playerGameHandler(socket: Socket) {
             gameState.deckManager.DiscardCard(player, cardId);
             gameState.trixelManager.AddTrixel(player, trixelCondition_oOWJ5);
             player.lastAction = playerAction.Card;
+
+            UpdateUI(gameState, player);
+
+            gameState.eventEmitter.emit("seasonCardEvent", player);
         } catch (err) {
             socket.emit("player-card-season-error", `PlayerCardSeason: Internal server error on card operation:\n${err}`);
             console.log(err);
             return;
         }
-        gameState.uiUpdater.EmitMapUpdate();
-        gameState.uiUpdater.EmitMyDeckUpdate(player);
-        gameState.uiUpdater.EmitSidebarUpdate();
-        gameState.uiUpdater.EmitGameUpdate();
-
-        gameState.eventEmitter.emit("seasonCardEvent", player)
     })
     socket.on("player-card-info", (playerCardInput: IPlayerCardInput) => {
         const { value, error } = cardInputSchema.validate(playerCardInput);
         if (error) {
+            console.error(error)
             socket.emit("player-card-info-error", `PlayerCardSeason: Internal server error on card operation:\n${error.message}`);
             return;
         }
@@ -83,6 +93,7 @@ export function playerGameHandler(socket: Socket) {
             socket.emit("player-card-info", info);
         }
         catch (err) {
+            console.error(err);
             socket.emit("player-card-info-error", `PlayerCardInfo: Internal server error on card info:\n${err}`);
         }
 
@@ -171,6 +182,17 @@ export function playerGameHandler(socket: Socket) {
         }
         catch (err) {
             console.log(err);
+        }
+    })
+    socket.on("pause", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            gameState.SetPause();
+            gameState.uiUpdater.EmitGameUpdate();
+        }
+        catch (err: any) {
+
         }
     })
 }

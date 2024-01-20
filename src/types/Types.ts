@@ -1,7 +1,7 @@
 import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
 import { Badge, Card_type, StartStructure, Timing_to_play, TurnOrder } from "./Enums"
-export type Card = {
+export type CardType = {
     readonly id: string,
     readonly title: string,
     readonly card_type: Card_type,
@@ -11,11 +11,11 @@ export type Card = {
     readonly trixelCondition?: string,
     readonly secondDescription?: string
 }
-export type TrixelCondition = {
+export type TrixelConditionType = {
     readonly id: string,
     readonly description: string
 }
-export type Territory = {
+export type TerritoryType = {
     id: string,
     title: string
     description: string
@@ -26,26 +26,33 @@ export type axialCoordinates = {
     q: number
     r: number
 }
-export type PlayerTurnOrder = {
+export type PlayerTurnOrderType = {
     playersId: string[],
     direction: TurnOrder,
     activePlayerId: string;
 }
-export type playerInfo = {
+export type PlayerInfoType = {
     gameState: GameState
     player: Player
 }
-export type AttackerCycle = {
+export type AttackerCycleType = {
     status: boolean,
     attackerPlayerId: string | null,
     defenderPlayerId: string | null
 }
-export type PretenderTokens = {
+export type PretenderTokensType = {
     sanctuaries: boolean,
     clans: boolean,
     territories: boolean
 }
-export type DealCards = {
+export type DealCardsType = {
     cardsToDiscardNum: number,
     players: Record<string, { cards: string[], cardsToDiscard: string[], readyToDeal: boolean }>
+}
+export type MoveDataType = {
+    singleAxial: axialCoordinates,
+    axialToNum: { axial: axialCoordinates, num: number }[]
+}
+export type axialToNum = {
+    axial: axialCoordinates, num: number
 }

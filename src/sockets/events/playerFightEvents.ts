@@ -40,12 +40,15 @@ export function playerFightHandler(socket: Socket) {
         const player: Player = socket.player!
         try {
             gameState.fightManager.DeffenderAction(player, params.deffenderAction, params.cardId);
-            gameState.uiUpdater.EmitFightUpdate();
-            gameState.uiUpdater.EmitAttackCycleUpdate();
+            gameState.uiUpdater.EmitMapUpdate();
             if (gameState.fightManager.currentFight === null) {
                 gameState.uiUpdater.EmitSidebarUpdate();
                 gameState.uiUpdater.EmitGameUpdate();
+                return;
             }
+            gameState.uiUpdater.EmitFightUpdate();
+            gameState.uiUpdater.EmitAttackCycleUpdate();
+            gameState.uiUpdater.EmitMyDeckUpdate(player);
         } catch (err) {
             console.log(err)
         }
@@ -63,4 +66,16 @@ export function playerFightHandler(socket: Socket) {
             console.log(`PlayerFightPeaceVote:\n${err}`)
         }
     })
+    socket.on("player-move-info", () => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            if (gameState.gameStage !== GameStage.Fight) {
+                throw new Error("player-move-info: Game Stage is not fight");
+            }
+            gameState.uiUpdater.EmitPlayerFightMoveUpdate(player);
+        } catch (err) {
+            console.error(err);
+        }
+    });
 }

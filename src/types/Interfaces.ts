@@ -2,8 +2,8 @@
 import { Player } from "../core/Player"
 import { GameState } from "../core/gameState/GameState"
 import { Field } from "../core/map/Field"
-import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction, GameStage } from "./Enums"
-import { axialCoordinates } from "./Types"
+import { ActionType, AttackerAction, PretenderTokenType, DeffenderAction, playerAction, GameStage, Color } from "./Enums"
+import { MoveDataType, axialCoordinates, axialToNum } from "./Types"
 
 export interface ICardParams {
     axial?: axialCoordinates[],
@@ -13,13 +13,13 @@ export interface ICardParams {
     targetCardId?: string,
     cardVariation?: number,
 }
-export interface IPlayerCardInput {
-    cardId: string,
-    params?: ICardParams
-}
 export interface ICardOperationParams extends ICardParams {
     gameState: GameState,
     player: Player
+}
+export interface IPlayerCardInput {
+    cardId: string,
+    params?: ICardParams
 }
 export interface ICardOperationResponse {
     axial?: axialCoordinates[],
@@ -27,8 +27,9 @@ export interface ICardOperationResponse {
     maxTerClicks?: number,
     maxCardClicks?: number,
     maxTargetPlayerClicks?: number
-    axialToNum?: { axial: axialCoordinates, num: number }[],
-    axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[]
+    axialToNum?: axialToNum[],
+    axialToPlayerId?: { axialCoordinates: axialCoordinates, playerIds: string[] }[],
+    moveData?: MoveDataType[]
 }
 export interface IAttackerInputParams {
     attackerAction: AttackerAction,
@@ -59,6 +60,7 @@ export interface ISidebarUiInfo {
         id: string,
         username: string,
         mmr: number,
+        color: Color,
         deck: {
             Epos: number,
             Action: number,
@@ -105,6 +107,7 @@ export interface IFightUiInfo {
     fightHex: axialCoordinates,
     players:
     {
+        username: string,
         playerId: string,
         clansNum: number,
         peace: boolean,
@@ -120,13 +123,13 @@ export interface IPlayer {
     id: string
     username: string,
     mmr: number,
-    color?: string,
+    color?: Color,
 }
 export interface IPlayerDto {
     id: string
     username: string,
     mmr: number,
-    color?: string,
+    color?: Color,
 }
 export interface ICreateGameDto {
     players: IPlayerDto[],
@@ -137,14 +140,14 @@ export interface IPlayersUiInfo {
         id: string
         username: string,
         mmr: number,
-        color?: string
+        color?: Color
     }[]
 }
 export interface IMeUiInfo {
     id: string
     username: string,
     mmr: number,
-    color?: string
+    color?: Color
 }
 export interface IPretenderToken {
     sanctuaries: boolean,

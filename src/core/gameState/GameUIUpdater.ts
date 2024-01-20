@@ -1,4 +1,4 @@
-import { IAttackCycleUiInfo, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayersUiInfo, IPretenderToken, ISidebarUiInfo } from "../../types/Interfaces";
+import { IAttackCycleUiInfo, ICardOperationParams, ICardOperationResponse, IDealCardsInfo, IFightUiInfo, IGameUiInfo, IMapUiInfo, IMeUiInfo, IMyDeckUiInfo, IPlayersUiInfo, IPretenderToken, ISidebarUiInfo } from "../../types/Interfaces";
 import { axialCoordinates } from "../../types/Types";
 import { PretenderClans, PretenderSanctuaries, PretenderTerritories } from "../../utils/gameStateUtils";
 import { hexToAxialCoordinates } from "../../utils/helperFunctions";
@@ -7,6 +7,7 @@ import { MIN_WINNING_AMOUNT } from "../constans/constant_3_players";
 import { territoryMap } from "../constans/constant_territories";
 import { GameState } from "./GameState";
 import { io } from "../../initServer";
+import { GameStage } from "../../types/Enums";
 export class GameUiUpdater {
     _gameState: GameState;
     constructor(gameState: GameState) {
@@ -95,6 +96,34 @@ export class GameUiUpdater {
                 _player.socket.emit("new-message", this._gameState.chatManager.GetLastMessage());
             }
         }
+    public EmitIsActiveUpdate() {
+        const players = this._gameState.playerManager.GetPlayers();
+        for (const _player of players) {
+            if (!_player.socket) {
+                continue;
+            }
+            const activePlayerId = this._gameState.turnOrderManager.GetActivePlayer().id;
+            _player.socket!.emit("is-active", { isActive: activePlayerId === _player.id });
+        }
+    }
+    public EmitPlayerFightMoveUpdate(player: Player) {
+        if (this._gameState.gameStage !== GameStage.Fight) {
+            throw new Error("player-move-info: Game Stage is not fight");
+        }
+        const fightHex = this._gameState.fightManager.currentFight?.fightHex!;
+        const neighbourHexArr = this._gameState.hexGridManager.GetNeighbors(fightHex);
+        const resHexArr = [];
+        for (const _hex of neighbourHexArr) {
+            if (_hex.field.leaderPlayerId === player.id) {
+                resHexArr.push(_hex);
+            }
+        }
+        const clansCount = fightHex.field.playersClans.get(player.id)!;
+        const res: ICardOperationResponse = {
+            axial: resHexArr,
+            maxTerClicks: clansCount
+        };
+        player.socket?.emit("player-move-info", res);
     }
     private getMapUiInfo(): IMapUiInfo {
         const hexGrid = this._gameState.hexGridManager;
@@ -148,6 +177,7 @@ export class GameUiUpdater {
                     id: player.id,
                     username: player.username,
                     mmr: player.mmr,
+                    color: player.color,
                     deck: {
                         Epos: deck.eposCards.length,
                         Action: deck.actionCards.length,
@@ -172,7 +202,7 @@ export class GameUiUpdater {
             maxPlayers: this._gameState.playerManager.numPlayers,
             citadelsLeft: this._gameState.hexGridManager.fieldsController.citadelsLeft,
             sanctuariesLeft: this._gameState.hexGridManager.fieldsController.sanctuariesLeft,
-            gameStage: this._gameState.gameStage
+            gameStage: this._gameState.isPaused ? GameStage.PAUSE : this._gameState.gameStage
         }
     }
     private getDealCardUiInfo(player: Player): IDealCardsInfo {
@@ -196,6 +226,7 @@ export class GameUiUpdater {
         const players = this._gameState.fightManager.currentFight.players;
         const activePlayerId = this._gameState.fightManager.currentFight.FightTurnOrder.activePlayerId;
         const _players = Object.keys(players).map((playerId) => ({
+            username: this._gameState.playerManager.GetPlayerById(playerId)!.username,
             playerId,
             clansNum: players[playerId].clansNum,
             peace: players[playerId].peace,

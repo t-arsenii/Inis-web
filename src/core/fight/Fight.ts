@@ -2,7 +2,7 @@ import { Hills_ter } from "../constans/constant_territories";
 import { trixelCondition_NzLys, trixelCondition_bxaty } from "../constans/constant_trixelConditions";
 import { AttackerAction, DeffenderAction, FightStage, GameStage, TurnOrder } from "../../types/Enums";
 import { IAttackerParams } from "../../types/Interfaces";
-import { AttackerCycle, PlayerTurnOrder, axialCoordinates } from "../../types/Types";
+import { AttackerCycleType, PlayerTurnOrderType, axialCoordinates } from "../../types/Types";
 import { GameState } from "../gameState/GameState";
 import { Hexagon } from "../map/Field";
 import { Player } from "../Player";
@@ -10,8 +10,8 @@ import { hexToAxialCoordinates } from "../../utils/helperFunctions";
 export class Fight {
     _gameState: GameState;
     players: Record<string, { clansNum: number, peace: boolean }>;
-    FightTurnOrder: PlayerTurnOrder;
-    attackCycle: AttackerCycle;
+    FightTurnOrder: PlayerTurnOrderType;
+    attackCycle: AttackerCycleType;
     fightHex: Hexagon;
     fightStage: FightStage;
     constructor(hex: Hexagon, playerAttacker: Player, gameState: GameState) {
@@ -76,7 +76,8 @@ export class Fight {
             }
             this._gameState.deckManager.DiscardCard(deffenderPlayer, cardId)
         }
-        this.RestoreAttackCycle()
+        this.RestoreAttackCycle();
+        this.NextFightTurn();
     }
     RestoreAttackCycle() {
         this.attackCycle.status = false
@@ -113,18 +114,18 @@ export class Fight {
         const newActivePlayerId = this.FightTurnOrder.playersId[this.GetNextPlayerIndex()];
         this.FightTurnOrder.activePlayerId = newActivePlayerId;
     }
-    public startTimerAndListenForTrixel(timeoutMs: number) {
-        const timer = setTimeout(() => {
-            console.log("Action is not occurred")
-            this.NextFightTurn();
-        }, timeoutMs);
+    // public startTimerAndListenForTrixel(timeoutMs: number) {
+    //     const timer = setTimeout(() => {
+    //         console.log("Action is not occurred")
+    //         this.NextFightTurn();
+    //     }, timeoutMs);
 
-        this._gameState.eventEmitter.on('TrixelEvent', () => {
-            clearTimeout(timer);
-            console.log("Action occurred.");
-            this.NextFightTurn();
-        });
-    }
+    //     this._gameState.eventEmitter.on('TrixelEvent', () => {
+    //         clearTimeout(timer);
+    //         console.log("Action occurred.");
+    //         this.NextFightTurn();
+    //     });
+    // }
     toJSON() {
         const { players, FightTurnOrder, attackCycle, fightHex } = this
         return {

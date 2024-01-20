@@ -16,25 +16,20 @@ test("shuffle array", () => {
 
 describe('getRandomDirection', () => {
     it('should return TurnOrder.clockwise or TurnOrder.counter_clockwise', () => {
-        // Set the random value to a specific number (0.25 in this case) for testing clockwise result.
         jest.spyOn(Math, 'random').mockReturnValue(0.25);
 
         const result1 = getRandomDirection();
 
-        // Set the random value to a specific number (0.75 in this case) for testing counter_clockwise result.
         jest.spyOn(Math, 'random').mockReturnValue(0.75);
 
         const result2 = getRandomDirection();
 
-        // Ensure that the function returns one of the valid TurnOrder values
         expect([TurnOrder.clockwise, TurnOrder.counter_clockwise]).toContain(result1);
         expect([TurnOrder.clockwise, TurnOrder.counter_clockwise]).toContain(result2);
 
-        // If you want to check that the function returns different values on multiple calls with different random values:
         expect(result1).not.toBe(result2);
     });
 
-    // Restore Math.random to its original implementation after the tests.
     afterAll(() => {
         jest.restoreAllMocks();
     });

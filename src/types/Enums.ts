@@ -36,7 +36,8 @@ export enum GameStage {
     Gathering = "GATHERING",
     Season = "SEASON",
     Fight = "FIGHT",
-    END = "END"
+    END = "END",
+    PAUSE = "PAUSE"
 }
 export enum TurnOrder {
     clockwise = "CLOCKWISE",
@@ -63,4 +64,12 @@ export enum PretenderTokenType {
 export enum FightStage {
     setup = "SETUP",
     fight = "FIGHT"
+}
+export enum Color {
+    red = "red",
+    green = "green",
+    blue = "blue",
+    yellow = "yellow",
+    purple = "purple",
+    orange = "orange"
 }

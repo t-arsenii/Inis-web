@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
 import { Player } from "../core/Player";
 import { cardActionMap } from "../core/constans/constant_action_cards";
-import { playerInfo } from "../types/Types";
+import { PlayerInfoType } from "../types/Types";
 import { axialCoordinates } from "../types/Types";
 import { gameLobbyHandler } from "./events/gameEvents";
 import { CheckSocketGameConnection } from "../utils/helperFunctions";
@@ -20,16 +20,13 @@ import { io } from "../initServer"
 import { chatEvents } from "./events/chatEvents";
 
 export default function handleSocketConnections() {
-    //Maybe make middleware to retrive token data from user and also gameId from querry string,
-    //to assosiate socket with game and user, in theory gives performance boost 
     io.on('connection', (socket: Socket) => {
-        //middlewares 
         socket.use((packet, next) => {
             if (packet[0] === 'game-join' || packet[0] === 'game-join-id') {
                 return next();
             }
             if (!socket.auth) {
-                console.log("Socket not found");
+                console.error("Socket not found");
                 return next(new Error("Socket not found"));
             }
             if (!socket.gameState) {
@@ -43,16 +40,21 @@ export default function handleSocketConnections() {
             if (!gameState.gameStatus) {
                 return next(new Error("Game status is false"));
             }
-            return next();
+            if (!gameState.isPaused) {
+                return next();
+            }
+            if (packet[0] === 'pause') {
+                return next();
+            }
+            console.error("Game is in paused state");
+            return next(new Error("Game is in paused state"));
         });
-
-        DebugTools(socket);
-        gameLobbyHandler(socket);
-        gameSetupHandler(socket);
-        playerGameHandler(socket);
-        playerFightHandler(socket);
-        uiUpdateHandler(socket);
-        chatEvents(socket);
-        
+        DebugTools(io, socket);
+        gameLobbyHandler(io, socket);
+        gameSetupHandler(io, socket);
+        playerGameHandler(io, socket);
+        playerFightHandler(io, socket);
+        uiUpdateHandler(io, socket);
     });
 }
+``
