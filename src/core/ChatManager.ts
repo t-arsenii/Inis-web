@@ -35,7 +35,7 @@ export class ChatManager {
             return;
         }
         playerMutedPlayers?.add(targetPlayer.id);
-
+        console.log(playerMutedPlayers)
     }
     public GetMessages(): IMessage[] {
         return this.messages;
