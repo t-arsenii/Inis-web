@@ -89,7 +89,7 @@ export class GameUiUpdater {
         const players = this._gameState.playerManager.GetPlayers();
         for (const _player of players) {
             if (!_player.socket) {
-                throw new Error("GameUiUpdater error");
+                continue;
             }
             const playerMutedPlayers = this._gameState.chatManager.GetPlayerMutedPlayerIds(_player);
             if (!playerMutedPlayers.includes(player.id)) {
