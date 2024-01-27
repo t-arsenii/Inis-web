@@ -81,7 +81,7 @@ export class GameUiUpdater {
             throw new Error("GameUiUpdater error");
         }
         const playerMutedPlayers = this._gameState.chatManager.GetPlayerMutedPlayerIds(player);
-        const allFilteredMessages = this._gameState.chatManager.GetMessages().filter(message => !playerMutedPlayers.includes(message.userId));
+        const allFilteredMessages = this._gameState.chatManager.GetMessages().filter(message => !playerMutedPlayers.includes(message.userId)).map(message => message.message = "MUTED");
         player.socket.emit("all-messages", allFilteredMessages);
     }
     public EmitNewMessageUpdate(player: Player) {
