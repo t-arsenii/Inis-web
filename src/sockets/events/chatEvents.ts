@@ -3,7 +3,7 @@ import { GameState } from "../../core/gameState/GameState";
 import { Player } from "../../core/Player";
 import { string } from "joi";
 
-export function chatEvents(socket: Socket): void {
+export function chatEventsHandler(socket: Socket): void {
     socket.on("send-message", ({ message }: { message: string }) => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
