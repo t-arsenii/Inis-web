@@ -96,6 +96,7 @@ export class GameUiUpdater {
                 _player.socket.emit("new-message", this._gameState.chatManager.GetLastMessage());
             }
         }
+        // player.socket.emit("new-message", this._gameState.chatManager.GetLastMessage());
     }
     public EmitIsActiveUpdate() {
         const players = this._gameState.playerManager.GetPlayers();

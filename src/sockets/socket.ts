@@ -8,6 +8,7 @@ import { DebugTools } from "./events/debugEvents";
 import { GameState } from "../core/gameState/GameState";
 import { uiUpdateHandler } from "./events/uiUpdateEvents";
 import { io } from "../initServer"
+import { chatEventsHandler } from "./events/chatEvents";
 
 export default function handleSocketConnections() {
     io.on('connection', (socket: Socket) => {
@@ -45,5 +46,6 @@ export default function handleSocketConnections() {
         playerGameHandler(socket);
         playerFightHandler(socket);
         uiUpdateHandler(socket);
+        chatEventsHandler(socket);
     });
 }

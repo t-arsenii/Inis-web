@@ -7,8 +7,12 @@ export function chatEventsHandler(socket: Socket): void {
     socket.on("send-message", ({ message }: { message: string }) => {
         const gameState: GameState = socket.gameState!;
         const player: Player = socket.player!;
-        gameState.chatManager.AddMessage(player, message);
-        gameState.uiUpdater.EmitNewMessageUpdate(player)
+        try{
+            gameState.chatManager.AddMessage(player, message);
+            gameState.uiUpdater.EmitNewMessageUpdate(player)
+        }catch(err){
+            console.log(err);
+        }
     })
     socket.on("mute-unmute", ({ targetPlayerId }: { targetPlayerId: string }) => {
         const gameState: GameState = socket.gameState!;
