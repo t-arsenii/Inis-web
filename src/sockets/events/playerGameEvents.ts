@@ -59,9 +59,11 @@ export function playerGameHandler(socket: Socket) {
             gameState.trixelManager.AddTrixel(player, trixelCondition_oOWJ5);
             player.lastAction = playerAction.Card;
 
-            UpdateUI(gameState, player);
-
+            
+            gameState.turnOrderManager.NextTurn();
+            
             gameState.eventEmitter.emit("seasonCardEvent", player);
+            UpdateUI(gameState, player);
         } catch (err) {
             socket.emit("player-card-season-error", `PlayerCardSeason: Internal server error on card operation:\n${err}`);
             console.log(err);
