@@ -1,59 +1,68 @@
-import { Socket } from "socket.io";
-import { axialCoordiantes } from "../../types/Types";
-import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../services/helperFunctions";
+import { Server, Socket } from "socket.io";
+import { axialCoordinates } from "../../types/Types";
+import { CheckSocketGameConnection, GetGameStateAndPlayer } from "../../utils/helperFunctions";
 import { GameStage } from "../../types/Enums";
-import { GameState } from "../../core/GameState";
 import { Player } from "../../core/Player";
-// interface IGameStage {
-//     gameId: string,
-//     userId: string,
-//     axial: axialCoordiantes
-// }
+import { GameState } from "../../core/gameState/GameState";
+import { io } from "../../initServer"
 export function gameSetupHandler(socket: Socket) {
-    socket.on("game-setup-clans", (axial: axialCoordiantes) => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
-        if (!player.isActive) {
-            socket.emit("game-setup-info", "GameSetupClans: player not active")
-            return
+    socket.on("game-setup-clans", async (axial: axialCoordinates) => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            if (!player.isActive) {
+                throw new Error("GameSetupClans: player not active");
+            }
+            if (gameState.gameStage !== GameStage.ClansSetup) {
+                throw new Error("GameSetupClans: game stage is not valid");
+            }
+            gameState.hexGridManager.clansController.AddClans(player, 1, axial);
+            if (gameState.hexGridManager.setupController.SetupClans()) {
+                gameState.turnOrderManager.NextTurn();
+                await gameState.StartGatheringStage();
+                gameState.uiUpdater.EmitSidebarUpdate();
+                gameState.uiUpdater.EmitDealCardUpdateAll();
+                gameState.uiUpdater.EmitGameUpdate();
+                gameState.uiUpdater.EmitMapUpdate();
+                return;
+            }
+            gameState.turnOrderManager.NextTurn();
+
+            gameState.uiUpdater.EmitGameUpdate();
+            gameState.uiUpdater.EmitSidebarUpdate();
+            gameState.uiUpdater.EmitMapUpdate();
+            gameState.uiUpdater.EmitIsActiveUpdate();
         }
-        if (gameState.gameStage !== GameStage.ClansSetup) {
-            socket.emit("game-setup-info", "GameSetupClans: game stage is not valid")
-            return
+        catch (err) {
+            socket.emit("game-setup-clans-error", `GameSetupClans: Internal server error:\n${err}`)
+            console.log(err)
         }
-        if (!gameState.map.AddClans(player, 1, axial)) {
-            socket.emit("game-setup-info", "GameSetupClans: error adding clans")
-            return
-        }
-        if (gameState.map.SetupClans()) {
-            gameState.gameStage = GameStage.Gathering
-            gameState.NextTurn()
-            return
-        }
-        gameState.NextTurn()
     })
+    socket.on("game-setup-capital", (axial: axialCoordinates) => {
+        const gameState: GameState = socket.gameState!;
+        const player: Player = socket.player!;
+        try {
+            if (!player.isBren || !player.isActive) {
+                throw new Error("GameSetupCapital: player not active or not bren");
+            }
+            if (gameState.gameStage !== GameStage.CapitalSetup) {
+                throw new Error("GameSetupCapital: game stage is not valid");
+            }
+            if (gameState.hexGridManager.fieldsController.capitalHex) {
+                throw new Error("GameSetupCapital: capital already exists");
+            }
+            gameState.hexGridManager.fieldsController.SetCapital(axial);
+            gameState.hexGridManager.fieldsController.AddSanctuary(axial);
+            gameState.gameStage = GameStage.ClansSetup;
 
-    socket.on("game-setup-capital", (axial: axialCoordiantes) => {
-        const gameState: GameState = socket.gameState!
-        const player: Player = socket.player!
-
-        if (!player.isBren || !player.isActive) {
-            socket.emit("game-setup-info", "GameSetupCapital: player not active or not bren")
-            return
+            gameState.uiUpdater.EmitGameUpdate();
+            gameState.uiUpdater.EmitSidebarUpdate();
+            gameState.uiUpdater.EmitMapUpdate();
+            gameState.uiUpdater.EmitIsActiveUpdate();
         }
-        if (gameState.gameStage !== GameStage.CapitalSetup) {
-            socket.emit("game-setup-info", "GameSetupCapital: game stage is not valid")
-            return
+        catch (err) {
+            socket.emit("game-setup-capital-error", `GameSetupClans: Internal server error:\n${err}`);
+            console.log(err);
         }
-        if (gameState.map.capital) {
-            socket.emit("game-setup-info", "GameSetupCapital: capital already exists")
-            return
-        }
-        const setCapitalRes = gameState.map.SetCapital(axial)
-        if (!setCapitalRes) {
-            socket.emit("game-setup-info", `GameSetupCapital: capital placement error(q:${axial.q},r:${axial.r})`)
-            return
-        }
-        gameState.gameStage = GameStage.ClansSetup
     })
 }
